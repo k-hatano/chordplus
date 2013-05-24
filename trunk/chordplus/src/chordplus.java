@@ -109,6 +109,10 @@ public class chordplus extends JFrame {
 		fChord.receiveKeyPressed(which);
 	}
 	
+	void receiveShiftBasic(int db){
+		fChord.receiveShiftBasic(db);
+	}
+	
 	void receiveEstimatedChord(String name,int notes[]){
 		fKeyboard.receiveEstimatedChord(name,notes);
 		
@@ -126,6 +130,10 @@ public class chordplus extends JFrame {
 		fChord.receiveSelectRow(which);
 	}
 	
+	void receiveShiftRow(int vx,int vy){
+		fChord.receiveShiftRow(vx, vy);
+	}
+	
 	void receiveChangeScale(int t,int m){
 		Chord.tonic=t;
 		Chord.minor=m;
@@ -136,6 +144,10 @@ public class chordplus extends JFrame {
 		fFullKeyboard.receiveChangeTranspose(t);
 		fKeyboard.receiveChangeTranspose(t);
 		Chord.changeTranspose(t);
+	}
+	
+	void shiftTranspose(int dt){
+		changeTranspose(Chord.transpose+dt);
 	}
 	
 	void changePianoBasement(int t){
@@ -153,6 +165,13 @@ public class chordplus extends JFrame {
 	void changeVelocity(int v){
 		Chord.velocity=v;
 		fOption.receiveChangeVelocity(v);
+	}
+	
+	void shiftVelocity(int v){
+		Chord.velocity+=v;
+		if(Chord.velocity<0) Chord.velocity=0;
+		if(Chord.velocity>=128) Chord.velocity=127;
+		fOption.receiveChangeVelocity(Chord.velocity);
 	}
 	
 	void changeInstrument(int inst){
