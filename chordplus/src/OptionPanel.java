@@ -48,6 +48,7 @@ public class OptionPanel extends JPanel implements ChangeListener,ActionListener
 	}
 	
 	public void receiveChangeVelocity(int v){
+		sVelocitySlider.setValue(v/2);
 		lVelocity.setText(""+v);
 	}
 

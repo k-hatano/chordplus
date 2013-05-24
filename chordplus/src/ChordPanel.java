@@ -213,29 +213,31 @@ public class ChordPanel extends JPanel {
 				}
 			}
 		}
-		if(m>0){
-			tension=t;
-			basic=b;
-			for(j=0;j<6;j++){
-				if(tension==0&&basic==j) aTriad[j].setBackground(Color.lightGray);
-				else aTriad[j].setBackground(null);
-			}
-			for(j=0;j<6;j++){
-				if(tension==1&&basic==j) aSeventh[j].setBackground(Color.lightGray);
-				else aSeventh[j].setBackground(null);
-			}
-			for(j=0;j<6;j++){
-				if(tension==2&&basic==j) aMajorSeventh[j].setBackground(Color.lightGray);
-				else aMajorSeventh[j].setBackground(null);
-			}
-			for(j=0;j<6;j++){
-				if(tension==3&&basic==j) aSixth[j].setBackground(Color.lightGray);
-				else aSixth[j].setBackground(null);
-			}
-			for(j=0;j<6;j++){
-				if(tension==4&&basic==j) aAdd9[j].setBackground(Color.lightGray);
-				else aAdd9[j].setBackground(null);
-			}
+		if(m>0) stressMax(b,t);
+	}
+	void stressMax(int b,int t){
+		int j;
+		tension=t;
+		basic=b;
+		for(j=0;j<6;j++){
+			if(tension==0&&basic==j) aTriad[j].setBackground(Color.lightGray);
+			else aTriad[j].setBackground(null);
+		}
+		for(j=0;j<6;j++){
+			if(tension==1&&basic==j) aSeventh[j].setBackground(Color.lightGray);
+			else aSeventh[j].setBackground(null);
+		}
+		for(j=0;j<6;j++){
+			if(tension==2&&basic==j) aMajorSeventh[j].setBackground(Color.lightGray);
+			else aMajorSeventh[j].setBackground(null);
+		}
+		for(j=0;j<6;j++){
+			if(tension==3&&basic==j) aSixth[j].setBackground(Color.lightGray);
+			else aSixth[j].setBackground(null);
+		}
+		for(j=0;j<6;j++){
+			if(tension==4&&basic==j) aAdd9[j].setBackground(Color.lightGray);
+			else aAdd9[j].setBackground(null);
 		}
 	}
 	void resetReality(){
@@ -356,10 +358,33 @@ public class ChordPanel extends JPanel {
 		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root));
 	}
 	
+	void receiveShiftRow(int vx,int vy){
+		if(Chord.mode==0||root<0) return;
+		basic+=vx;
+		if(basic<0) basic=5;
+		if(basic>5) basic=0;
+		row=basic;
+		tension+=vy;
+		if(tension>=5) tension=Chord.omitTriad?1:0;
+		if(Chord.notesOfChord(basic,tension).length<=1) tension=Chord.omitTriad?1:0;
+		
+		if(tension<(Chord.omitTriad?1:0)) tension=4;
+		while(Chord.notesOfChord(basic,tension).length<=1) tension--;
+		reflectReality();
+		stressMax(basic,tension);
+		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root));
+	}
+	
 	void receiveOmitTriad(boolean ot){
 		int i;
+		if(Chord.mode==0) ot=true;
 		for(i=0;i<6;i++){
 			aTriad[i].setVisible(!ot);
 		}
+	}
+	
+	void receiveShiftBasic(int db){
+		//int b=(basic+db+12)%12;
+		//parent.receiveKeyPressed(b);
 	}
 }

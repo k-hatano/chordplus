@@ -73,6 +73,18 @@ public class KeyboardPanel extends JPanel implements ActionListener,MouseListene
 	void receiveSelectRow(int which){
 		parent.receiveSelectRow(which);
 	}
+	void receiveShiftRow(int vx,int vy){
+		parent.receiveShiftRow(vx, vy);
+	}
+	public void receiveShiftVelocity(int v){
+		parent.shiftVelocity(v);
+	}
+	public void receiveShiftTranspose(int dt){
+		parent.shiftTranspose(dt);
+	}
+	void receiveShiftBasic(int db){
+		parent.receiveShiftBasic(db);
+	}
 
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getSource()==bFocus){
