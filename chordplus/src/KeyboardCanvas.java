@@ -180,19 +180,19 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 	
 	public void mouseDragged(MouseEvent e) {
 		Point pt = e.getPoint();
-		if(pt.x-startPoint.x > 16){
+		if(pt.x-startPoint.x > 32){
 			parent.receiveShiftRow(1, 0);
 			startPoint=pt;
 		}
-		if(pt.x-startPoint.x < -16){
+		if(pt.x-startPoint.x < -32){
 			parent.receiveShiftRow(-1, 0);
 			startPoint=pt;
 		}
-		if(pt.y-startPoint.y > 16){
+		if(pt.y-startPoint.y > 32){
 			parent.receiveShiftRow(0, 1);
 			startPoint=pt;
 		}
-		if(pt.y-startPoint.y < -16){
+		if(pt.y-startPoint.y < -32){
 			parent.receiveShiftRow(0, -1);
 			startPoint=pt;
 		}
