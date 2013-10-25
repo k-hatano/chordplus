@@ -295,8 +295,8 @@ public class ChordPanel extends JPanel {
 		parent.receiveAllNotesOff();
 		
 		if(Chord.mode==1){
-			n=root+Chord.transpose();
-			if(bass>=0) n=bass+Chord.transpose();
+			n=root+(Chord.transpose()+36)%12;
+			if(bass>=0) n=bass+(Chord.transpose()+36)%12;
 			while(true){
 				if(n<Chord.pianoBasement+48) n+=12;
 				else if(n>=Chord.pianoBasement+60) n-=12;
@@ -305,7 +305,7 @@ public class ChordPanel extends JPanel {
 			parent.receiveNoteOn(n,true);
 			chord=Chord.notesOfChordWithRoot(basic,tension,root);
 			for(i=0;i<chord.length;i++){
-				n=chord[i]+Chord.transpose();
+				n=chord[i]+(Chord.transpose()+36)%12;
 				while(true){
 					if(n<Chord.pianoBasement+60) n+=12;
 					else if(n>=Chord.pianoBasement+72) n-=12;
@@ -314,7 +314,7 @@ public class ChordPanel extends JPanel {
 				parent.receiveNoteOn(n,true);
 			}
 		}else if(Chord.mode==2){
-			chord=Chord.notesOfChordWithGuitarBasement(basic,tension,root+Chord.transpose(),bass<0?bass:bass+Chord.transpose(),Chord.guitarBasement+40);
+			chord=Chord.notesOfChordWithGuitarBasement(basic,tension,root+(Chord.transpose()+36)%12,bass<0?bass:bass+(Chord.transpose()+36)%12,Chord.guitarBasement+40);
 			for(i=0;i<chord.length;i++){
 				n=chord[i];
 				parent.receiveNoteOn(n,true);
@@ -325,6 +325,8 @@ public class ChordPanel extends JPanel {
 		lastBass=bass;
 		lastBasic=basic;
 		lastTension=tension;
+		
+		parent.receivePushChordName(chordName());
 		
 		root=-1;
 		bass=-1;
@@ -383,8 +385,14 @@ public class ChordPanel extends JPanel {
 		}
 	}
 	
-	void receiveShiftBasic(int db){
-		//int b=(basic+db+12)%12;
-		//parent.receiveKeyPressed(b);
+	void receiveShiftRoot(int db){
+		int r=(root+db+12)%12;
+		if(root<0) return;
+		root=-1;
+		resetReality();
+		estimate(r);
+		reflectReality();
+		selectMax();
+		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root));
 	}
 }

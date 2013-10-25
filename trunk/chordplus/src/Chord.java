@@ -14,6 +14,7 @@ public class Chord {
 	
 	static int nMajor[]={0,2,4,5,7,9,11};
 	static int nMinor[]={0,2,3,5,7,8,10};
+	static int nHarmonicMinor[]={0,2,3,5,7,8,11};
 	
 	public static int tonic=0,minor=0,transpose=0,pianoBasement=0,guitarBasement=0;
 	public static int instrument=0;
@@ -24,6 +25,7 @@ public class Chord {
 	static String[] sNoteFlat={"C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"};
 	
 	public static boolean omitTriad=false;
+	public static boolean harmonicMinor=false;
 	
 	static String[] instruments={
 		"Acoustic Piano",
@@ -185,7 +187,7 @@ public class Chord {
 	static int[] notesOfChordWithRoot(int basic,int tension,int root){
 		int r[]=notesOfChord(basic,tension);
 		int i;
-		for(i=0;i<r.length;i++) r[i]=(r[i]+root)%12;
+		for(i=0;i<r.length;i++) r[i]=(r[i]+root+36)%12;
 		return r;
 	}
 	
@@ -259,7 +261,8 @@ public class Chord {
 			b=nMajor;
 			break;
 		case 1:
-			b=nMinor;
+			if(harmonicMinor) b=nHarmonicMinor;
+			else b=nMinor;
 			break;
 		default:
 			b=nMajor;	
@@ -267,6 +270,14 @@ public class Chord {
 		int i;
 		for(i=0;i<7;i++) r[i]=(b[i]+tonic)%12;
 		return r;
+	}
+	
+	static boolean scaleContainsNote(int tonic,int minor,int note){
+		int[] r=notesOfScale(tonic,minor);
+		for(int i=0;i<r.length;i++){
+			if(r[i]==note) return true;
+		}
+		return false;
 	}
 	
 	static String nameOfNote(int note,int flat){

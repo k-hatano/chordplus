@@ -4,7 +4,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 public class FullKeyboardPanel extends JPanel implements ActionListener {
-	JLabel lInstLabel;
+	JLabel lMessage,lInstLabel;
 	JComboBox cInst;
 	FullKeyboardCanvas cKeyboard;
 	JRadioButton rSingle,rPiano,rGuitar;
@@ -21,9 +21,13 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 		
 		parent=cp;
 		
-		cKeyboard = new FullKeyboardCanvas(this);
+		cKeyboard = new FullKeyboardCanvas(this,parent);
 		cKeyboard.setBounds(12,32,601,36);
 		add(cKeyboard);
+		
+		lMessage = new JLabel("トランスポーズ: 0");
+		lMessage.setBounds(16,8,601,20);
+		add(lMessage);
 		
 		gHowToPlay = new ButtonGroup();
 		rSingle = new JRadioButton("単音",true);
@@ -55,6 +59,9 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent arg0) {
 		Object target=arg0.getSource();
 		if(target==rSingle){
+			if(Chord.mode==0){
+				parent.changeTranspose(0);
+			}
 			cKeyboard.changeMode(0);
 			parent.receiveChangeMode(0,Chord.transpose());
 		}
@@ -104,20 +111,31 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 		cKeyboard.receiveChangeGuitarBasement(t);
 	}
 	
-	public void changeTranspose(int t){
-		parent.changeTranspose(t);
-	}
-
-	public void changePianoBasement(int t){
-		parent.changePianoBasement(t);
-	}
-
-	public void changeGuitarBasement(int t){
-		parent.changeGuitarBasement(t);
-	}
-	
 	public void changeInstrument(int i){
 		cInst.setSelectedIndex(i);
 		parent.changeInstrument(i);
+	}
+	
+	public void updateMessage(){
+		String message="";
+		/*
+		message+=Chord.nameOfNote(Chord.tonic,0)+" "+(Chord.minor>0?"minor":"major");
+		if(Chord.transpose==0){
+			message+=" (トランスポーズ: 0)";
+		}else{
+			message+=" -> "+Chord.nameOfNote((Chord.tonic+Chord.transpose+36)%12,0)+" "+(Chord.minor>0?"minor":"major");
+			if(Chord.transpose>0){
+				message+=" (トランスポーズ: +"+Chord.transpose+")";
+			}else{
+				message+=" (トランスポーズ: "+Chord.transpose+")";
+			}
+		}
+		*/
+		if(Chord.transpose>0){
+			message="トランスポーズ: +"+Chord.transpose;
+		}else{
+			message="トランスポーズ: "+Chord.transpose;
+		}
+		lMessage.setText(message);
 	}
 }

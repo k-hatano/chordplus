@@ -7,10 +7,12 @@ public class FullKeyboardCanvas extends Canvas implements MouseListener,MouseMot
 	int notesPlaying[]=new int[120];
 	int clickedX,originTranspose;
 	FullKeyboardPanel parent;
+	chordplus grandparent;
 	
-	public FullKeyboardCanvas(FullKeyboardPanel cp){
+	public FullKeyboardCanvas(FullKeyboardPanel cp,chordplus gp){
 		int i;
 		parent=cp;
+		grandparent=gp;
 		for(i=0;i<notesPlaying.length;i++) notesPlaying[i]=0;
 		addMouseListener(this);
 		addMouseMotionListener(this);
@@ -244,19 +246,20 @@ public class FullKeyboardCanvas extends Canvas implements MouseListener,MouseMot
 	public void mouseDragged(MouseEvent arg0) {
 		int newTranspose;
 		newTranspose=(arg0.getX()-clickedX)/6+originTranspose;
+		if(newTranspose<-36||newTranspose>36) return;
 		if(mode==0){
 			if(newTranspose!=Chord.transpose){
-				parent.changeTranspose(newTranspose);
+				grandparent.changeTranspose(newTranspose);
 			}
 		}
 		if(mode==1){
 			if(newTranspose!=Chord.pianoBasement){
-				parent.changePianoBasement(newTranspose);
+				grandparent.changePianoBasement(newTranspose);
 			}
 		}
 		if(mode==2){
 			if(newTranspose!=Chord.guitarBasement){
-				parent.changeGuitarBasement(newTranspose);
+				grandparent.changeGuitarBasement(newTranspose);
 			}
 		}
 	}
