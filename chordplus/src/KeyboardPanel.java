@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.ShortMessage;
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -18,7 +20,7 @@ public class KeyboardPanel extends JPanel implements ActionListener,MouseListene
 		setLayout(null);
 		setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 		
-		cKeyboard = new KeyboardCanvas(this);
+		cKeyboard = new KeyboardCanvas(this,parent);
 		cKeyboard.setBounds(16,16,353,99);
 		add(cKeyboard);
 		cKeyboard.requestFocusInWindow();
@@ -40,17 +42,8 @@ public class KeyboardPanel extends JPanel implements ActionListener,MouseListene
 		add(lTranspose);
 	}
 	
-	void receiveNoteOn(int note,boolean onOrOff){
-		parent.receiveNoteOn(note,onOrOff);
-	}
-	void receiveAllNotesOff(){
-		parent.receiveAllNotesOff();
-	}
 	void receiveChangeMode(int mode,int transpose){
 		cKeyboard.receiveChangeMode(mode,transpose);
-	}
-	void receiveKeyPressed(int which){
-		parent.receiveKeyPressed(which);
 	}
 	void receiveEstimatedChord(String name,int notes[]){
 		lChord.setForeground(Color.gray);
@@ -61,29 +54,8 @@ public class KeyboardPanel extends JPanel implements ActionListener,MouseListene
 		lChord.setForeground(Color.black);
 		parent.receivePlay();
 	}
-	void receiveBassChanged(int note){
-		parent.receiveBassChanged(note);
-	}
-	void receiveKeyboardFocused(){
-		bFocus.setVisible(false);
-	}
-	void receiveKeyboardBlured(){
+	public void receiveKeyboardBlured(){
 		bFocus.setVisible(true);
-	}
-	void receiveSelectRow(int which){
-		parent.receiveSelectRow(which);
-	}
-	void receiveShiftRow(int vx,int vy){
-		parent.receiveShiftRow(vx, vy);
-	}
-	public void receiveShiftVelocity(int v){
-		parent.shiftVelocity(v);
-	}
-	public void receiveShiftTranspose(int dt){
-		parent.shiftTranspose(dt);
-	}
-	void receiveShiftBasic(int db){
-		parent.receiveShiftBasic(db);
 	}
 
 	public void actionPerformed(ActionEvent arg0) {
@@ -116,5 +88,9 @@ public class KeyboardPanel extends JPanel implements ActionListener,MouseListene
 
 	public void mouseReleased(MouseEvent arg0) {
 		
+	}
+	
+	public void receiveKeyboardFocused(){
+		bFocus.setVisible(false);
 	}
 }

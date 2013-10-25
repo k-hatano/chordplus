@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
@@ -7,6 +6,7 @@ import javax.swing.border.*;
 
 public class OptionPanel extends JPanel implements ChangeListener,ActionListener {
 	chordplus parent;
+	JButton bHistory;
 	JLabel lVelocityLabel,lVelocity;
 	JSlider sVelocitySlider;
 	JCheckBox cOmitTriad,cHarmonicMinor,cTransposed;
@@ -32,10 +32,20 @@ public class OptionPanel extends JPanel implements ChangeListener,ActionListener
 		sVelocitySlider.addChangeListener(this);
 		add(sVelocitySlider);
 		
+		cHarmonicMinor = new JCheckBox("òaê∫ìIíZâπäK");
+		cHarmonicMinor.setBounds(4,50,115,24);
+		cHarmonicMinor.addActionListener(this);
+		add(cHarmonicMinor);
+		
 		cOmitTriad = new JCheckBox("éOòaâπÇñ≥éã");
-		cOmitTriad.setBounds(4,50,115,24);
+		cOmitTriad.setBounds(4,70,115,24);
 		cOmitTriad.addActionListener(this);
 		add(cOmitTriad);
+		
+		bHistory = new JButton("ÉRÅ[Éhçƒê∂óöó");
+		bHistory.setBounds(4,108,123,24);
+		bHistory.addActionListener(this);
+		add(bHistory);
 	}
 
 	public void stateChanged(ChangeEvent arg0) {
@@ -56,6 +66,10 @@ public class OptionPanel extends JPanel implements ChangeListener,ActionListener
 		if(arg0.getSource()==cOmitTriad){
 			Chord.omitTriad=cOmitTriad.isSelected();
 			parent.setOmitTriad(cOmitTriad.isSelected());
+		}else if(arg0.getSource()==bHistory){
+			parent.receiveShowHistoryPanel();
+		}else if(arg0.getSource()==cHarmonicMinor){
+			Chord.harmonicMinor=cHarmonicMinor.isSelected();
 		}
 	}
 }
