@@ -24,26 +24,26 @@ public class OptionPanel extends JPanel implements ChangeListener,ActionListener
 		add(lVelocityLabel);
 		
 		lVelocity = new JLabel(""+Chord.velocity,JLabel.RIGHT);
-		lVelocity.setBounds(95,8,24,16);
+		lVelocity.setBounds(99,8,46,16);
 		add(lVelocity);
 		
-		sVelocitySlider = new JSlider(0,64,32);
-		sVelocitySlider.setBounds(8,24,115,24);
+		sVelocitySlider = new JSlider(0,127,64);
+		sVelocitySlider.setBounds(16,24,134,24);
 		sVelocitySlider.addChangeListener(this);
 		add(sVelocitySlider);
 		
 		cHarmonicMinor = new JCheckBox("˜aº“I’Z‰¹ŠK");
-		cHarmonicMinor.setBounds(4,50,115,24);
+		cHarmonicMinor.setBounds(12,50,137,24);
 		cHarmonicMinor.addActionListener(this);
 		add(cHarmonicMinor);
 		
 		cOmitTriad = new JCheckBox("ŽO˜a‰¹‚ð–³Ž‹");
-		cOmitTriad.setBounds(4,70,115,24);
+		cOmitTriad.setBounds(12,70,137,24);
 		cOmitTriad.addActionListener(this);
 		add(cOmitTriad);
 		
 		bHistory = new JButton("ƒR[ƒhÄ¶—š—ð");
-		bHistory.setBounds(4,108,123,24);
+		bHistory.setBounds(12,108,137,24);
 		bHistory.addActionListener(this);
 		add(bHistory);
 	}
@@ -51,15 +51,20 @@ public class OptionPanel extends JPanel implements ChangeListener,ActionListener
 	public void stateChanged(ChangeEvent arg0) {
 		if(arg0.getSource()==sVelocitySlider){
 			int v;
-			v=sVelocitySlider.getValue()*2;
+			v=sVelocitySlider.getValue();
 			if(v>=128) v=127;
 			parent.changeVelocity(v);
 		}
 	}
 	
 	public void receiveChangeVelocity(int v){
-		sVelocitySlider.setValue(v/2);
+		sVelocitySlider.setValue(v);
 		lVelocity.setText(""+v);
+	}
+	
+	public void receiveChangeHarmonicMinor(boolean which){
+		cHarmonicMinor.setSelected(which);
+		Chord.harmonicMinor=which;
 	}
 
 	public void actionPerformed(ActionEvent arg0) {

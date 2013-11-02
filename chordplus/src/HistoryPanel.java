@@ -34,12 +34,12 @@ public class HistoryPanel extends JPanel implements ActionListener {
 		}
 		
 		bLoopMaker = new JButton("ループメーカー");
-		bLoopMaker.setBounds(4,248,123,24);
+		bLoopMaker.setBounds(12,248,137,24);
 		bLoopMaker.addActionListener(this);
 		add(bLoopMaker);
 		
 		bCancel = new JButton("キャンセル");
-		bCancel.setBounds(4,276,123,24);
+		bCancel.setBounds(12,276,137,24);
 		bCancel.addActionListener(this);
 		add(bCancel);
 	}

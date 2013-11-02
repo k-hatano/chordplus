@@ -131,7 +131,7 @@ public class ChordPanel extends JPanel {
 			root=-1;
 			bass=-1;
 			resetReality();
-			parent.receiveEstimatedChord("",emptyArray);
+			parent.receiveEstimatedChord("",emptyArray,true);
 		}else{
 			if(lastPressed==which){
 				root=-1;
@@ -141,7 +141,7 @@ public class ChordPanel extends JPanel {
 			bass=-1;
 			estimate(which%12);
 			selectMax();
-			parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root));
+			parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),true);
 		}
 		reflectReality();
 		lastPressed=which;
@@ -326,6 +326,7 @@ public class ChordPanel extends JPanel {
 		lastBasic=basic;
 		lastTension=tension;
 		
+		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),false);
 		parent.receivePushChordName(chordName());
 		
 		root=-1;
@@ -336,12 +337,15 @@ public class ChordPanel extends JPanel {
 	void receiveBassChanged(int note){
 		bass=note;
 		reflectReality();
-		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root));
+		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),true);
 	}
 	
 	void receiveSelectRow(int which){
 		int i,j;
-		if(Chord.mode==0||root<0) return;
+		if(Chord.mode==0) return;
+		if(root<0&&lastRoot>=0){
+			root=lastRoot;
+		}
 		for(i=0;i<5;i++){
 			for(j=0;j<6;j++) reality[j][i]=(j==which)?1:0;
 		}
@@ -357,11 +361,14 @@ public class ChordPanel extends JPanel {
 		reality[basic][tension]++;
 		reflectReality();
 		selectMax();
-		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root));
+		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),true);
 	}
 	
 	void receiveShiftRow(int vx,int vy){
-		if(Chord.mode==0||root<0) return;
+		if(Chord.mode==0) return;
+		if(root<0&&lastRoot>=0){
+			root=lastRoot;
+		}
 		basic+=vx;
 		if(basic<0) basic=5;
 		if(basic>5) basic=0;
@@ -374,7 +381,7 @@ public class ChordPanel extends JPanel {
 		while(Chord.notesOfChord(basic,tension).length<=1) tension--;
 		reflectReality();
 		stressMax(basic,tension);
-		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root));
+		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),true);
 	}
 	
 	void receiveOmitTriad(boolean ot){
@@ -386,13 +393,15 @@ public class ChordPanel extends JPanel {
 	}
 	
 	void receiveShiftRoot(int db){
+		if(root<0&&lastRoot>=0){
+			root=lastRoot;
+		}
 		int r=(root+db+12)%12;
-		if(root<0) return;
 		root=-1;
 		resetReality();
 		estimate(r);
 		reflectReality();
 		selectMax();
-		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root));
+		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),true);
 	}
 }

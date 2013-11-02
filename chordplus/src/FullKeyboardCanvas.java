@@ -4,7 +4,7 @@ import java.awt.event.*;
 public class FullKeyboardCanvas extends Canvas implements MouseListener,MouseMotionListener {
 	int mode=0;
 	int whiteNote[]={0,2,4,5,7,9,11},blackNote[]={1,3,-1,6,8,10,-1};
-	int notesPlaying[]=new int[120];
+	int notesPlaying[]=new int[144];
 	int clickedX,originTranspose;
 	FullKeyboardPanel parent;
 	chordplus grandparent;
@@ -27,22 +27,10 @@ public class FullKeyboardCanvas extends Canvas implements MouseListener,MouseMot
 		return notesPlaying[note];
 	}
 	
-	public void receiveChangeTranspose(int t){
-		repaint();
-	}
-	
-	public void receiveChangePianoBasement(int t){
-		repaint();
-	}
-	
-	public void receiveChangeGuitarBasement(int t){
-		repaint();
-	}
-	
 	public void paint(final Graphics g){
 		int i;
 		if(mode==0){
-			for(i=0;i<60;i++){
+			for(i=0;i<72;i++){
 				int note=(i/7)*12+whiteNote[i%7];
 				if(note>=Chord.transpose+60&&note<=Chord.transpose+60+17){
 					g.setColor(new Color(0.85f,0.85f,0.85f));
@@ -61,7 +49,7 @@ public class FullKeyboardCanvas extends Canvas implements MouseListener,MouseMot
 				}
 			}
 			g.setColor(Color.black);
-			for(i=0;i<60;i++){
+			for(i=0;i<72;i++){
 				int note=(i/7)*12+blackNote[i%7];
 				if(blackNote[i%7]<0) continue; 
 				if(note>=Chord.transpose+60&&note<=Chord.transpose+60+17){
@@ -81,7 +69,7 @@ public class FullKeyboardCanvas extends Canvas implements MouseListener,MouseMot
 				}
 			}
 		}else if(mode==1){
-			for(i=0;i<60;i++){
+			for(i=0;i<72;i++){
 				int note=(i/7)*12+whiteNote[i%7];
 				if(note>=Chord.pianoBasement+48&&note<Chord.pianoBasement+60){
 					g.setColor(new Color(0.7f,0.85f,1.0f));
@@ -105,7 +93,7 @@ public class FullKeyboardCanvas extends Canvas implements MouseListener,MouseMot
 				}
 			}
 			g.setColor(Color.black);
-			for(i=0;i<60;i++){
+			for(i=0;i<72;i++){
 				int note=(i/7)*12+blackNote[i%7];
 				if(blackNote[i%7]<0) continue; 
 				if(note>=Chord.pianoBasement+48&&note<Chord.pianoBasement+60){
@@ -130,7 +118,7 @@ public class FullKeyboardCanvas extends Canvas implements MouseListener,MouseMot
 				}
 			}
 		}else if(mode==2){
-			for(i=0;i<60;i++){
+			for(i=0;i<72;i++){
 				int note=(i/7)*12+whiteNote[i%7];
 				if(note>=Chord.guitarBasement+40&&note<Chord.guitarBasement+45){
 					g.setColor(new Color(1.0f,0.8f,0.5f));
@@ -174,7 +162,7 @@ public class FullKeyboardCanvas extends Canvas implements MouseListener,MouseMot
 				}
 			}
 			g.setColor(Color.black);
-			for(i=0;i<60;i++){
+			for(i=0;i<72;i++){
 				int note=(i/7)*12+blackNote[i%7];
 				if(blackNote[i%7]<0) continue; 
 				if(note>=Chord.guitarBasement+40&&note<Chord.guitarBasement+45){
@@ -219,14 +207,14 @@ public class FullKeyboardCanvas extends Canvas implements MouseListener,MouseMot
 				}
 			}
 		}else{
-			for(i=0;i<60;i++){
+			for(i=0;i<72;i++){
 				g.setColor(Color.white);
 				g.fillRect(i*10,0,10,30);
 				g.setColor(Color.black);
 				g.drawRect(i*10,0,10,30);
 			}
 			g.setColor(Color.black);
-			for(i=0;i<60;i++){
+			for(i=0;i<72;i++){
 				switch(i%7){
 				case 0:	case 1: case 3: case 4: case 5:
 					g.fillRect(i*10+6,0,8,18);
@@ -250,16 +238,19 @@ public class FullKeyboardCanvas extends Canvas implements MouseListener,MouseMot
 		if(mode==0){
 			if(newTranspose!=Chord.transpose){
 				grandparent.changeTranspose(newTranspose);
+				repaint();
 			}
 		}
 		if(mode==1){
 			if(newTranspose!=Chord.pianoBasement){
 				grandparent.changePianoBasement(newTranspose);
+				repaint();
 			}
 		}
 		if(mode==2){
 			if(newTranspose!=Chord.guitarBasement){
 				grandparent.changeGuitarBasement(newTranspose);
+				repaint();
 			}
 		}
 	}
