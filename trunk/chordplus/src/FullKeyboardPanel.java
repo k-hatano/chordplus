@@ -22,7 +22,7 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 		parent=cp;
 		
 		cKeyboard = new FullKeyboardCanvas(this,parent);
-		cKeyboard.setBounds(12,32,601,36);
+		cKeyboard.setBounds(12,32,631,36);
 		add(cKeyboard);
 		
 		lMessage = new JLabel("トランスポーズ: 0");
@@ -30,7 +30,7 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 		add(lMessage);
 		
 		gHowToPlay = new ButtonGroup();
-		rSingle = new JRadioButton("単音",true);
+		rSingle = new JRadioButton("フリー",true);
 		rSingle.setBounds(12,71,72,20);
 		add(rSingle);
 		rSingle.addActionListener(this);
@@ -47,11 +47,11 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 		rGuitar.addActionListener(this);
 		
 		lInstLabel = new JLabel("音色:",JLabel.RIGHT);
-		lInstLabel.setBounds(393,70,32,22);
+		lInstLabel.setBounds(413,70,32,22);
 		add(lInstLabel);
 		
 		cInst = new JComboBox(Chord.instrumentNameList());
-		cInst.setBounds(425,70,192,22);
+		cInst.setBounds(451,70,192,22);
 		cInst.addActionListener(this);
 		add(cInst);
 	}
@@ -67,6 +67,7 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 		}
 		if(target==rPiano){
 			if(Chord.mode==1){
+				parent.changePianoBasement(0);
 				changeInstrument(0);
 			}else{
 				cKeyboard.changeMode(1);
@@ -75,6 +76,7 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 		}
 		if(target==rGuitar){
 			if(Chord.mode==2){
+				parent.changeGuitarBasement(0);
 				changeInstrument(24);
 			}else{
 				cKeyboard.changeMode(2);
@@ -97,18 +99,6 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 				parent.receiveNoteOn(i,false);
 			}
 		}
-	}
-	
-	public void receiveChangeTranspose(int t){
-		cKeyboard.receiveChangeTranspose(t);
-	}
-	
-	public void receiveChangePianoBasement(int t){
-		cKeyboard.receiveChangePianoBasement(t);
-	}
-	
-	public void receiveChangeGuitarBasement(int t){
-		cKeyboard.receiveChangeGuitarBasement(t);
 	}
 	
 	public void changeInstrument(int i){

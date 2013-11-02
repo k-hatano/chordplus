@@ -25,7 +25,7 @@ public class chordplus extends JFrame {
 		Insets insets = this.getInsets();
 		il=insets.left;
 		it=insets.top;
-		setSize(640+il,471+it);
+		setSize(670+il,471+it);
 		setLocation(32,48);
 		setResizable(false);
 		addWindowListener(new WindowAdapter(){
@@ -36,7 +36,7 @@ public class chordplus extends JFrame {
 		setLayout(null);
 		
 		fStatus=new StatusPanel(this);
-		fStatus.setBounds(8,8,624,32);
+		fStatus.setBounds(8,8,654,32);
 		add(fStatus);
 		
 		ScalePanel fScale=new ScalePanel(this);
@@ -52,16 +52,16 @@ public class chordplus extends JFrame {
 		add(fChord);
 		
 		fOption=new OptionPanel(this);
-		fOption.setBounds(501,48,131,308);
+		fOption.setBounds(501,48,161,308);
 		add(fOption);
 		
 		fHistory=new HistoryPanel(this);
-		fHistory.setBounds(501,48,131,308);
+		fHistory.setBounds(501,48,161,308);
 		fHistory.setVisible(false);
 		add(fHistory);
 		
 		fFullKeyboard=new FullKeyboardPanel(this);
-		fFullKeyboard.setBounds(8,364,624,99);
+		fFullKeyboard.setBounds(8,364,654,99);
 		add(fFullKeyboard);
 		
 		/*
@@ -163,8 +163,8 @@ public class chordplus extends JFrame {
 		fChord.receiveShiftRoot(db);
 	}
 	
-	void receiveEstimatedChord(String name,int notes[]){
-		fKeyboard.receiveEstimatedChord(name,notes);
+	void receiveEstimatedChord(String name,int notes[],boolean mute){
+		fKeyboard.receiveEstimatedChord(name,notes,mute);
 		
 	}
 	
@@ -191,9 +191,9 @@ public class chordplus extends JFrame {
 	
 	void changeTranspose(int t){
 		fFullKeyboard.receiveAllNotesOff();
-		fFullKeyboard.receiveChangeTranspose(t);
 		fKeyboard.receiveChangeTranspose(t);
 		Chord.changeTranspose(t);
+		fFullKeyboard.updateMessage();
 	}
 	
 	void shiftTranspose(int dt){
@@ -204,13 +204,11 @@ public class chordplus extends JFrame {
 	
 	void changePianoBasement(int t){
 		fFullKeyboard.receiveAllNotesOff();
-		fFullKeyboard.receiveChangePianoBasement(t);
 		Chord.pianoBasement=t;
 	}
 	
 	void changeGuitarBasement(int t){
 		fFullKeyboard.receiveAllNotesOff();
-		fFullKeyboard.receiveChangeGuitarBasement(t);
 		Chord.guitarBasement=t;
 	}
 	
@@ -255,6 +253,10 @@ public class chordplus extends JFrame {
 	
 	void receivePushChordName(String s){
 		fHistory.pushChordName(s);
+	}
+	
+	public void receiveChangeHarmonicMinor(boolean which){
+		fOption.receiveChangeHarmonicMinor(which);
 	}
 	
 	void receiveSetPitchBend(int b){
