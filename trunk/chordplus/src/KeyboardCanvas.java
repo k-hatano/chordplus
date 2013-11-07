@@ -8,6 +8,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 	int lastPressed[]=new int[18];
 	int togglePressed[]=new int[18];
 	int lastClicked;
+	int lastKey;
 	int whiteKeys[]={0,2,4,5,7,9,11,12,14,16,17};
 	int blackKeys[]={1,3,6,8,10,13,15};
 	int keyRects[][]={
@@ -57,6 +58,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		for(i=0;i<18;i++) lastPressed[i]=0;
 		for(i=0;i<18;i++) togglePressed[i]=0;
 		lastClicked=-1;
+		lastKey=-1;
 		addKeyListener(this);
 		addMouseListener(this);
 		addMouseMotionListener(this);
@@ -166,6 +168,11 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		int which;
 		
 		if(lastClicked>-1) return;
+		if(arg0.getButton()==MouseEvent.BUTTON3){
+			grandparent.receiveKeyPressed(-1);
+			grandparent.receiveAllNotesOff();
+			return;
+		}
 		Point pt = arg0.getPoint();
 		which=whichKey(pt.x,pt.y);
 		if(which>-1&&pressed[which]==0){
@@ -177,30 +184,48 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 	
 	public void mouseReleased(MouseEvent arg0) {
 		if(lastClicked<0) return;
+		if(arg0.getButton()==MouseEvent.BUTTON3){
+			return;
+		}
 		pressed[lastClicked]=0;
 		lastClicked=-1;
-		if(mode>0){
+		if(mode==0){
+			grandparent.receiveSetPitchBend(0);
+		}else{
 			parent.receivePlay();
 		}
 	}
 	
 	public void mouseDragged(MouseEvent e) {
 		Point pt = e.getPoint();
-		if(pt.x-startPoint.x > 32){
-			grandparent.receiveShiftRow(1, 0);
-			startPoint=pt;
+		if(e.getButton()==MouseEvent.BUTTON3){
+			return;
 		}
-		if(pt.x-startPoint.x < -32){
-			grandparent.receiveShiftRow(-1, 0);
-			startPoint=pt;
-		}
-		if(pt.y-startPoint.y > 32){
-			grandparent.receiveShiftRow(0, 1);
-			startPoint=pt;
-		}
-		if(pt.y-startPoint.y < -32){
-			grandparent.receiveShiftRow(0, -1);
-			startPoint=pt;
+		if(mode==0){
+			if(pt.x-startPoint.x > 32){
+				grandparent.receiveSetPitchBend(63);
+			}else if(pt.x-startPoint.x < -32){
+				grandparent.receiveSetPitchBend(-63);
+			}else{
+				grandparent.receiveSetPitchBend(0);
+			}
+		}else{
+			if(pt.x-startPoint.x > 32){
+				grandparent.receiveShiftRow(1, 0);
+				startPoint=pt;
+			}
+			if(pt.x-startPoint.x < -32){
+				grandparent.receiveShiftRow(-1, 0);
+				startPoint=pt;
+			}
+			if(pt.y-startPoint.y > 32){
+				grandparent.receiveShiftRow(0, 1);
+				startPoint=pt;
+			}
+			if(pt.y-startPoint.y < -32){
+				grandparent.receiveShiftRow(0, -1);
+				startPoint=pt;
+			}
 		}
 	}
 	
@@ -260,6 +285,10 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 				grandparent.receiveSetPitchBend(-63);
 			}else if(key=='2'){
 				grandparent.receiveSetPitchBend(63);
+			}else if(key=='('){
+				grandparent.receiveShiftScale(-1);
+			}else if(key==')'){
+				grandparent.receiveShiftScale(1);
 			}
 			switch(code){
 			case KeyEvent.VK_LEFT:
@@ -293,21 +322,46 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 			if(key=='9'){
 				grandparent.receiveShiftRoot(1);
 			}
-			switch(code){
-			case KeyEvent.VK_UP:
-				grandparent.receiveShiftRow(0, -1);
-				break;
-			case KeyEvent.VK_DOWN:
-				grandparent.receiveShiftRow(0, 1);
-				break;
-			case KeyEvent.VK_LEFT:
-				grandparent.receiveShiftRow(-1, 0);
-				break;
-			case KeyEvent.VK_RIGHT:
-				grandparent.receiveShiftRow(1, 0);
-				break;
+			if(key=='('){
+				grandparent.receiveShiftScale(-1);
+			}
+			if(key==')'){
+				grandparent.receiveShiftScale(1);
+			}
+			if(Chord.root<0){
+				switch(code){
+				case KeyEvent.VK_UP:
+					grandparent.shiftVelocity(8);
+					break;
+				case KeyEvent.VK_DOWN:
+					grandparent.shiftVelocity(-8);
+					break;
+				case KeyEvent.VK_LEFT:
+					grandparent.receiveShiftScale(-1);
+					break;
+				case KeyEvent.VK_RIGHT:
+					grandparent.receiveShiftScale(1);
+					break;
+				}
+			}else{
+				switch(code){
+				case KeyEvent.VK_UP:
+					grandparent.receiveShiftRow(0, -1);
+					break;
+				case KeyEvent.VK_DOWN:
+					grandparent.receiveShiftRow(0, 1);
+					break;
+				case KeyEvent.VK_LEFT:
+					grandparent.receiveShiftRow(-1, 0);
+					break;
+				case KeyEvent.VK_RIGHT:
+					grandparent.receiveShiftRow(1, 0);
+					break;
+				}
 			}
 		}
+		
+		lastKey=key;
 	}
 	
 	public void keyReleased(KeyEvent arg0) {

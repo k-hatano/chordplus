@@ -15,6 +15,7 @@ public class chordplus extends JFrame {
 	ChordPanel fChord;
 	OptionPanel fOption;
 	HistoryPanel fHistory;
+	ScalePanel fScale;
 	FullKeyboardPanel fFullKeyboard;
 	
 	public chordplus(){
@@ -39,7 +40,7 @@ public class chordplus extends JFrame {
 		fStatus.setBounds(8,8,654,32);
 		add(fStatus);
 		
-		ScalePanel fScale=new ScalePanel(this);
+		fScale=new ScalePanel(this);
 		fScale.setBounds(8,48,92,308);
 		add(fScale);
 		
@@ -191,9 +192,9 @@ public class chordplus extends JFrame {
 	
 	void changeTranspose(int t){
 		fFullKeyboard.receiveAllNotesOff();
-		fKeyboard.receiveChangeTranspose(t);
 		Chord.changeTranspose(t);
-		fFullKeyboard.updateMessage();
+		fFullKeyboard.receiveChangeTranspose(t);
+		fKeyboard.receiveChangeTranspose(t);
 	}
 	
 	void shiftTranspose(int dt){
@@ -204,11 +205,13 @@ public class chordplus extends JFrame {
 	
 	void changePianoBasement(int t){
 		fFullKeyboard.receiveAllNotesOff();
+		fFullKeyboard.receiveChangePianoBasement(t);
 		Chord.pianoBasement=t;
 	}
 	
 	void changeGuitarBasement(int t){
 		fFullKeyboard.receiveAllNotesOff();
+		fFullKeyboard.receiveChangeGuitarBasement(t);
 		Chord.guitarBasement=t;
 	}
 	
@@ -255,10 +258,6 @@ public class chordplus extends JFrame {
 		fHistory.pushChordName(s);
 	}
 	
-	public void receiveChangeHarmonicMinor(boolean which){
-		fOption.receiveChangeHarmonicMinor(which);
-	}
-	
 	void receiveSetPitchBend(int b){
 		ShortMessage message = new ShortMessage();
 		try{
@@ -269,6 +268,17 @@ public class chordplus extends JFrame {
 			e.printStackTrace();
 			System.exit(0);
 		}
+	}
+	
+	void receiveShiftScale(int delta){
+		fScale.receiveShiftScale(delta);
+	}
+	
+	void receivePlayingChord(int basic,int tension,int root,int bass){
+		Chord.basic=basic;
+		Chord.tension=tension;
+		Chord.root=root;
+		Chord.bass=bass;
 	}
 }
 

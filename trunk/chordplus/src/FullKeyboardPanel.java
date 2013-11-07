@@ -101,6 +101,19 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 		}
 	}
 	
+	public void receiveChangeTranspose(int t){
+		cKeyboard.receiveChangeTranspose(t);
+		updateMessage();
+	}
+	
+	public void receiveChangePianoBasement(int t){
+		cKeyboard.receiveChangePianoBasement(t);
+	}
+	
+	public void receiveChangeGuitarBasement(int t){
+		cKeyboard.receiveChangeGuitarBasement(t);
+	}
+	
 	public void changeInstrument(int i){
 		cInst.setSelectedIndex(i);
 		parent.changeInstrument(i);

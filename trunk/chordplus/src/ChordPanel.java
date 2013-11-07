@@ -146,6 +146,7 @@ public class ChordPanel extends JPanel {
 		reflectReality();
 		lastPressed=which;
 		row=-1;
+		parent.receivePlayingChord(basic, tension, root, bass);
 	}
 	void estimate(int note){
 		int i,j,k,l,diatonic[],chord[];

@@ -61,11 +61,6 @@ public class OptionPanel extends JPanel implements ChangeListener,ActionListener
 		sVelocitySlider.setValue(v);
 		lVelocity.setText(""+v);
 	}
-	
-	public void receiveChangeHarmonicMinor(boolean which){
-		cHarmonicMinor.setSelected(which);
-		Chord.harmonicMinor=which;
-	}
 
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getSource()==cOmitTriad){
