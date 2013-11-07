@@ -27,6 +27,18 @@ public class FullKeyboardCanvas extends Canvas implements MouseListener,MouseMot
 		return notesPlaying[note];
 	}
 	
+	public void receiveChangeTranspose(int t){
+		repaint();
+	}
+	
+	public void receiveChangePianoBasement(int t){
+		repaint();
+	}
+	
+	public void receiveChangeGuitarBasement(int t){
+		repaint();
+	}
+	
 	public void paint(final Graphics g){
 		int i;
 		if(mode==0){
@@ -238,19 +250,16 @@ public class FullKeyboardCanvas extends Canvas implements MouseListener,MouseMot
 		if(mode==0){
 			if(newTranspose!=Chord.transpose){
 				grandparent.changeTranspose(newTranspose);
-				repaint();
 			}
 		}
 		if(mode==1){
 			if(newTranspose!=Chord.pianoBasement){
 				grandparent.changePianoBasement(newTranspose);
-				repaint();
 			}
 		}
 		if(mode==2){
 			if(newTranspose!=Chord.guitarBasement){
 				grandparent.changeGuitarBasement(newTranspose);
-				repaint();
 			}
 		}
 	}

@@ -21,6 +21,8 @@ public class Chord {
 	public static int velocity=64;
 	public static int mode=0;
 	
+	public static int basic=-1,tension=-1,root=-1,bass=-1;
+	
 	static String[] sNoteSharp={"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
 	static String[] sNoteFlat={"C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"};
 	
