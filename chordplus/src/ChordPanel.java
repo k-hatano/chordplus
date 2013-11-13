@@ -293,7 +293,7 @@ public class ChordPanel extends JPanel {
 		}
 		
 		
-		parent.receiveAllNotesOff();
+		parent.sendAllNotesOff();
 		
 		if(Chord.mode==1){
 			n=root+(Chord.transpose()+36)%12;
@@ -303,7 +303,7 @@ public class ChordPanel extends JPanel {
 				else if(n>=Chord.pianoBasement+60) n-=12;
 				else break;
 			}
-			parent.receiveNoteOn(n,true);
+			parent.sendNoteOn(n,true);
 			chord=Chord.notesOfChordWithRoot(basic,tension,root);
 			for(i=0;i<chord.length;i++){
 				n=chord[i]+(Chord.transpose()+36)%12;
@@ -312,13 +312,13 @@ public class ChordPanel extends JPanel {
 					else if(n>=Chord.pianoBasement+72) n-=12;
 					else break;
 				}
-				parent.receiveNoteOn(n,true);
+				parent.sendNoteOn(n,true);
 			}
 		}else if(Chord.mode==2){
 			chord=Chord.notesOfChordWithGuitarBasement(basic,tension,root+(Chord.transpose()+36)%12,bass<0?bass:bass+(Chord.transpose()+36)%12,Chord.guitarBasement+40);
 			for(i=0;i<chord.length;i++){
 				n=chord[i];
-				parent.receiveNoteOn(n,true);
+				parent.sendNoteOn(n,true);
 			}
 		}
 		
@@ -328,7 +328,7 @@ public class ChordPanel extends JPanel {
 		lastTension=tension;
 		
 		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),false);
-		parent.receivePushChordName(chordName());
+		parent.pushChordName(chordName());
 		
 		root=-1;
 		bass=-1;
@@ -385,12 +385,32 @@ public class ChordPanel extends JPanel {
 		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),true);
 	}
 	
-	void receiveOmitTriad(boolean ot){
+	void receiveChangeOmitTriad(boolean ot){
 		int i;
 		if(Chord.mode==0) ot=true;
 		for(i=0;i<6;i++){
 			aTriad[i].setVisible(!ot);
 		}
+		
+		if(root<0) return;
+		int r=root;
+		root=-1;
+		resetReality();
+		estimate(r);
+		reflectReality();
+		selectMax();
+		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),true);
+	}
+	
+	void receiveChangeHarmonicMinor(boolean hm){
+		if(root<0) return;
+		int r=root;
+		root=-1;
+		resetReality();
+		estimate(r);
+		reflectReality();
+		selectMax();
+		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),true);
 	}
 	
 	void receiveShiftRoot(int db){

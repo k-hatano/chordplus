@@ -47,6 +47,8 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 	int keysSpotted[]={0,0,0,0,0,0,0,0,0,0,0,0};
 	Point startPoint;
 	
+	boolean debugMode=false;
+	
 	public KeyboardCanvas(KeyboardPanel cp,chordplus gp){
 		super();
 		int i;
@@ -169,8 +171,8 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		
 		if(lastClicked>-1) return;
 		if(arg0.getButton()==MouseEvent.BUTTON3){
-			grandparent.receiveKeyPressed(-1);
-			grandparent.receiveAllNotesOff();
+			grandparent.keyPressed(-1);
+			grandparent.sendAllNotesOff();
 			return;
 		}
 		Point pt = arg0.getPoint();
@@ -190,9 +192,9 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		pressed[lastClicked]=0;
 		lastClicked=-1;
 		if(mode==0){
-			grandparent.receiveSetPitchBend(0);
+			grandparent.setPitchBend(0);
 		}else{
-			parent.receivePlay();
+			parent.play();
 		}
 	}
 	
@@ -203,27 +205,27 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		}
 		if(mode==0){
 			if(pt.x-startPoint.x > 32){
-				grandparent.receiveSetPitchBend(63);
+				grandparent.setPitchBend(63);
 			}else if(pt.x-startPoint.x < -32){
-				grandparent.receiveSetPitchBend(-63);
+				grandparent.setPitchBend(-63);
 			}else{
-				grandparent.receiveSetPitchBend(0);
+				grandparent.setPitchBend(0);
 			}
 		}else{
 			if(pt.x-startPoint.x > 32){
-				grandparent.receiveShiftRow(1, 0);
+				grandparent.shiftRow(1, 0);
 				startPoint=pt;
 			}
 			if(pt.x-startPoint.x < -32){
-				grandparent.receiveShiftRow(-1, 0);
+				grandparent.shiftRow(-1, 0);
 				startPoint=pt;
 			}
 			if(pt.y-startPoint.y > 32){
-				grandparent.receiveShiftRow(0, 1);
+				grandparent.shiftRow(0, 1);
 				startPoint=pt;
 			}
 			if(pt.y-startPoint.y < -32){
-				grandparent.receiveShiftRow(0, -1);
+				grandparent.shiftRow(0, -1);
 				startPoint=pt;
 			}
 		}
@@ -235,7 +237,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 	
 	void playNote(int note,boolean playOrStop,boolean mute){
 		pressed[note]=playOrStop?1:0;
-		if(!mute) grandparent.receiveNoteOn(60+note+Chord.transpose(),playOrStop);
+		if(!mute) grandparent.sendNoteOn(60+note+Chord.transpose(),playOrStop);
 	}
 	
 	public void keyPressed(KeyEvent arg0) {
@@ -243,21 +245,53 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		char key=arg0.getKeyChar();
 		int code=arg0.getKeyCode();
 		
+		if(debugMode){
+			for(i=0;i<smallKeys.length;i++){
+				if((key==smallKeys[i]||key==largeKeys[i])&&lastClicked!=i){
+					grandparent.changeScale(i, Chord.minor);
+					break;
+				}
+			}
+			switch(code){
+			case KeyEvent.VK_LEFT:
+				grandparent.shiftTranspose(-1);
+				break;
+			case KeyEvent.VK_RIGHT:
+				grandparent.shiftTranspose(1);
+				break;
+			case KeyEvent.VK_UP:
+				grandparent.shiftVelocity(1);
+				break;
+			case KeyEvent.VK_DOWN:
+				grandparent.shiftVelocity(-1);
+				break;
+			}
+			debugMode=false;
+			parent.lChord.setForeground(Color.black);
+			parent.lChord.setText("");
+			return;
+		}else if(code==KeyEvent.VK_ESCAPE){
+			debugMode=true;
+			parent.lChord.setForeground(Color.red);
+			parent.lChord.setText("コマンド入力モード");
+			return;
+		}
+		
 		if(code==KeyEvent.VK_SHIFT) shiftPushed=true;
 		
 		if(key=='.'||key=='\b'||key=='0'){
-			grandparent.receiveKeyPressed(-1);
-			grandparent.receiveAllNotesOff();
+			grandparent.keyPressed(-1);
+			grandparent.sendAllNotesOff();
 		}
 		
 		if((key==' '||key=='\n')&&mode>0){
-			grandparent.receivePlay();
+			grandparent.play();
 		}
 		
 		for(i=0;i<smallKeys.length;i++){
 			if((key==smallKeys[i]||key==largeKeys[i])&&lastClicked!=i){
 				if(shiftPushed){
-					grandparent.receiveBassChanged(i%12);
+					grandparent.bassChanged(i%12);
 				}else{
 					pressed[i]=1;
 				}
@@ -267,7 +301,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		
 		for(i=0;i<smallRowKeys.length;i++){
 			if(key==smallRowKeys[i]||key==largeRowKeys[i]){
-				grandparent.receiveSelectRow(i);
+				grandparent.selectRow(i);
 				break;
 			}
 		}
@@ -282,13 +316,13 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 			}else if(key=='v'){
 				grandparent.shiftVelocity(8);
 			}else if(key=='1'){
-				grandparent.receiveSetPitchBend(-63);
+				grandparent.setPitchBend(-63);
 			}else if(key=='2'){
-				grandparent.receiveSetPitchBend(63);
+				grandparent.setPitchBend(63);
 			}else if(key=='('){
-				grandparent.receiveShiftScale(-1);
+				grandparent.shiftScale(-1);
 			}else if(key==')'){
-				grandparent.receiveShiftScale(1);
+				grandparent.shiftScale(1);
 			}
 			switch(code){
 			case KeyEvent.VK_LEFT:
@@ -303,30 +337,42 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 			case KeyEvent.VK_DOWN:
 				grandparent.shiftVelocity(-8);
 				break;
+			case KeyEvent.VK_PAGE_UP:
+				grandparent.shiftScale(7);
+				break;
+			case KeyEvent.VK_PAGE_DOWN:
+				grandparent.shiftScale(-7);
+				break;
 			}
 		}else if(mode>0){
 			for(i=0;i<7;i++){
 				int j=Chord.notesOfScale(Chord.tonic(),Chord.minor())[i];
 				if((key==smallNumberKeys[i]||key==largeNumberKeys[i])&&lastClicked!=j){
 					if(shiftPushed){
-						grandparent.receiveBassChanged(j%12);
+						grandparent.bassChanged(j%12);
 					}else{
-						grandparent.receiveKeyPressed(j);
+						grandparent.keyPressed(j);
 					}
 					break;
 				}
 			}
 			if(key=='8'){
-				grandparent.receiveShiftRoot(-1);
+				grandparent.shiftRoot(-1);
 			}
 			if(key=='9'){
-				grandparent.receiveShiftRoot(1);
+				grandparent.shiftRoot(1);
 			}
 			if(key=='('){
-				grandparent.receiveShiftScale(-1);
+				grandparent.shiftScale(-1);
 			}
 			if(key==')'){
-				grandparent.receiveShiftScale(1);
+				grandparent.shiftScale(1);
+			}
+			if(key=='/'){
+				grandparent.changeHarmonicMinor(!Chord.harmonicMinor);
+			}
+			if(key=='_'){
+				grandparent.changeOmitTriad(!Chord.omitTriad);
 			}
 			if(Chord.root<0){
 				switch(code){
@@ -337,25 +383,37 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 					grandparent.shiftVelocity(-8);
 					break;
 				case KeyEvent.VK_LEFT:
-					grandparent.receiveShiftScale(-1);
+					grandparent.shiftScale(-1);
 					break;
 				case KeyEvent.VK_RIGHT:
-					grandparent.receiveShiftScale(1);
+					grandparent.shiftScale(1);
+					break;
+				case KeyEvent.VK_PAGE_UP:
+					grandparent.shiftScale(7);
+					break;
+				case KeyEvent.VK_PAGE_DOWN:
+					grandparent.shiftScale(-7);
 					break;
 				}
 			}else{
 				switch(code){
 				case KeyEvent.VK_UP:
-					grandparent.receiveShiftRow(0, -1);
+					grandparent.shiftRow(0, -1);
 					break;
 				case KeyEvent.VK_DOWN:
-					grandparent.receiveShiftRow(0, 1);
+					grandparent.shiftRow(0, 1);
 					break;
 				case KeyEvent.VK_LEFT:
-					grandparent.receiveShiftRow(-1, 0);
+					grandparent.shiftRow(-1, 0);
 					break;
 				case KeyEvent.VK_RIGHT:
-					grandparent.receiveShiftRow(1, 0);
+					grandparent.shiftRow(1, 0);
+					break;
+				case KeyEvent.VK_PAGE_UP:
+					grandparent.shiftScale(7);
+					break;
+				case KeyEvent.VK_PAGE_DOWN:
+					grandparent.shiftScale(-7);
 					break;
 				}
 			}
@@ -368,7 +426,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		int i;
 		char key=arg0.getKeyChar();
 		
-		if(key=='1'||key=='2') grandparent.receiveSetPitchBend(0);
+		if(key=='1'||key=='2') grandparent.setPitchBend(0);
 		if(arg0.getKeyCode()==KeyEvent.VK_SHIFT) shiftPushed=false;
 		
 		for(i=0;i<smallKeys.length;i++){
@@ -398,7 +456,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 	    			if(pressed[i]==1&&lastPressed[i]==0){
 	    				playNote(i,true,mode!=0);
 	    				lastPressed[i]=1;
-	    				grandparent.receiveKeyPressed(i);
+	    				grandparent.keyPressed(i);
 	    				repaintKey(i);
 	    			}
 	    			if(pressed[i]==0&&lastPressed[i]==1){
@@ -424,8 +482,8 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 	
 	public void focusLost(FocusEvent arg0) {
 		haveFocus=false;
-		grandparent.receiveKeyPressed(-1);
-		grandparent.receiveAllNotesOff();
+		grandparent.keyPressed(-1);
+		grandparent.sendAllNotesOff();
 		parent.receiveKeyboardBlured();
 	}
 	

@@ -44,12 +44,12 @@ public class ScalePanel extends JPanel implements ActionListener {
 		gMajor.add(rMin);
 	}
 	
-	public void receiveShiftScale(int delta){
-		int t=(Chord.tonic+delta+36)%12;
+	public void receiveChangeScale(int tonic,int minor){
 		for(int i=0;i<12;i++){
-			aScale[i].setSelected(i==t);
+			aScale[i].setSelected(i==tonic);
 		}
-		parent.receiveChangeScale(t,Chord.minor);
+		rMaj.setSelected(minor==0);
+		rMin.setSelected(minor==1);
 	}
 
 	public void actionPerformed(ActionEvent arg0) {
@@ -58,12 +58,12 @@ public class ScalePanel extends JPanel implements ActionListener {
 		
 		for(i=0;i<12;i++){
 			if(target==aScale[i]){
-				parent.receiveChangeScale(i,Chord.minor);
+				parent.changeScale(i,Chord.minor);
 				return;
 			}
 		}
 		
-		if(target==rMaj) parent.receiveChangeScale(Chord.tonic,0);
-		else if(target==rMin) parent.receiveChangeScale(Chord.tonic,1);
+		if(target==rMaj) parent.changeScale(Chord.tonic,0);
+		else if(target==rMin) parent.changeScale(Chord.tonic,1);
 	}
 }

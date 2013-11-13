@@ -61,13 +61,21 @@ public class OptionPanel extends JPanel implements ChangeListener,ActionListener
 		sVelocitySlider.setValue(v);
 		lVelocity.setText(""+v);
 	}
+	
+	public void receiveChangeHarmonicMinor(boolean hm){
+		cHarmonicMinor.setSelected(hm);
+	}
+	
+	public void receiveChangeOmitTriad(boolean ot){
+		cOmitTriad.setSelected(ot);
+	}
 
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getSource()==cOmitTriad){
 			Chord.omitTriad=cOmitTriad.isSelected();
-			parent.setOmitTriad(cOmitTriad.isSelected());
+			parent.changeOmitTriad(cOmitTriad.isSelected());
 		}else if(arg0.getSource()==bHistory){
-			parent.receiveShowHistoryPanel();
+			parent.showHistoryPanel();
 		}else if(arg0.getSource()==cHarmonicMinor){
 			Chord.harmonicMinor=cHarmonicMinor.isSelected();
 		}
