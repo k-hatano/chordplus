@@ -8,6 +8,7 @@ import javax.swing.border.EtchedBorder;
 
 
 public class HistoryPanel extends JPanel implements ActionListener {
+	LoopMaker loopMaker=null;
 	chordplus parent;
 	JButton bLoopMaker,bCancel;
 	JLabel lChords[];
@@ -33,7 +34,7 @@ public class HistoryPanel extends JPanel implements ActionListener {
 			add(lChords[i]);
 		}
 		
-		bLoopMaker = new JButton("ループメーカー");
+		bLoopMaker = new JButton("ループ作成");
 		bLoopMaker.setBounds(12,248,137,24);
 		bLoopMaker.addActionListener(this);
 		add(bLoopMaker);
@@ -47,7 +48,12 @@ public class HistoryPanel extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getSource()==bCancel){
-			parent.receiveShowOptionPanel();
+			parent.showOptionPanel();
+		}else if(arg0.getSource()==bLoopMaker){
+			if(loopMaker==null){
+				loopMaker=new LoopMaker();
+			}
+			loopMaker.show();
 		}
 	}
 	

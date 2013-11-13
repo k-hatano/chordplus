@@ -125,7 +125,7 @@ public class chordplus extends JFrame {
 	    }
 	}
 	
-	void receiveNoteOn(int note,boolean onOrOff){
+	void sendNoteOn(int note,boolean onOrOff){
 		ShortMessage message = new ShortMessage();
 		try {
 			if(onOrOff){
@@ -142,25 +142,25 @@ public class chordplus extends JFrame {
 		receiver.send(message,-1);
 	}
 	
-	void receiveAllNotesOff(){
+	void sendAllNotesOff(){
 		fFullKeyboard.receiveAllNotesOff();
 	}
 	
-	void receiveMidiMessage(MidiMessage message){
+	void sendMidiMessage(MidiMessage message){
 		
 	}
 	
-	void receiveChangeMode(int mode,int transpose){
+	void changeMode(int mode,int transpose){
 		Chord.mode=mode;
 		fChord.receiveChangeMode(mode,transpose);
 		fKeyboard.receiveChangeMode(mode,transpose);
 	}
 	
-	void receiveKeyPressed(int which){
+	void keyPressed(int which){
 		fChord.receiveKeyPressed(which);
 	}
 	
-	void receiveShiftRoot(int db){
+	void shiftRoot(int db){
 		fChord.receiveShiftRoot(db);
 	}
 	
@@ -169,25 +169,20 @@ public class chordplus extends JFrame {
 		
 	}
 	
-	void receivePlay(){
+	void play(){
 		fChord.receivePlay();
 	}
 	
-	void receiveBassChanged(int note){
+	void bassChanged(int note){
 		fChord.receiveBassChanged(note);
 	}
 	
-	void receiveSelectRow(int which){
+	void selectRow(int which){
 		fChord.receiveSelectRow(which);
 	}
 	
-	void receiveShiftRow(int vx,int vy){
+	void shiftRow(int vx,int vy){
 		fChord.receiveShiftRow(vx, vy);
-	}
-	
-	void receiveChangeScale(int t,int m){
-		Chord.tonic=t;
-		Chord.minor=m;
 	}
 	
 	void changeTranspose(int t){
@@ -240,25 +235,21 @@ public class chordplus extends JFrame {
 		}
 	}
 	
-	void setOmitTriad(boolean ot){
-		fChord.receiveOmitTriad(ot);
-	}
-	
-	void receiveShowHistoryPanel(){
+	void showHistoryPanel(){
 		fHistory.setVisible(true);
 		fOption.setVisible(false);
 	}
 	
-	void receiveShowOptionPanel(){
+	void showOptionPanel(){
 		fHistory.setVisible(false);
 		fOption.setVisible(true);
 	}
 	
-	void receivePushChordName(String s){
+	void pushChordName(String s){
 		fHistory.pushChordName(s);
 	}
 	
-	void receiveSetPitchBend(int b){
+	void setPitchBend(int b){
 		ShortMessage message = new ShortMessage();
 		try{
 			message.setMessage(ShortMessage.PITCH_BEND,0,64+b);
@@ -270,8 +261,15 @@ public class chordplus extends JFrame {
 		}
 	}
 	
-	void receiveShiftScale(int delta){
-		fScale.receiveShiftScale(delta);
+	void changeScale(int t,int m){
+		Chord.tonic=t;
+		Chord.minor=m;
+		fScale.receiveChangeScale(t, m);
+	}
+	
+	void shiftScale(int delta){
+		int t=(Chord.tonic+delta+36)%12;
+		changeScale(t,Chord.minor);
 	}
 	
 	void receivePlayingChord(int basic,int tension,int root,int bass){
@@ -279,6 +277,18 @@ public class chordplus extends JFrame {
 		Chord.tension=tension;
 		Chord.root=root;
 		Chord.bass=bass;
+	}
+	
+	void changeHarmonicMinor(boolean hm){
+		Chord.harmonicMinor=hm;
+		fOption.receiveChangeHarmonicMinor(hm);
+		fChord.receiveChangeHarmonicMinor(hm);
+	}
+	
+	void changeOmitTriad(boolean ot){
+		Chord.omitTriad=ot;
+		fOption.receiveChangeOmitTriad(ot);
+		fChord.receiveChangeOmitTriad(ot);
 	}
 }
 

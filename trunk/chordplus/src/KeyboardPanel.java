@@ -51,9 +51,9 @@ public class KeyboardPanel extends JPanel implements ActionListener,MouseListene
 		lChord.setText(name);
 		cKeyboard.receiveEstimatedChordNotes(notes);
 	}
-	void receivePlay(){
+	void play(){
 		lChord.setForeground(Color.black);
-		parent.receivePlay();
+		parent.play();
 	}
 	public void receiveKeyboardBlured(){
 		bFocus.setVisible(true);
@@ -72,7 +72,7 @@ public class KeyboardPanel extends JPanel implements ActionListener,MouseListene
 	}
 
 	public void mouseClicked(MouseEvent arg0) {
-		receivePlay();
+		play();
 	}
 
 	public void mouseEntered(MouseEvent arg0) {

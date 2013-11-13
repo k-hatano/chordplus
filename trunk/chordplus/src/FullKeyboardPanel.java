@@ -63,7 +63,7 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 				parent.changeTranspose(0);
 			}
 			cKeyboard.changeMode(0);
-			parent.receiveChangeMode(0,Chord.transpose());
+			parent.changeMode(0,Chord.transpose());
 		}
 		if(target==rPiano){
 			if(Chord.mode==1){
@@ -71,7 +71,7 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 				changeInstrument(0);
 			}else{
 				cKeyboard.changeMode(1);
-				parent.receiveChangeMode(1,transpose);
+				parent.changeMode(1,transpose);
 			}
 		}
 		if(target==rGuitar){
@@ -80,7 +80,7 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 				changeInstrument(24);
 			}else{
 				cKeyboard.changeMode(2);
-				parent.receiveChangeMode(2,transpose);
+				parent.changeMode(2,transpose);
 			}
 		}
 		if(target==cInst){
@@ -96,7 +96,7 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 		int i=0;
 		for(i=0;i<120;i++){
 			if(cKeyboard.isNotePlaying(i)>0){
-				parent.receiveNoteOn(i,false);
+				parent.sendNoteOn(i,false);
 			}
 		}
 	}
@@ -121,24 +121,23 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 	
 	public void updateMessage(){
 		String message="";
-		/*
-		message+=Chord.nameOfNote(Chord.tonic,0)+" "+(Chord.minor>0?"minor":"major");
 		if(Chord.transpose==0){
-			message+=" (トランスポーズ: 0)";
+			message+="トランスポーズ: 0";
 		}else{
-			message+=" -> "+Chord.nameOfNote((Chord.tonic+Chord.transpose+36)%12,0)+" "+(Chord.minor>0?"minor":"major");
 			if(Chord.transpose>0){
-				message+=" (トランスポーズ: +"+Chord.transpose+")";
+				message+="トランスポーズ: +"+Chord.transpose;
 			}else{
-				message+=" (トランスポーズ: "+Chord.transpose+")";
+				message+="トランスポーズ: "+Chord.transpose;
 			}
+			message+=" ("+Chord.nameOfNote(Chord.tonic,0)+" -> "+Chord.nameOfNote((Chord.tonic+Chord.transpose+36)%12,0)+")";
 		}
-		*/
+		/*
 		if(Chord.transpose>0){
 			message="トランスポーズ: +"+Chord.transpose;
 		}else{
 			message="トランスポーズ: "+Chord.transpose;
 		}
+		*/
 		lMessage.setText(message);
 	}
 }
