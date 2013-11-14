@@ -2,6 +2,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
@@ -11,27 +12,32 @@ public class HistoryPanel extends JPanel implements ActionListener {
 	LoopMaker loopMaker=null;
 	chordplus parent;
 	JButton bLoopMaker,bCancel;
-	JLabel lChords[];
-	String chords[];
+	JCheckBox cChords[];
+	
+	int degrees[],basics[],tensions[],basses[];
 	
 	public HistoryPanel(chordplus cp){
 		super();
 		
 		parent=cp;
 		
-		chords=new String[12];
-		for(int i=0;i<12;i++){
-			chords[i]="";
-		}
+		degrees=new int[12];
+		for(int i=0;i<12;i++) degrees[i]=-1;
+		basics=new int[12];
+		for(int i=0;i<12;i++) basics[i]=-1;
+		tensions=new int[12];
+		for(int i=0;i<12;i++) tensions[i]=-1;
+		basses=new int[12];
+		for(int i=0;i<12;i++) basses[i]=-1;
 		
 		setLayout(null);
 		setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 		
-		lChords=new JLabel[12];
+		cChords=new JCheckBox[12];
 		for(int i=0;i<12;i++){
-			lChords[i]=new JLabel();
-			lChords[i].setBounds(24,i*20+4,64,20);
-			add(lChords[i]);
+			cChords[i]=new JCheckBox();
+			cChords[i].setBounds(16,i*20+4,72,20);
+			add(cChords[i]);
 		}
 		
 		bLoopMaker = new JButton("ƒ‹[ƒvì¬");
@@ -51,20 +57,33 @@ public class HistoryPanel extends JPanel implements ActionListener {
 			parent.showOptionPanel();
 		}else if(arg0.getSource()==bLoopMaker){
 			if(loopMaker==null){
-				loopMaker=new LoopMaker();
+				loopMaker=new LoopMaker(this,parent);
 			}
+			loopMaker.receiveChords(degrees, basics, tensions, basses);
 			loopMaker.show();
 		}
 	}
 	
-	public void pushChordName(String s){
+	public void pushChord(int d,int b,int t,int bass){
 		int i;
+		if(degrees[11]==d&&basics[11]==b&&tensions[11]==t&&basses[11]==bass) return;
 		for(i=0;i<11;i++){
-			chords[i]=chords[i+1];
+			degrees[i]=degrees[i+1];
+			basics[i]=basics[i+1];
+			tensions[i]=tensions[i+1];
+			basses[i]=basses[i+1];
 		}
-		chords[11]=s;
-		for(i=0;i<12;i++){
-			lChords[i].setText(chords[i]);
+		degrees[11]=d;
+		basics[11]=b;
+		tensions[11]=t;
+		basses[11]=bass;
+		updateChordNames();
+	}
+	
+	public void updateChordNames(){
+		for(int i=0;i<12;i++){
+			if(degrees[i]<0) continue;
+			cChords[i].setText(Chord.chordName((degrees[i]+Chord.tonic+36)%12,basics[i],tensions[i],(basses[i]+Chord.tonic+36)%12,0));
 		}
 	}
 	

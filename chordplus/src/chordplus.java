@@ -245,8 +245,12 @@ public class chordplus extends JFrame {
 		fOption.setVisible(true);
 	}
 	
-	void pushChordName(String s){
-		fHistory.pushChordName(s);
+	void pushChord(int d,int b,int t,int bass){
+		fHistory.pushChord(d,b,t,bass);
+	}
+	
+	void updateChordNames(){
+		fHistory.updateChordNames();
 	}
 	
 	void setPitchBend(int b){
@@ -265,6 +269,7 @@ public class chordplus extends JFrame {
 		Chord.tonic=t;
 		Chord.minor=m;
 		fScale.receiveChangeScale(t, m);
+		fHistory.updateChordNames();
 	}
 	
 	void shiftScale(int delta){
