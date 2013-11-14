@@ -328,7 +328,7 @@ public class ChordPanel extends JPanel {
 		lastTension=tension;
 		
 		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),false);
-		parent.pushChordName(chordName());
+		parent.pushChord((root-Chord.tonic+36)%12,basic,tension,bass>=0?(bass-Chord.tonic+36)%12:(root-Chord.tonic+36)%12);
 		
 		root=-1;
 		bass=-1;
