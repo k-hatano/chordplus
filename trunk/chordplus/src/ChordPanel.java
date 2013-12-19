@@ -365,6 +365,23 @@ public class ChordPanel extends JPanel {
 		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),true);
 	}
 	
+	void receiveSelectTension(int which){
+		int i,j;
+		if(Chord.mode==0) return;
+		if(root<0&&lastRoot>=0){
+			root=lastRoot;
+		}
+		for(i=0;i<5;i++){
+			for(j=0;j<6;j++) reality[j][i]=(i==which)?1:0;
+		}
+		tension=which;
+		if(Chord.notesOfChord(basic,tension).length<=1) tension=Chord.omitTriad?1:0;
+		reality[basic][tension]++;
+		reflectReality();
+		selectMax();
+		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),true);
+	}
+	
 	void receiveShiftRow(int vx,int vy){
 		if(Chord.mode==0) return;
 		if(root<0&&lastRoot>=0){

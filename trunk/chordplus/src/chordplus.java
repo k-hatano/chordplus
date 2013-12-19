@@ -181,6 +181,10 @@ public class chordplus extends JFrame {
 		fChord.receiveSelectRow(which);
 	}
 	
+	void selectTension(int which){
+		fChord.receiveSelectTension(which);
+	}
+	
 	void shiftRow(int vx,int vy){
 		fChord.receiveShiftRow(vx, vy);
 	}
