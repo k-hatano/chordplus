@@ -3,7 +3,7 @@ import java.awt.event.*;
 
 import javax.swing.JPanel;
 
-public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionListener,KeyListener,FocusListener {
+public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionListener,MouseWheelListener,KeyListener,FocusListener {
 	int pressed[]=new int[18];
 	int lastPressed[]=new int[18];
 	int togglePressed[]=new int[18];
@@ -46,6 +46,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 	int chordNotes[]={0,0,0,0,0,0,0,0,0,0,0,0};
 	int keysSpotted[]={0,0,0,0,0,0,0,0,0,0,0,0};
 	Point startPoint;
+	int rotated=0;
 	
 	boolean debugMode=false;
 	
@@ -64,6 +65,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		addKeyListener(this);
 		addMouseListener(this);
 		addMouseMotionListener(this);
+		addMouseWheelListener(this);
 		addFocusListener(this);
 		keyWatcher = new KeyWatcher();
 		keyWatcher.start();
@@ -162,8 +164,15 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 	}
 	
 	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		if(mode==0){
+			return;
+		}
+		if(lastClicked>=0){
+			return;
+		}
+		grandparent.keyPressed(-1);
+		grandparent.sendAllNotesOff();
+		return;
 	}
 	
 	public void mousePressed(MouseEvent arg0) {
@@ -171,8 +180,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		
 		if(lastClicked>-1) return;
 		if(arg0.getButton()==MouseEvent.BUTTON3){
-			grandparent.keyPressed(-1);
-			grandparent.sendAllNotesOff();
+			parent.play();
 			return;
 		}
 		Point pt = arg0.getPoint();
@@ -193,8 +201,6 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		lastClicked=-1;
 		if(mode==0){
 			grandparent.setPitchBend(0);
-		}else{
-			parent.play();
 		}
 	}
 	
@@ -300,9 +306,12 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		}
 		
 		for(i=0;i<smallRowKeys.length;i++){
-			if(key==smallRowKeys[i]||key==largeRowKeys[i]){
+			if(key==smallRowKeys[i]){
 				grandparent.selectRow(i);
 				break;
+			}
+			if(key==largeRowKeys[i]&&i<=4){
+				grandparent.selectTension(i);
 			}
 		}
 		
@@ -500,6 +509,17 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		for(i=0;i<12;i++) chordNotes[i]=0;
 		for(i=0;i<notes.length;i++){
 			chordNotes[notes[i]]=1;
+		}
+	}
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent arg0) {
+		rotated+=arg0.getWheelRotation();
+		if(rotated>=1){
+			grandparent.shiftRow(1, 0);
+			rotated=0;
+		}else if(rotated<=-1){
+			grandparent.shiftRow(-1, 0);
+			rotated=0;
 		}
 	}
 }
