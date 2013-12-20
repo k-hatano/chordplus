@@ -47,6 +47,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 	int keysSpotted[]={0,0,0,0,0,0,0,0,0,0,0,0};
 	Point startPoint;
 	int rotated=0;
+	int bassNote=-1,oldBassNote=-1;
 	
 	boolean debugMode=false;
 	
@@ -114,6 +115,16 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 				int sx=(keyRects[i][0]+keyRects[i][2]/2)-11;
 				int sy=keyRects[i][1]+keyRects[i][3]-27;
 				g.fillOval(sx, sy, 22, 22);
+			}
+			if(i==bassNote){
+				if(Chord.scaleContainsNote(Chord.tonic,Chord.minor,i)){
+					g.setColor(Color.gray);
+				}else{
+					g.setColor(Color.lightGray);
+				}
+				int sx=(keyRects[i][0]+keyRects[i][2]/2)-12;
+				int sy=keyRects[i][1]+keyRects[i][3]-28;
+				g.drawOval(sx, sy, 24, 24);
 			}
 		}
 	}
@@ -480,6 +491,11 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 	    				repaintKey(i);
 	    			}
 	    		}
+	    		if(bassNote!=oldBassNote){
+	    			if(bassNote>=0) repaintKey(bassNote);
+	    			if(oldBassNote>=0) repaintKey(oldBassNote);
+	    			oldBassNote=bassNote;
+	    		}
 	    	}
 	    }
 	}
@@ -504,12 +520,13 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		}
 	}
 	
-	void receiveEstimatedChordNotes(int notes[]){
+	void receiveEstimatedChordNotes(int notes[],int bass){
 		int i;
 		for(i=0;i<12;i++) chordNotes[i]=0;
 		for(i=0;i<notes.length;i++){
 			chordNotes[notes[i]]=1;
 		}
+		bassNote=bass;
 	}
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent arg0) {

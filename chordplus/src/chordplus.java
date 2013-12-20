@@ -164,9 +164,8 @@ public class chordplus extends JFrame {
 		fChord.receiveShiftRoot(db);
 	}
 	
-	void receiveEstimatedChord(String name,int notes[],boolean mute){
-		fKeyboard.receiveEstimatedChord(name,notes,mute);
-		
+	void receiveEstimatedChord(String name,int notes[],int bass,boolean mute){
+		fKeyboard.receiveEstimatedChord(name,notes,bass,mute);
 	}
 	
 	void play(){
