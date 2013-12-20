@@ -28,6 +28,7 @@ public class Chord {
 	
 	public static boolean omitTriad=false;
 	public static boolean harmonicMinor=false;
+	public static boolean playAtReleased=false;
 	
 	static String[] instruments={
 		"Acoustic Piano",

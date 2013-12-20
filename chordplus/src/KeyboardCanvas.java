@@ -50,6 +50,8 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 	int bassNote=-1,oldBassNote=-1;
 	
 	boolean debugMode=false;
+	boolean keyPressedAfterReleased=false;
+	boolean repaintTrigger=false;
 	
 	public KeyboardCanvas(KeyboardPanel cp,chordplus gp){
 		super();
@@ -201,6 +203,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 			pressed[which]=1;
 		}
 		startPoint=pt;
+		repaintTrigger=true;
 	}
 	
 	public void mouseReleased(MouseEvent arg0) {
@@ -213,6 +216,10 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		if(mode==0){
 			grandparent.setPitchBend(0);
 		}
+		if(Chord.playAtReleased){
+			parent.play();
+		}
+		repaintTrigger=true;
 	}
 	
 	public void mouseDragged(MouseEvent e) {
@@ -246,6 +253,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 				startPoint=pt;
 			}
 		}
+		repaintTrigger=true;
 	}
 	
 	public void mouseMoved(MouseEvent e) {
@@ -307,6 +315,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		
 		for(i=0;i<smallKeys.length;i++){
 			if((key==smallKeys[i]||key==largeKeys[i])&&lastClicked!=i){
+				if(Chord.playAtReleased) keyPressedAfterReleased=true;
 				if(shiftPushed){
 					grandparent.bassChanged(i%12);
 				}else{
@@ -363,6 +372,12 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 			case KeyEvent.VK_PAGE_DOWN:
 				grandparent.shiftScale(-7);
 				break;
+			case KeyEvent.VK_HOME:
+				grandparent.changeScale(Chord.tonic,0);
+				break;
+			case KeyEvent.VK_END:
+				grandparent.changeScale(Chord.tonic,1);
+				break;
 			}
 		}else if(mode>0){
 			for(i=0;i<7;i++){
@@ -383,10 +398,10 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 				grandparent.shiftRoot(1);
 			}
 			if(key=='('){
-				grandparent.shiftScale(-1);
+				grandparent.shiftBass(-1);
 			}
 			if(key==')'){
-				grandparent.shiftScale(1);
+				grandparent.shiftBass(1);
 			}
 			if(key=='/'){
 				grandparent.changeHarmonicMinor(!Chord.harmonicMinor);
@@ -414,6 +429,12 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 				case KeyEvent.VK_PAGE_DOWN:
 					grandparent.shiftScale(-7);
 					break;
+				case KeyEvent.VK_HOME:
+					grandparent.changeScale(Chord.tonic,0);
+					break;
+				case KeyEvent.VK_END:
+					grandparent.changeScale(Chord.tonic,1);
+					break;
 				}
 			}else{
 				switch(code){
@@ -435,11 +456,18 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 				case KeyEvent.VK_PAGE_DOWN:
 					grandparent.shiftScale(-7);
 					break;
+				case KeyEvent.VK_HOME:
+					grandparent.changeScale(Chord.tonic,0);
+					break;
+				case KeyEvent.VK_END:
+					grandparent.changeScale(Chord.tonic,1);
+					break;
 				}
 			}
 		}
 		
 		lastKey=key;
+		repaintTrigger=true;
 	}
 	
 	public void keyReleased(KeyEvent arg0) {
@@ -456,6 +484,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 				break;
 			}
 		}
+		repaintTrigger=true;
 	}
 	
 	public void keyTyped(KeyEvent arg0) {
@@ -465,14 +494,19 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 	
 	class KeyWatcher extends Thread{
 	    public void run(){
-	    	int i;
+	    	int i,pressing;
 	    	while(true){
 	    		try {
-					sleep(10);
+	    			for(int j=0;j<10;j++){
+	    				sleep(10);
+	    				if(repaintTrigger) break;
+	    			}
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+	    		pressing=0;
 	    		for(i=0;i<smallKeys.length;i++){
+	    			if(pressed[i]==1) pressing++;
 	    			if(pressed[i]==1&&lastPressed[i]==0){
 	    				playNote(i,true,mode!=0);
 	    				lastPressed[i]=1;
@@ -496,6 +530,11 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 	    			if(oldBassNote>=0) repaintKey(oldBassNote);
 	    			oldBassNote=bassNote;
 	    		}
+	    		if(pressing==0&&keyPressedAfterReleased&&Chord.playAtReleased){
+	    			keyPressedAfterReleased=false;
+	    			grandparent.play();
+	    		}
+	    		repaintTrigger=false;
 	    	}
 	    }
 	}
