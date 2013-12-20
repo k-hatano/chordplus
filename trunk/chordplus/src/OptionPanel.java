@@ -9,7 +9,7 @@ public class OptionPanel extends JPanel implements ChangeListener,ActionListener
 	JButton bHistory;
 	JLabel lVelocityLabel,lVelocity;
 	JSlider sVelocitySlider;
-	JCheckBox cOmitTriad,cHarmonicMinor,cTransposed;
+	JCheckBox cOmitTriad,cHarmonicMinor,cPlayAtReleased,cTransposed;
 	
 	public OptionPanel(chordplus cp){
 		super();
@@ -42,8 +42,13 @@ public class OptionPanel extends JPanel implements ChangeListener,ActionListener
 		cOmitTriad.addActionListener(this);
 		add(cOmitTriad);
 		
+		cPlayAtReleased = new JCheckBox("ó£ÇµÇΩÇÁçƒê∂");
+		cPlayAtReleased.setBounds(12,90,137,24);
+		cPlayAtReleased.addActionListener(this);
+		add(cPlayAtReleased);
+		
 		bHistory = new JButton("ÉRÅ[Éhçƒê∂óöó");
-		bHistory.setBounds(12,108,137,24);
+		bHistory.setBounds(12,128,137,24);
 		bHistory.addActionListener(this);
 		add(bHistory);
 	}
@@ -76,6 +81,8 @@ public class OptionPanel extends JPanel implements ChangeListener,ActionListener
 			parent.changeOmitTriad(cOmitTriad.isSelected());
 		}else if(arg0.getSource()==bHistory){
 			parent.showHistoryPanel();
+		}else if(arg0.getSource()==cPlayAtReleased){
+			Chord.playAtReleased=cPlayAtReleased.isSelected();
 		}else if(arg0.getSource()==cHarmonicMinor){
 			Chord.harmonicMinor=cHarmonicMinor.isSelected();
 		}

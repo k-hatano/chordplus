@@ -447,4 +447,18 @@ public class ChordPanel extends JPanel {
 		selectMax();
 		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),bass<0?root:bass,true);
 	}
+	
+	void receiveShiftBass(int delta){
+		if(root<0&&lastRoot>=0){
+			root=lastRoot;
+			basic=lastBasic;
+			tension=lastTension;
+			bass=lastBass;
+		}
+		if(bass<0) bass=root;
+		bass=(bass+delta+36)%12;
+		reflectReality();
+		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),bass<0?root:bass,true);
+	
+	}
 }

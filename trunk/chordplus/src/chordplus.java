@@ -298,6 +298,10 @@ public class chordplus extends JFrame {
 		fOption.receiveChangeOmitTriad(ot);
 		fChord.receiveChangeOmitTriad(ot);
 	}
+	
+	void shiftBass(int delta){
+		fChord.receiveShiftBass(delta);
+	}
 }
 
 
