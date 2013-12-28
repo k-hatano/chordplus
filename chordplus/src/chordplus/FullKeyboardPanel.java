@@ -1,3 +1,5 @@
+package chordplus;
+
 import java.awt.event.*;
 
 import javax.swing.*;
@@ -9,7 +11,7 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 	FullKeyboardCanvas cKeyboard;
 	JRadioButton rSingle,rPiano,rGuitar;
 	ButtonGroup gHowToPlay;
-	chordplus parent;
+	chordplus rootview;
 	
 	int transpose=0,pianoBasement=0,guitarBasement=0;
 	
@@ -19,9 +21,9 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 		setLayout(null);
 		setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 		
-		parent=cp;
+		rootview=cp;
 		
-		cKeyboard = new FullKeyboardCanvas(this,parent);
+		cKeyboard = new FullKeyboardCanvas(this,rootview);
 		cKeyboard.setBounds(12,32,631,36);
 		add(cKeyboard);
 		
@@ -60,31 +62,31 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 		Object target=arg0.getSource();
 		if(target==rSingle){
 			if(Chord.mode==0){
-				parent.changeTranspose(0);
+				rootview.changeTranspose(0);
 			}
 			cKeyboard.changeMode(0);
-			parent.changeMode(0,Chord.transpose());
+			rootview.changeMode(0,Chord.transpose());
 		}
 		if(target==rPiano){
 			if(Chord.mode==1){
-				parent.changePianoBasement(0);
+				rootview.changePianoBasement(0);
 				changeInstrument(0);
 			}else{
 				cKeyboard.changeMode(1);
-				parent.changeMode(1,transpose);
+				rootview.changeMode(1,transpose);
 			}
 		}
 		if(target==rGuitar){
 			if(Chord.mode==2){
-				parent.changeGuitarBasement(0);
+				rootview.changeGuitarBasement(0);
 				changeInstrument(24);
 			}else{
 				cKeyboard.changeMode(2);
-				parent.changeMode(2,transpose);
+				rootview.changeMode(2,transpose);
 			}
 		}
 		if(target==cInst){
-			parent.changeInstrument(cInst.getSelectedIndex());
+			rootview.changeInstrument(cInst.getSelectedIndex());
 		}
 	}
 	
@@ -96,7 +98,7 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 		int i=0;
 		for(i=0;i<120;i++){
 			if(cKeyboard.isNotePlaying(i)>0){
-				parent.sendNoteOn(i,false);
+				rootview.sendNoteOn(i,false);
 			}
 		}
 	}
@@ -116,7 +118,7 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 	
 	public void changeInstrument(int i){
 		cInst.setSelectedIndex(i);
-		parent.changeInstrument(i);
+		rootview.changeInstrument(i);
 	}
 	
 	public void updateMessage(){

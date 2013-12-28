@@ -1,3 +1,5 @@
+package chordplus;
+
 import javax.sound.midi.*;
 import javax.sound.midi.MidiDevice.Info;
 import javax.swing.*;

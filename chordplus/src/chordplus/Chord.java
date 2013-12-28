@@ -1,3 +1,4 @@
+package chordplus;
 
 public class Chord {
 	static int nTriad[][]={{0,4,7},{0,3,7},{0,3,6},{0,4,8},{0,5,7},{0,4,6}};
@@ -161,7 +162,7 @@ public class Chord {
 		"Gunshot"
 	};
 	
-	static int[] notesOfChord(int basic,int tension){
+	public static int[] notesOfChord(int basic,int tension){
 		int r[],b[],i;
 		switch(tension){
 		case 0:
@@ -187,14 +188,14 @@ public class Chord {
 		return r;
 	}
 	
-	static int[] notesOfChordWithRoot(int basic,int tension,int root){
+	public static int[] notesOfChordWithRoot(int basic,int tension,int root){
 		int r[]=notesOfChord(basic,tension);
 		int i;
 		for(i=0;i<r.length;i++) r[i]=(r[i]+root+36)%12;
 		return r;
 	}
 	
-	static int[] notesOfChordWithGuitarBasement(int basic,int tension,int root,int bass,int guitarBasement){
+	public static int[] notesOfChordWithGuitarBasement(int basic,int tension,int root,int bass,int guitarBasement){
 		int a,b,c,d,e,f,i,j,n,lowest=-1,highScore=0;
 		int tmpNotes[]={-1,-1,-1,-1,-1,-1};
 		int chordNotes[]=notesOfChordWithRoot(basic,tension,root);
@@ -256,7 +257,7 @@ public class Chord {
 		return notes;
 	}
 	
-	static int[] notesOfScale(int tonic,int minor){
+	public static int[] notesOfScale(int tonic,int minor){
 		int[] r=new int[7];
 		int[] b;
 		switch(minor){
@@ -275,7 +276,7 @@ public class Chord {
 		return r;
 	}
 	
-	static boolean scaleContainsNote(int tonic,int minor,int note){
+	public static boolean scaleContainsNote(int tonic,int minor,int note){
 		int[] r=notesOfScale(tonic,minor);
 		for(int i=0;i<r.length;i++){
 			if(r[i]==note) return true;
@@ -283,12 +284,12 @@ public class Chord {
 		return false;
 	}
 	
-	static String nameOfNote(int note,int flat){
+	public static String nameOfNote(int note,int flat){
 		if(flat>0)	return sNoteFlat[note];
 		else		return sNoteSharp[note];
 	}
 	
-	static String chordName(int root,int basic,int tension,int bass,int flat){
+	public static String chordName(int root,int basic,int tension,int bass,int flat){
 		String name;
 		
 		if(root<0)		name="";
@@ -323,28 +324,28 @@ public class Chord {
 		return name;
 	}
 	
-	static void changeScale(int t,int m){
+	public static void changeScale(int t,int m){
 		tonic=t;
 		minor=m;
 	}
 	
-	static int tonic(){
+	public static int tonic(){
 		return tonic;
 	}
 	
-	static int minor(){
+	public static int minor(){
 		return minor;
 	}
 	
-	static int transpose(){
+	public static int transpose(){
 		return transpose;
 	}
 	
-	static void changeTranspose(int t){
+	public static void changeTranspose(int t){
 		transpose=t;
 	}
 	
-	static String[] instrumentNameList(){
+	public static String[] instrumentNameList(){
 		String[] list=new String[128];
 		int i;
 		for(i=0;i<128;i++){

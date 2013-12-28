@@ -1,3 +1,5 @@
+package chordplus;
+
 import java.awt.event.*;
 
 import javax.swing.*;
@@ -5,7 +7,7 @@ import javax.swing.event.*;
 import javax.swing.border.*;
 
 public class OptionPanel extends JPanel implements ChangeListener,ActionListener {
-	chordplus parent;
+	chordplus rootview;
 	JButton bHistory;
 	JLabel lVelocityLabel,lVelocity;
 	JSlider sVelocitySlider;
@@ -14,7 +16,7 @@ public class OptionPanel extends JPanel implements ChangeListener,ActionListener
 	public OptionPanel(chordplus cp){
 		super();
 		
-		parent=cp;
+		rootview=cp;
 		
 		setLayout(null);
 		setBorder(new EtchedBorder(EtchedBorder.LOWERED));
@@ -58,7 +60,7 @@ public class OptionPanel extends JPanel implements ChangeListener,ActionListener
 			int v;
 			v=sVelocitySlider.getValue();
 			if(v>=128) v=127;
-			parent.changeVelocity(v);
+			rootview.changeVelocity(v);
 		}
 	}
 	
@@ -78,9 +80,9 @@ public class OptionPanel extends JPanel implements ChangeListener,ActionListener
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getSource()==cOmitTriad){
 			Chord.omitTriad=cOmitTriad.isSelected();
-			parent.changeOmitTriad(cOmitTriad.isSelected());
+			rootview.changeOmitTriad(cOmitTriad.isSelected());
 		}else if(arg0.getSource()==bHistory){
-			parent.showHistoryPanel();
+			rootview.showHistoryPanel();
 		}else if(arg0.getSource()==cPlayAtReleased){
 			Chord.playAtReleased=cPlayAtReleased.isSelected();
 		}else if(arg0.getSource()==cHarmonicMinor){

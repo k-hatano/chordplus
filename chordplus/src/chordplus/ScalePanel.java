@@ -1,3 +1,5 @@
+package chordplus;
+
 import java.awt.event.*;
 
 import javax.swing.*;
@@ -9,12 +11,12 @@ public class ScalePanel extends JPanel implements ActionListener {
 	JRadioButton[] aScale=new JRadioButton[12];
 	String sScale[]={"C","C# / Db","D","D# / Eb","E","F","F# / Gb","G","G# / Ab","A","A# / Bb","B"};
 	ButtonGroup gScale,gMajor;
-	chordplus parent;
+	chordplus rootview;
 	
 	public ScalePanel(chordplus cp){
 		super();
 		int i;
-		parent=cp;
+		rootview=cp;
 		Chord.changeScale(0,0);
 		
 		setLayout(null);
@@ -58,12 +60,12 @@ public class ScalePanel extends JPanel implements ActionListener {
 		
 		for(i=0;i<12;i++){
 			if(target==aScale[i]){
-				parent.changeScale(i,Chord.minor);
+				rootview.changeScale(i,Chord.minor);
 				return;
 			}
 		}
 		
-		if(target==rMaj) parent.changeScale(Chord.tonic,0);
-		else if(target==rMin) parent.changeScale(Chord.tonic,1);
+		if(target==rMaj) rootview.changeScale(Chord.tonic,0);
+		else if(target==rMin) rootview.changeScale(Chord.tonic,1);
 	}
 }
