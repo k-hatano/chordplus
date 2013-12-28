@@ -1,3 +1,5 @@
+package chordplus;
+
 import java.awt.*;
 
 import javax.swing.*;
@@ -11,7 +13,7 @@ public class ChordPanel extends JPanel {
 	JLabel[] aSixth=new JLabel[6];
 	JLabel[] aAdd9=new JLabel[6];
 	
-	chordplus parent;
+	chordplus rootview;
 	int lastPressed;
 	int root;
 	int reality[][] = new int[6][5];
@@ -29,7 +31,7 @@ public class ChordPanel extends JPanel {
 		
 		lastPressed=-1;
 		
-		parent=cp;
+		rootview=cp;
 		
 		root=-1;
 		bass=-1;
@@ -131,7 +133,7 @@ public class ChordPanel extends JPanel {
 			root=-1;
 			bass=-1;
 			resetReality();
-			parent.receiveEstimatedChord("",emptyArray,-1,true);
+			rootview.receiveEstimatedChord("",emptyArray,-1,true);
 		}else{
 			if(lastPressed==which){
 				root=-1;
@@ -141,12 +143,12 @@ public class ChordPanel extends JPanel {
 			bass=-1;
 			estimate(which%12);
 			selectMax();
-			parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),root,true);
+			rootview.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),root,true);
 		}
 		reflectReality();
 		lastPressed=which;
 		row=-1;
-		parent.receivePlayingChord(basic, tension, root, bass);
+		rootview.receivePlayingChord(basic, tension, root, bass);
 	}
 	void estimate(int note){
 		int i,j,k,l,diatonic[],chord[];
@@ -293,7 +295,7 @@ public class ChordPanel extends JPanel {
 		}
 		
 		
-		parent.sendAllNotesOff();
+		rootview.sendAllNotesOff();
 		
 		if(Chord.mode==1){
 			n=root+(Chord.transpose()+36)%12;
@@ -303,7 +305,7 @@ public class ChordPanel extends JPanel {
 				else if(n>=Chord.pianoBasement+60) n-=12;
 				else break;
 			}
-			parent.sendNoteOn(n,true);
+			rootview.sendNoteOn(n,true);
 			chord=Chord.notesOfChordWithRoot(basic,tension,root);
 			for(i=0;i<chord.length;i++){
 				n=chord[i]+(Chord.transpose()+36)%12;
@@ -312,13 +314,13 @@ public class ChordPanel extends JPanel {
 					else if(n>=Chord.pianoBasement+72) n-=12;
 					else break;
 				}
-				parent.sendNoteOn(n,true);
+				rootview.sendNoteOn(n,true);
 			}
 		}else if(Chord.mode==2){
 			chord=Chord.notesOfChordWithGuitarBasement(basic,tension,root+(Chord.transpose()+36)%12,bass<0?bass:bass+(Chord.transpose()+36)%12,Chord.guitarBasement+40);
 			for(i=0;i<chord.length;i++){
 				n=chord[i];
-				parent.sendNoteOn(n,true);
+				rootview.sendNoteOn(n,true);
 			}
 		}
 		
@@ -327,8 +329,8 @@ public class ChordPanel extends JPanel {
 		lastBasic=basic;
 		lastTension=tension;
 		
-		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),bass<0?root:bass,false);
-		parent.pushChord((root-Chord.tonic+36)%12,basic,tension,bass>=0?(bass-Chord.tonic+36)%12:(root-Chord.tonic+36)%12);
+		rootview.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),bass<0?root:bass,false);
+		rootview.pushChord((root-Chord.tonic+36)%12,basic,tension,bass>=0?(bass-Chord.tonic+36)%12:(root-Chord.tonic+36)%12);
 		
 		root=-1;
 		bass=-1;
@@ -343,7 +345,7 @@ public class ChordPanel extends JPanel {
 		}
 		bass=note;
 		reflectReality();
-		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),bass<0?root:bass,true);
+		rootview.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),bass<0?root:bass,true);
 	}
 	
 	void receiveSelectRow(int which){
@@ -367,7 +369,7 @@ public class ChordPanel extends JPanel {
 		reality[basic][tension]++;
 		reflectReality();
 		selectMax();
-		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),bass<0?root:bass,true);
+		rootview.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),bass<0?root:bass,true);
 	}
 	
 	void receiveSelectTension(int which){
@@ -384,7 +386,7 @@ public class ChordPanel extends JPanel {
 		reality[basic][tension]++;
 		reflectReality();
 		selectMax();
-		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),bass<0?root:bass,true);
+		rootview.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),bass<0?root:bass,true);
 	}
 	
 	void receiveShiftRow(int vx,int vy){
@@ -404,7 +406,7 @@ public class ChordPanel extends JPanel {
 		while(Chord.notesOfChord(basic,tension).length<=1) tension--;
 		reflectReality();
 		stressMax(basic,tension);
-		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),bass<0?root:bass,true);
+		rootview.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),bass<0?root:bass,true);
 	}
 	
 	void receiveChangeOmitTriad(boolean ot){
@@ -421,7 +423,7 @@ public class ChordPanel extends JPanel {
 		estimate(r);
 		reflectReality();
 		selectMax();
-		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),bass<0?root:bass,true);
+		rootview.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),bass<0?root:bass,true);
 	}
 	
 	void receiveChangeHarmonicMinor(boolean hm){
@@ -432,7 +434,7 @@ public class ChordPanel extends JPanel {
 		estimate(r);
 		reflectReality();
 		selectMax();
-		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),bass<0?root:bass,true);
+		rootview.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),bass<0?root:bass,true);
 	}
 	
 	void receiveShiftRoot(int db){
@@ -445,7 +447,7 @@ public class ChordPanel extends JPanel {
 		estimate(r);
 		reflectReality();
 		selectMax();
-		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),bass<0?root:bass,true);
+		rootview.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),bass<0?root:bass,true);
 	}
 	
 	void receiveShiftBass(int delta){
@@ -458,7 +460,7 @@ public class ChordPanel extends JPanel {
 		if(bass<0) bass=root;
 		bass=(bass+delta+36)%12;
 		reflectReality();
-		parent.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),bass<0?root:bass,true);
+		rootview.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),bass<0?root:bass,true);
 	
 	}
 }

@@ -1,3 +1,5 @@
+package chordplus;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -7,10 +9,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 
+import LoopMaker.LoopMaker;
 
 public class HistoryPanel extends JPanel implements ActionListener {
 	LoopMaker loopMaker=null;
-	chordplus parent;
+	chordplus rootview;
 	JButton bLoopMaker,bCancel;
 	JCheckBox cChords[];
 	
@@ -19,7 +22,7 @@ public class HistoryPanel extends JPanel implements ActionListener {
 	public HistoryPanel(chordplus cp){
 		super();
 		
-		parent=cp;
+		rootview=cp;
 		
 		degrees=new int[12];
 		for(int i=0;i<12;i++) degrees[i]=-1;
@@ -36,7 +39,7 @@ public class HistoryPanel extends JPanel implements ActionListener {
 		cChords=new JCheckBox[12];
 		for(int i=0;i<12;i++){
 			cChords[i]=new JCheckBox();
-			cChords[i].setBounds(16,i*20+4,72,20);
+			cChords[i].setBounds(16,i*20+4,120,20);
 			add(cChords[i]);
 		}
 		
@@ -54,10 +57,10 @@ public class HistoryPanel extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getSource()==bCancel){
-			parent.showOptionPanel();
+			rootview.showOptionPanel();
 		}else if(arg0.getSource()==bLoopMaker){
 			if(loopMaker==null){
-				loopMaker=new LoopMaker(this,parent);
+				loopMaker=new LoopMaker(this,rootview);
 			}
 			loopMaker.receiveChords(degrees, basics, tensions, basses);
 			loopMaker.show();

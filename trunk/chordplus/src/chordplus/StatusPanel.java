@@ -1,13 +1,15 @@
+package chordplus;
+
 import javax.swing.*;
 import javax.swing.border.*;
 
 public class StatusPanel extends JPanel {
 	JLabel lStatus;
-	chordplus parent;
+	chordplus rootview;
 	public StatusPanel(chordplus cp){
 		super();
 		
-		parent=cp;
+		rootview=cp;
 		
 		setLayout(null);
 		setBorder(new EtchedBorder(EtchedBorder.LOWERED));

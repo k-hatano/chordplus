@@ -1,3 +1,5 @@
+package chordplus;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -9,18 +11,18 @@ import javax.swing.border.*;
 public class KeyboardPanel extends JPanel implements ActionListener,MouseListener {
 	JLabel lChord,lTranspose;
 	JButton bFocus;
-	chordplus parent;
+	chordplus rootview;
 	KeyboardCanvas cKeyboard;
 	
 	public KeyboardPanel(chordplus cp){
 		super();
 		
-		parent=cp;
+		rootview=cp;
 		
 		setLayout(null);
 		setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 		
-		cKeyboard = new KeyboardCanvas(this,parent);
+		cKeyboard = new KeyboardCanvas(this,rootview);
 		cKeyboard.setBounds(16,16,353,99);
 		add(cKeyboard);
 		cKeyboard.requestFocusInWindow();
@@ -28,7 +30,7 @@ public class KeyboardPanel extends JPanel implements ActionListener,MouseListene
 		bFocus = new JButton("Å£");
 		bFocus.setBounds(80,125,225,20);
 		bFocus.addActionListener(this);
-		parent.getRootPane().setDefaultButton(bFocus);
+		rootview.getRootPane().setDefaultButton(bFocus);
 		add(bFocus);
 		
 		lChord = new JLabel("",JLabel.CENTER);
@@ -53,7 +55,7 @@ public class KeyboardPanel extends JPanel implements ActionListener,MouseListene
 	}
 	void play(){
 		lChord.setForeground(Color.black);
-		parent.play();
+		rootview.play();
 	}
 	public void receiveKeyboardBlured(){
 		bFocus.setVisible(true);

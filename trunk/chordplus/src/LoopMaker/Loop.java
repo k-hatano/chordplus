@@ -1,3 +1,4 @@
+package LoopMaker;
 
 public class Loop {
 	public static String[] loopKinds={"ピアノ","ギター"};
