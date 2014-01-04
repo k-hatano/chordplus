@@ -102,7 +102,7 @@ public class ChordPanel extends JPanel {
 		
 		resetReality();
 	}
-	void receiveChangeMode(int md,int transpose){
+	void receiveChangeMode(int md){
 		int i;
 		Chord.mode=md;
 		if(Chord.mode==0){

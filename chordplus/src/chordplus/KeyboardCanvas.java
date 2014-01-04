@@ -35,8 +35,8 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 	};
 	char smallKeys[]={'a','w','s','e','d','f','t','g','y','h','u','j','k','o','l','p',';',':'};
 	char largeKeys[]={'A','W','S','E','D','F','T','G','Y','H','U','J','K','O','L','P','+','*'};
-	char smallRowKeys[]={'z','x','c','v','b','n','m'};
-	char largeRowKeys[]={'Z','X','C','V','B','N','M'};
+	char smallRowKeys[]={'z','x','c','v','b','n'};
+	char largeRowKeys[]={'Z','X','C','V','B','N'};
 	char smallNumberKeys[]={'1','2','3','4','5','6','7','8','9'};
 	char largeNumberKeys[]={'!','\"','#','$','%','&','\'','(',')'};
 	KeyboardPanel superview;
@@ -277,7 +277,16 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		char key=arg0.getKeyChar();
 		int code=arg0.getKeyCode();
 		
-		if(debugMode){
+		if(debugMode){ // コマンド入力モード
+			if(key=='z'){
+				rootview.changeMode(0);
+			}else if(key=='x'){
+				rootview.changeMode(1);
+			}else if(key=='c'){
+				rootview.changeMode(2);
+			}else if(key=='q'){
+				rootview.changeScale(Chord.tonic, 1-Chord.minor);
+			}
 			for(i=0;i<smallKeys.length;i++){
 				if((key==smallKeys[i]||key==largeKeys[i])&&lastClicked!=i){
 					rootview.changeScale(i, Chord.minor);
@@ -342,7 +351,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 			}
 		}
 		
-		if(mode==0){
+		if(mode==0){ // フリーモード
 			if(key=='z'){
 				rootview.shiftTranspose(-12);
 			}else if(key=='x'){
@@ -351,14 +360,18 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 				rootview.shiftVelocity(-8);
 			}else if(key=='v'){
 				rootview.shiftVelocity(8);
+			}else if(key=='Z'){
+				rootview.shiftTranspose(-1);
+			}else if(key=='X'){
+				rootview.shiftTranspose(1);
+			}else if(key=='C'){
+				rootview.shiftVelocity(-1);
+			}else if(key=='V'){
+				rootview.shiftVelocity(1);
 			}else if(key=='1'){
 				rootview.setPitchBend(-63);
 			}else if(key=='2'){
 				rootview.setPitchBend(63);
-			}else if(key=='('){
-				rootview.shiftScale(-1);
-			}else if(key==')'){
-				rootview.shiftScale(1);
 			}
 			switch(code){
 			case KeyEvent.VK_LEFT:
@@ -374,10 +387,10 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 				rootview.shiftVelocity(-8);
 				break;
 			case KeyEvent.VK_PAGE_UP:
-				rootview.shiftScale(7);
+				rootview.shiftScale(1);
 				break;
 			case KeyEvent.VK_PAGE_DOWN:
-				rootview.shiftScale(-7);
+				rootview.shiftScale(-1);
 				break;
 			case KeyEvent.VK_HOME:
 				rootview.changeScale(Chord.tonic,0);
@@ -386,7 +399,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 				rootview.changeScale(Chord.tonic,1);
 				break;
 			}
-		}else if(mode>0){
+		}else if(mode>0){ // ピアノ・ギターモード
 			for(i=0;i<7;i++){
 				int j=Chord.notesOfScale(Chord.tonic(),Chord.minor())[i];
 				if((key==smallNumberKeys[i]||key==largeNumberKeys[i])&&lastClicked!=j){
@@ -400,23 +413,18 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 			}
 			if(key=='8'){
 				rootview.shiftRoot(-1);
-			}
-			if(key=='9'){
+			}else if(key=='9'){
 				rootview.shiftRoot(1);
-			}
-			if(key=='('){
+			}else if(key=='('){
 				rootview.shiftBass(-1);
-			}
-			if(key==')'){
+			}else if(key==')'){
 				rootview.shiftBass(1);
-			}
-			if(key=='/'){
+			}else if(key=='/'){
 				rootview.changeHarmonicMinor(!Chord.harmonicMinor);
-			}
-			if(key=='_'){
+			}else if(key=='_'){
 				rootview.changeOmitTriad(!Chord.omitTriad);
 			}
-			if(Chord.root<0){
+			if(Chord.root<0){ // コード停止後
 				switch(code){
 				case KeyEvent.VK_UP:
 					rootview.shiftVelocity(8);
@@ -431,10 +439,10 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 					rootview.shiftScale(1);
 					break;
 				case KeyEvent.VK_PAGE_UP:
-					rootview.shiftScale(7);
+					rootview.shiftScale(1);
 					break;
 				case KeyEvent.VK_PAGE_DOWN:
-					rootview.shiftScale(-7);
+					rootview.shiftScale(-1);
 					break;
 				case KeyEvent.VK_HOME:
 					rootview.changeScale(Chord.tonic,0);
@@ -443,7 +451,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 					rootview.changeScale(Chord.tonic,1);
 					break;
 				}
-			}else{
+			}else{ // コード再生中
 				switch(code){
 				case KeyEvent.VK_UP:
 					rootview.shiftRow(0, -1);
@@ -458,10 +466,10 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 					rootview.shiftRow(1, 0);
 					break;
 				case KeyEvent.VK_PAGE_UP:
-					rootview.shiftScale(7);
+					rootview.shiftScale(1);
 					break;
 				case KeyEvent.VK_PAGE_DOWN:
-					rootview.shiftScale(-7);
+					rootview.shiftScale(-1);
 					break;
 				case KeyEvent.VK_HOME:
 					rootview.changeScale(Chord.tonic,0);
@@ -558,7 +566,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		superview.receiveKeyboardBlured();
 	}
 	
-	void receiveChangeMode(int md,int transpose){
+	void receiveChangeMode(int md){
 		int i;
 		mode=md;
 		if(mode==0){

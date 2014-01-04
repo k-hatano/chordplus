@@ -44,8 +44,8 @@ public class KeyboardPanel extends JPanel implements ActionListener,MouseListene
 		add(lTranspose);
 	}
 	
-	void receiveChangeMode(int mode,int transpose){
-		cKeyboard.receiveChangeMode(mode,transpose);
+	void receiveChangeMode(int mode){
+		cKeyboard.receiveChangeMode(mode);
 	}
 	void receiveEstimatedChord(String name,int notes[],int bass,boolean mute){
 		if(mute) lChord.setForeground(Color.gray);
