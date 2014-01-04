@@ -152,10 +152,11 @@ public class chordplus extends JFrame {
 		
 	}
 	
-	void changeMode(int mode,int transpose){
+	void changeMode(int mode){
 		Chord.mode=mode;
-		fChord.receiveChangeMode(mode,transpose);
-		fKeyboard.receiveChangeMode(mode,transpose);
+		fChord.receiveChangeMode(mode);
+		fKeyboard.receiveChangeMode(mode);
+		fFullKeyboard.receiveChangeMode(mode);
 	}
 	
 	void keyPressed(int which){

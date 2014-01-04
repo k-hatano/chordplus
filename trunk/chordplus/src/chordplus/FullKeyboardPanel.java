@@ -64,16 +64,14 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 			if(Chord.mode==0){
 				rootview.changeTranspose(0);
 			}
-			cKeyboard.changeMode(0);
-			rootview.changeMode(0,Chord.transpose());
+			rootview.changeMode(0);
 		}
 		if(target==rPiano){
 			if(Chord.mode==1){
 				rootview.changePianoBasement(0);
 				changeInstrument(0);
 			}else{
-				cKeyboard.changeMode(1);
-				rootview.changeMode(1,transpose);
+				rootview.changeMode(1);
 			}
 		}
 		if(target==rGuitar){
@@ -81,8 +79,7 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 				rootview.changeGuitarBasement(0);
 				changeInstrument(24);
 			}else{
-				cKeyboard.changeMode(2);
-				rootview.changeMode(2,transpose);
+				rootview.changeMode(2);
 			}
 		}
 		if(target==cInst){
@@ -101,6 +98,13 @@ public class FullKeyboardPanel extends JPanel implements ActionListener {
 				rootview.sendNoteOn(i,false);
 			}
 		}
+	}
+	
+	public void receiveChangeMode(int mode){
+		cKeyboard.changeMode(mode);
+		rSingle.setSelected(mode==0);
+		rPiano.setSelected(mode==1);
+		rGuitar.setSelected(mode==2);
 	}
 	
 	public void receiveChangeTranspose(int t){
