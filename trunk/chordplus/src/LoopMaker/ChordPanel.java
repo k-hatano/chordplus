@@ -19,6 +19,10 @@ public class ChordPanel extends JPanel {
 	BarCanvas cHorizon;
 	BarCanvas cVertic[];
 	
+	int chords;
+	int bar=8;
+	int lengths[]=new int[12];
+	
 	ChordPanel(LoopMaker rv){
 		super();
 		rootview=rv;
@@ -50,10 +54,28 @@ public class ChordPanel extends JPanel {
 		
 	}
 	
-	public void receiveChords(int ds[],int bs[],int ts[],int bass[]){
+	public void receiveChords(int n,int ds[],int bs[],int ts[],int bass[]){
 		for(int i=0;i<12;i++){
-			if(ds[i]<0) continue;
-			lChords[i].setText(Chord.chordName((ds[i]+Chord.tonic+36)%12,bs[i],ts[i],(bass[i]+Chord.tonic+36)%12,0));
+			if(i<n){
+				lChords[i].setText(Chord.chordName((ds[i]+Chord.tonic+36)%12,bs[i],ts[i],(bass[i]+Chord.tonic+36)%12,0));
+				lChords[i].setVisible(true);
+			}else{
+				lChords[i].setText("");
+				lChords[i].setVisible(false);
+			}
+		}
+		for(int i=0;i<n;i++){
+			lengths[i]=bar;
+		}
+		chords=n;
+		updateLengths();
+	}
+	
+	public void updateLengths(){
+		int lastX=16;
+		for(int i=0;i<chords;i++){
+			lChords[i].setBounds(lastX,24,lengths[i]*64/bar,16);
+			lastX+=lengths[i]*64/bar;
 		}
 	}
 	

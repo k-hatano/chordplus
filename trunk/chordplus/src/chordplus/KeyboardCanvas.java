@@ -286,6 +286,24 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 				rootview.changeMode(2);
 			}else if(key=='q'){
 				rootview.changeScale(Chord.tonic, 1-Chord.minor);
+			}else if(key=='1'){
+				rootview.changeInstrument(0);
+			}else if(key=='2'){
+				rootview.changeInstrument(8);
+			}else if(key=='3'){
+				rootview.changeInstrument(16);
+			}else if(key=='4'){
+				rootview.changeInstrument(24);
+			}else if(key=='5'){
+				rootview.changeInstrument(32);
+			}else if(key=='6'){
+				rootview.changeInstrument(40);
+			}else if(key=='7'){
+				rootview.changeInstrument(48);
+			}else if(key=='8'){
+				rootview.changeInstrument(56);
+			}else if(key=='9'){
+				rootview.changeInstrument(64);
 			}
 			for(i=0;i<smallKeys.length;i++){
 				if((key==smallKeys[i]||key==largeKeys[i])&&lastClicked!=i){

@@ -6,12 +6,14 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 public class ChordPanel extends JPanel {
-	JLabel lScale,lOn;
+	JLabel lScale,lDegree,lOn;
 	JLabel[] aTriad=new JLabel[6];
 	JLabel[] aSeventh=new JLabel[6];
 	JLabel[] aMajorSeventh=new JLabel[6];
 	JLabel[] aSixth=new JLabel[6];
 	JLabel[] aAdd9=new JLabel[6];
+	
+	BarCanvas bcSeparator;
 	
 	chordplus rootview;
 	int lastPressed;
@@ -47,16 +49,25 @@ public class ChordPanel extends JPanel {
 		setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 		
 		lScale = new JLabel("",JLabel.CENTER);
-		lScale.setBounds(8,12,61,16);
+		lScale.setBounds(8,11,61,16);
 		add(lScale);
 		
+		lDegree = new JLabel("",JLabel.CENTER);
+		lDegree.setForeground(Color.lightGray);
+		lDegree.setBounds(130,11,122,16);
+		add(lDegree);
+		
 		lOn = new JLabel("",JLabel.CENTER);
-		lOn.setBounds(313,12,61,16);
+		lOn.setBounds(313,11,61,16);
 		add(lOn);
+		
+		bcSeparator = new BarCanvas(Color.lightGray);
+		bcSeparator.setBounds(8,34,366,1);
+		add(bcSeparator);
 		
 		for(i=0;i<6;i++){
 			aTriad[i] = new JLabel(Chord.chordName(-1,i,0,-1,0),JLabel.CENTER);
-			aTriad[i].setBounds(8+i*61,40,61,16);
+			aTriad[i].setBounds(8+i*61,41,61,16);
 			aTriad[i].setForeground(Color.gray);
 			aTriad[i].setOpaque(true);
 			add(aTriad[i]);
@@ -91,7 +102,9 @@ public class ChordPanel extends JPanel {
 		}
 		
 		lScale.setVisible(false);
+		lDegree.setVisible(false);
 		lOn.setVisible(false);
+		bcSeparator.setVisible(false);
 		for(i=0;i<aTriad.length;i++){
 			aTriad[i].setVisible(false);
 			aSeventh[i].setVisible(false);
@@ -107,7 +120,9 @@ public class ChordPanel extends JPanel {
 		Chord.mode=md;
 		if(Chord.mode==0){
 			lScale.setVisible(false);
+			lDegree.setVisible(false);
 			lOn.setVisible(false);
+			bcSeparator.setVisible(false);
 			for(i=0;i<aTriad.length;i++){
 				aTriad[i].setVisible(false);
 				aSeventh[i].setVisible(false);
@@ -117,7 +132,9 @@ public class ChordPanel extends JPanel {
 			}
 		}else{
 			lScale.setVisible(true);
+			lDegree.setVisible(true);
 			lOn.setVisible(true);
+			bcSeparator.setVisible(true);
 			for(i=0;i<aTriad.length;i++){
 				aTriad[i].setVisible(!Chord.omitTriad);
 				aSeventh[i].setVisible(true);
@@ -259,6 +276,15 @@ public class ChordPanel extends JPanel {
 	void reflectReality(){
 		int j;
 		lScale.setText(root<0?"":Chord.nameOfNote(root,0));
+		if(root<0){
+			lDegree.setText("");
+		}else if(Chord.minor==0){
+			lDegree.setText(Chord.sDegreeMajor[(root-Chord.tonic+36)%12]);
+		}else if(Chord.harmonicMinor==false){
+			lDegree.setText(Chord.sDegreeMinor[(root-Chord.tonic+36)%12]);
+		}else{
+			lDegree.setText(Chord.sDegreeHarmonicMinor[(root-Chord.tonic+36)%12]);
+		}
 		if(bass>=0&&bass!=root) lOn.setText("on "+Chord.nameOfNote(bass,0));
 		else lOn.setText("");
 		for(j=0;j<6;j++){
@@ -358,14 +384,15 @@ public class ChordPanel extends JPanel {
 			for(j=0;j<6;j++) reality[j][i]=(j==which)?1:0;
 		}
 		if(row==which){
-			tension++;
+			do{
+				tension++;
+				if(tension>=5) tension=Chord.omitTriad?1:0;
+			}while(Chord.notesOfChord(basic,tension).length<=1);
 		}else{
 			basic=which;
 			tension=Chord.omitTriad?1:0;
 		}
 		row=which;
-		if(tension>=5) tension=Chord.omitTriad?1:0;
-		if(Chord.notesOfChord(basic,tension).length<=1) tension=Chord.omitTriad?1:0;
 		reality[basic][tension]++;
 		reflectReality();
 		selectMax();
