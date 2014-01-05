@@ -76,7 +76,7 @@ public class LoopMaker extends JFrame {
 		add(fExport);
 	}
 	
-	public void receiveChords(int ds[],int bs[],int ts[],int bass[]){
-		fChord.receiveChords(ds,bs,ts,bass);
+	public void receiveChords(int n,int ds[],int bs[],int ts[],int bass[]){
+		fChord.receiveChords(n,ds,bs,ts,bass);
 	}
 }

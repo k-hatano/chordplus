@@ -5,13 +5,13 @@ public class Chord {
 	static int nSeventh[][]={{0,4,7,10},{0,3,7,10},{0,3,6,10},{0,4,8,10},{0,5,7,10},{0,4,6,10}};
 	static int nMajorSeventh[][]={{0,4,7,11},{0,3,7,11},{0,3,6,11},{0,4,8,11},{0,5,7,11},{0,4,6,11}};
 	static int nSixth[][]={{0,4,7,9},{0,3,7,9},{0,3,6,9},{},{},{}};
-	static int nAdd9[][]={{0,4,7,14},{0,3,7,14},{},{},{},{}};
+	static int nAdd9[][]={{0,4,7,14},{0,3,7,14},{},{},{0,4,5,7},{}};
 	
 	static String[] sTriad={"maj","m","dim","aug","sus4","-5"};
 	static String[] sSeventh={"7","m7","m7-5","aug7","7sus4","7-5"};
 	static String[] sMajorSeventh={"M7","mM7","mM7-5","augM7","M7sus4","M7-5"};
 	static String[] sSixth={"6","m6","dim7","","",""};
-	static String[] sAdd9={"add9","madd9","","","",""};
+	static String[] sAdd9={"add9","madd9","","","add4",""};
 	
 	static int nMajor[]={0,2,4,5,7,9,11};
 	static int nMinor[]={0,2,3,5,7,8,10};
@@ -26,6 +26,9 @@ public class Chord {
 	
 	static String[] sNoteSharp={"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
 	static String[] sNoteFlat={"C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"};
+	static String[] sDegreeMajor={"I","","II","","III","VI","","V","","VI","","VII"};
+	static String[] sDegreeMinor={"I","","II","III","","VI","","V","VI","","VII",""};
+	static String[] sDegreeHarmonicMinor={"I","","II","III","","VI","","V","VI","","","VII"};
 	
 	public static boolean omitTriad=false;
 	public static boolean harmonicMinor=false;

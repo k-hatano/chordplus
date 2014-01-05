@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 
@@ -59,11 +60,29 @@ public class HistoryPanel extends JPanel implements ActionListener {
 		if(arg0.getSource()==bCancel){
 			rootview.showOptionPanel();
 		}else if(arg0.getSource()==bLoopMaker){
-			if(loopMaker==null){
-				loopMaker=new LoopMaker(this,rootview);
+			int ds[]=new int[12];
+			int bs[]=new int[12];
+			int ts[]=new int[12];
+			int bss[]=new int[12];
+			int k=0;
+			for(int i=0;i<12;i++){
+				if(cChords[i].isSelected()){
+					ds[k]=degrees[i];
+					bs[k]=basics[i];
+					ts[k]=tensions[i];
+					bss[k]=basses[i];
+					k++;
+				}
 			}
-			loopMaker.receiveChords(degrees, basics, tensions, basses);
-			loopMaker.show();
+			if(k<=0){
+				JOptionPane.showMessageDialog(null,"ループに使用するコードを 1 つ以上選択してください。");
+			}else{
+				if(loopMaker==null){
+					loopMaker=new LoopMaker(this,rootview);
+				}
+				loopMaker.receiveChords(k, ds, bs, ts, bss);
+				loopMaker.show();
+			}
 		}
 	}
 	
@@ -85,8 +104,20 @@ public class HistoryPanel extends JPanel implements ActionListener {
 	
 	public void updateChordNames(){
 		for(int i=0;i<12;i++){
-			if(degrees[i]<0) continue;
-			cChords[i].setText(Chord.chordName((degrees[i]+Chord.tonic+36)%12,basics[i],tensions[i],(basses[i]+Chord.tonic+36)%12,0));
+			if(degrees[i]<0){
+				cChords[i].setEnabled(false);
+				cChords[i].setText("");
+			}else{
+				cChords[i].setEnabled(true);
+				cChords[i].setText(Chord.chordName((degrees[i]+Chord.tonic+36)%12,basics[i],tensions[i],(basses[i]+Chord.tonic+36)%12,0));
+			}
+		}
+	}
+	
+	public void receiveShowHistoryPanel(){
+		updateChordNames();
+		for(int i=0;i<12;i++){
+			cChords[i].setSelected(i>=4&&degrees[i]>=0);
 		}
 	}
 	

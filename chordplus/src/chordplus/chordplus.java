@@ -28,7 +28,7 @@ public class chordplus extends JFrame {
 		Insets insets = this.getInsets();
 		il=insets.left;
 		it=insets.top;
-		setSize(670+il,471+it);
+		setSize(670+il,475+it);
 		setLocation(32,48);
 		setResizable(false);
 		addWindowListener(new WindowAdapter(){
@@ -64,7 +64,7 @@ public class chordplus extends JFrame {
 		add(fHistory);
 		
 		fFullKeyboard=new FullKeyboardPanel(this);
-		fFullKeyboard.setBounds(8,364,654,99);
+		fFullKeyboard.setBounds(8,364,654,103);
 		add(fFullKeyboard);
 		
 		/*
@@ -239,10 +239,12 @@ public class chordplus extends JFrame {
 			e.printStackTrace();
 			System.exit(0);
 		}
+		fFullKeyboard.receiveChangeInstrument(inst);
 	}
 	
 	void showHistoryPanel(){
 		fHistory.setVisible(true);
+		fHistory.receiveShowHistoryPanel();
 		fOption.setVisible(false);
 	}
 	
