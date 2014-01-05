@@ -23,13 +23,13 @@ public class LoopMaker extends JFrame {
 	chordplus rootview;
 	
 	JPanel fTemplate;
-	JLabel lTemplate;
+	JLabel lTemplate,lTime;
 	JComboBox cTemplateKind,cTemplate;
 	
 	ChordPanel fChord;
 	
 	JPanel fExport;
-	JButton bExport;
+	JButton bPlay,bExport;
 	
 	public LoopMaker(HistoryPanel cp,chordplus gp){
 		super();
@@ -60,6 +60,9 @@ public class LoopMaker extends JFrame {
 		cTemplate = new JComboBox(Loop.pianoTemplates);
 		cTemplate.setBounds(208,8,196,24);
 		fTemplate.add(cTemplate);
+		lTime = new JLabel("8/8 îèéq");
+		lTime.setBounds(412,8,128,24);
+		fTemplate.add(lTime);
 		add(fTemplate);
 		
 		fChord = new ChordPanel(this);
@@ -70,8 +73,11 @@ public class LoopMaker extends JFrame {
 		fExport.setBounds(8,128,544,40);
 		fExport.setLayout(null);
 		fExport.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+		bPlay=new JButton("çƒê∂");
+		bPlay.setBounds(8,8,96,24);
+		fExport.add(bPlay);
 		bExport=new JButton("èëÇ´èoÇµ");
-		bExport.setBounds(224,8,96,24);
+		bExport.setBounds(440,8,96,24);
 		fExport.add(bExport);
 		add(fExport);
 	}
