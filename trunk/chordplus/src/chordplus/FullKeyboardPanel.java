@@ -32,7 +32,7 @@ public class FullKeyboardPanel extends JPanel implements ActionListener, ChangeL
 		add(cKeyboard);
 		
 		lTranspose = new JLabel("トランスポーズ: ");
-		lTranspose.setBounds(16,10,120,24);
+		lTranspose.setBounds(16,10,112,24);
 		add(lTranspose);
 		
 		SpinnerNumberModel snm = new SpinnerNumberModel(0,-36,36,1);

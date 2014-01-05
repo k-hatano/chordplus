@@ -26,9 +26,9 @@ public class Chord {
 	
 	static String[] sNoteSharp={"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};
 	static String[] sNoteFlat={"C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"};
-	static String[] sDegreeMajor={"I","","II","","III","VI","","V","","VI","","VII"};
-	static String[] sDegreeMinor={"I","","II","III","","VI","","V","VI","","VII",""};
-	static String[] sDegreeHarmonicMinor={"I","","II","III","","VI","","V","VI","","","VII"};
+	static String[] sDegreeMajor={"I","","II","","III","IV","","V","","VI","","VII"};
+	static String[] sDegreeMinor={"I","","II","III","","IV","","V","VI","","VII",""};
+	static String[] sDegreeHarmonicMinor={"I","","II","III","","IV","","V","VI","","","VII"};
 	
 	public static boolean omitTriad=false;
 	public static boolean harmonicMinor=false;
