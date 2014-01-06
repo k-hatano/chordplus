@@ -6,6 +6,7 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 public class chordplus extends JFrame {
 	MidiDevice device=null;
@@ -84,10 +85,34 @@ public class chordplus extends JFrame {
 			}else if(infos.length==1){
 				receiver=MidiSystem.getMidiDevice(infos[0]).getReceiver();
 			}else{
+				Boolean omits[] = new Boolean[infos.length];
+				for(int i=0;i<infos.length;i++){
+					omits[i]=true;
+				}
+				
+				ArrayList<String> names = new ArrayList<String>();
+				for(int i=0;i<infos.length;i++){
+					MidiDevice dev=MidiSystem.getMidiDevice(infos[i]);
+					try{
+						dev.open();
+						if(dev.getReceiver()!=null){
+							names.add(infos[i].getName());
+							omits[i]=false;
+						}
+					}catch(MidiUnavailableException e){
+					}finally{
+						dev.close();
+					}
+				}
+				String params[];
+				params=(String[])names.toArray(new String[0]);
+				/*
 				String params[] = new String[infos.length];
 				for(int i=0;i<infos.length;i++){
 					params[i]=infos[i].getName();
 				}
+				*/
+				if(params.length<=0) throw new MidiUnavailableException();
 				String res=(String)JOptionPane.showInputDialog(this,
 						"使用可能な MIDI デバイスが複数存在します。使用する MIDI デバイスを選択してください。",
 						"chordplus",
@@ -97,6 +122,7 @@ public class chordplus extends JFrame {
 						params[0]);
 				if(res==null) System.exit(1);
 				for(int i=0;i<infos.length;i++){
+					if(omits[i]) continue;
 					if(res.equals(infos[i].getName())){
 						device=MidiSystem.getMidiDevice(infos[i]);
 						device.open();

@@ -302,8 +302,26 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 				rootview.changeInstrument(48);
 			}else if(key=='8'){
 				rootview.changeInstrument(56);
+			}else if(key=='!'){
+				rootview.changeInstrument(64);
+			}else if(key=='\"'){
+				rootview.changeInstrument(72);
+			}else if(key=='#'){
+				rootview.changeInstrument(80);
+			}else if(key=='$'){
+				rootview.changeInstrument(88);
+			}else if(key=='%'){
+				rootview.changeInstrument(96);
+			}else if(key=='&'){
+				rootview.changeInstrument(104);
+			}else if(key=='\''){
+				rootview.changeInstrument(112);
+			}else if(key=='('){
+				rootview.changeInstrument(120);
 			}else if(key=='9'){
 				rootview.changeInstrument(64);
+			}else if(key==')'){
+				rootview.changeInstrument(0);
 			}
 			for(i=0;i<smallKeys.length;i++){
 				if((key==smallKeys[i]||key==largeKeys[i])&&lastClicked!=i){
@@ -324,6 +342,11 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 			case KeyEvent.VK_DOWN:
 				rootview.shiftVelocity(-1);
 				break;
+			case KeyEvent.VK_SHIFT:
+			case KeyEvent.VK_ALT:
+			case KeyEvent.VK_CONTROL:
+			case KeyEvent.VK_CAPS_LOCK:
+				return;
 			}
 			debugMode=false;
 			superview.lChord.setForeground(Color.black);
@@ -439,7 +462,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 				rootview.shiftBass(1);
 			}else if(key=='/'){
 				rootview.changeHarmonicMinor(!Chord.harmonicMinor);
-			}else if(key=='_'){
+			}else if(key=='_'||key=='\\'){
 				rootview.changeOmitTriad(!Chord.omitTriad);
 			}
 			if(Chord.root<0){ // ƒR[ƒh’âŽ~Œã
