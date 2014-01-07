@@ -29,7 +29,7 @@ public class chordplus extends JFrame {
 		Insets insets = this.getInsets();
 		il=insets.left;
 		it=insets.top;
-		setSize(670+il,475+it);
+		setSize(670+il,483+it);
 		setLocation(32,48);
 		setResizable(false);
 		addWindowListener(new WindowAdapter(){
@@ -40,32 +40,32 @@ public class chordplus extends JFrame {
 		setLayout(null);
 		
 		fStatus=new StatusPanel(this);
-		fStatus.setBounds(8,8,654,32);
+		fStatus.setBounds(8,8,654,40);
 		add(fStatus);
 		
 		fScale=new ScalePanel(this);
-		fScale.setBounds(8,48,92,308);
+		fScale.setBounds(8,56,92,308);
 		add(fScale);
 		
 		fKeyboard=new KeyboardPanel(this);
-		fKeyboard.setBounds(108,48,385,155);
+		fKeyboard.setBounds(108,56,385,155);
 		add(fKeyboard);
 		
 		fChord=new ChordPanel(this);
-		fChord.setBounds(108,211,385,145);
+		fChord.setBounds(108,219,385,145);
 		add(fChord);
 		
 		fOption=new OptionPanel(this);
-		fOption.setBounds(501,48,161,308);
+		fOption.setBounds(501,56,161,308);
 		add(fOption);
 		
 		fHistory=new HistoryPanel(this);
-		fHistory.setBounds(501,48,161,308);
+		fHistory.setBounds(501,56,161,308);
 		fHistory.setVisible(false);
 		add(fHistory);
 		
 		fFullKeyboard=new FullKeyboardPanel(this);
-		fFullKeyboard.setBounds(8,364,654,103);
+		fFullKeyboard.setBounds(8,372,654,103);
 		add(fFullKeyboard);
 		
 		/*
@@ -77,67 +77,8 @@ public class chordplus extends JFrame {
 		}
 		*/
 		
-		try{
-			Info[] infos = MidiSystem.getMidiDeviceInfo();
-			if(infos.length==0){
-				JOptionPane.showMessageDialog(null,"MIDI が使用できません。chordplus を終了します。");
-				System.exit(0);
-			}else if(infos.length==1){
-				receiver=MidiSystem.getMidiDevice(infos[0]).getReceiver();
-			}else{
-				Boolean omits[] = new Boolean[infos.length];
-				for(int i=0;i<infos.length;i++){
-					omits[i]=true;
-				}
-				
-				ArrayList<String> names = new ArrayList<String>();
-				for(int i=0;i<infos.length;i++){
-					MidiDevice dev=MidiSystem.getMidiDevice(infos[i]);
-					try{
-						dev.open();
-						if(dev.getReceiver()!=null){
-							names.add(infos[i].getName());
-							omits[i]=false;
-						}
-					}catch(MidiUnavailableException e){
-					}finally{
-						dev.close();
-					}
-				}
-				String params[];
-				params=(String[])names.toArray(new String[0]);
-				/*
-				String params[] = new String[infos.length];
-				for(int i=0;i<infos.length;i++){
-					params[i]=infos[i].getName();
-				}
-				*/
-				if(params.length<=0) throw new MidiUnavailableException();
-				String res=(String)JOptionPane.showInputDialog(this,
-						"使用可能な MIDI デバイスが複数存在します。使用する MIDI デバイスを選択してください。",
-						"chordplus",
-						JOptionPane.INFORMATION_MESSAGE,
-						null,
-						params,
-						params[0]);
-				if(res==null) System.exit(1);
-				for(int i=0;i<infos.length;i++){
-					if(omits[i]) continue;
-					if(res.equals(infos[i].getName())){
-						device=MidiSystem.getMidiDevice(infos[i]);
-						device.open();
-						receiver=device.getReceiver();
-						break;
-					}
-				}
-			}
-		}catch(MidiUnavailableException e){
-			JOptionPane.showMessageDialog(null,"MIDI が使用できません。chordplus を終了します。");
-			e.printStackTrace();
-			System.exit(0);
-		}
-		if(receiver==null) System.exit(1);
-		
+		selectMidiDevice();
+		if(receiver==null) System.exit(0);
 		
 		Runtime.getRuntime().addShutdownHook(new Shutdown());
 	}
@@ -333,6 +274,79 @@ public class chordplus extends JFrame {
 	void shiftBass(int delta){
 		fChord.receiveShiftBass(delta);
 	}
+	
+	MidiDevice selectMidiDevice(){
+		try{
+			Info[] infos = MidiSystem.getMidiDeviceInfo();
+			if(infos.length==0){
+				JOptionPane.showMessageDialog(null,"MIDI が使用できません。chordplus を終了します。");
+				System.exit(0);
+			}else{
+				Boolean omits[] = new Boolean[infos.length];
+				for(int i=0;i<infos.length;i++){
+					omits[i]=true;
+				}
+				
+				ArrayList<String> names = new ArrayList<String>();
+				for(int i=0;i<infos.length;i++){
+					MidiDevice dev=MidiSystem.getMidiDevice(infos[i]);
+					try{
+						dev.open();
+						if(dev.getReceiver()!=null){
+							names.add(infos[i].getName());
+							omits[i]=false;
+						}
+					}catch(MidiUnavailableException e){
+					}finally{
+						dev.close();
+					}
+				}
+				String params[];
+				params=(String[])names.toArray(new String[0]);
+				/*
+				String params[] = new String[infos.length];
+				for(int i=0;i<infos.length;i++){
+					params[i]=infos[i].getName();
+				}
+				*/
+				if(params.length<=0) throw new MidiUnavailableException();
+				String res=(String)JOptionPane.showInputDialog(null,
+						"使用する MIDI デバイスを選択してください。",
+						"chordplus",
+						JOptionPane.INFORMATION_MESSAGE,
+						null,
+						params,
+						params[0]);
+				if(res==null) System.exit(1);
+				for(int i=0;i<infos.length;i++){
+					if(omits[i]) continue;
+					if(res.equals(infos[i].getName())){
+						device=MidiSystem.getMidiDevice(infos[i]);
+						device.open();
+						receiver=device.getReceiver();
+						break;
+					}
+				}
+			}
+		}catch(MidiUnavailableException e){
+			JOptionPane.showMessageDialog(null,"MIDI が使用できません。chordplus を終了します。");
+			e.printStackTrace();
+			System.exit(0);
+		}
+		return device;
+	}
+	
+	public void reselectMidiDevice(){
+		if(device!=null) device.close();
+		device=null;
+    	if(receiver!=null) receiver.close();
+    	receiver=null;
+    	this.setVisible(false);
+    	selectMidiDevice();
+    	if(receiver==null) System.exit(0);
+    	this.setVisible(true);
+	}
+	
 }
 
 
