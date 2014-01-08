@@ -324,29 +324,16 @@ public class ChordPanel extends JPanel {
 		rootview.sendAllNotesOff();
 		
 		if(Chord.mode==1){
-			n=root+(Chord.transpose()+36)%12;
-			if(bass>=0) n=bass+(Chord.transpose()+36)%12;
-			while(true){
-				if(n<Chord.pianoBasement+48) n+=12;
-				else if(n>=Chord.pianoBasement+60) n-=12;
-				else break;
-			}
-			rootview.sendNoteOn(n,true);
-			chord=Chord.notesOfChordWithRoot(basic,tension,root);
+			chord=Chord.notesOfChordWithPianoBasement(basic,tension,root+(Chord.transpose()+36)%12,bass<0?bass:bass+(Chord.transpose()+36)%12,Chord.pianoBasement);
 			for(i=0;i<chord.length;i++){
-				n=chord[i]+(Chord.transpose()+36)%12;
-				while(true){
-					if(n<Chord.pianoBasement+60) n+=12;
-					else if(n>=Chord.pianoBasement+72) n-=12;
-					else break;
-				}
-				rootview.sendNoteOn(n,true);
+				n=chord[i];
+				rootview.noteOn(n,true);
 			}
 		}else if(Chord.mode==2){
 			chord=Chord.notesOfChordWithGuitarBasement(basic,tension,root+(Chord.transpose()+36)%12,bass<0?bass:bass+(Chord.transpose()+36)%12,Chord.guitarBasement+40);
 			for(i=0;i<chord.length;i++){
 				n=chord[i];
-				rootview.sendNoteOn(n,true);
+				rootview.noteOn(n,true);
 			}
 		}
 		

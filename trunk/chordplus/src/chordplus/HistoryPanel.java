@@ -80,7 +80,7 @@ public class HistoryPanel extends JPanel implements ActionListener {
 				if(loopMaker==null){
 					loopMaker=new LoopMaker(this,rootview);
 				}
-				loopMaker.receiveChords(k, ds, bs, ts, bss);
+				loopMaker.receiveChords(k, ds, bs, ts, bss, Chord.mode);
 				loopMaker.show();
 			}
 		}

@@ -319,13 +319,13 @@ public class FullKeyboardCanvas extends Canvas implements MouseListener,MouseMot
 		    }
 		}
 		if(clickedKey>=0){
-            rootview.sendNoteOn(clickedKey,true);
+            rootview.noteOn(clickedKey,true);
         }
 	}
 
 	public void mouseReleased(MouseEvent arg0) {
 	    if(clickedKey>=0){
-	        rootview.sendNoteOn(clickedKey,false);
+	        rootview.noteOn(clickedKey,false);
 	        clickedKey=-1;
 	    }
 	}

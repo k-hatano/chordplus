@@ -198,6 +198,29 @@ public class Chord {
 		return r;
 	}
 	
+	public static int[] notesOfChordWithPianoBasement(int basic,int tension,int root,int bass,int pianoBasement){
+		int chordNotes[]=notesOfChordWithRoot(basic,tension,root);
+		int res[]=new int[chordNotes.length+1];
+		
+		res[0]=root;
+		while(true){
+			if(res[0]<pianoBasement+48) res[0]+=12;
+			else if(res[0]>=pianoBasement+60) res[0]-=12;
+			else break;
+		}
+		
+		for(int i=0;i<chordNotes.length;i++){
+			res[i+1]=chordNotes[i];
+			while(true){
+				if(res[i+1]<Chord.pianoBasement+60) res[i+1]+=12;
+				else if(res[i+1]>=Chord.pianoBasement+72) res[i+1]-=12;
+				else break;
+			}
+		}
+		
+		return res;
+	}
+	
 	public static int[] notesOfChordWithGuitarBasement(int basic,int tension,int root,int bass,int guitarBasement){
 		int a,b,c,d,e,f,i,j,n,lowest=-1,highScore=0;
 		int tmpNotes[]={-1,-1,-1,-1,-1,-1};
@@ -355,5 +378,12 @@ public class Chord {
 			list[i]=""+(i+1)+" - "+instruments[i];
 		}
 		return list;
+	}
+	
+	public static int numberOfSharps(int tonic,int minor){
+		if(minor>0) tonic=(tonic+9)%12;
+		int res=(tonic*5)%12;
+		if(res>6) res-=12;
+		return res;
 	}
 }
