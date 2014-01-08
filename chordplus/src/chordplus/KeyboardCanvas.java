@@ -221,7 +221,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		pressed[lastClicked]=0;
 		lastClicked=-1;
 		if(mode==0){
-			rootview.setPitchBend(0);
+			rootview.pitchBend(0);
 		}
 		if(Chord.playAtReleased){
 			superview.play();
@@ -236,11 +236,11 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		}
 		if(mode==0){
 			if(pt.x-startPoint.x > 32){
-				rootview.setPitchBend(63);
+				rootview.pitchBend(63);
 			}else if(pt.x-startPoint.x < -32){
-				rootview.setPitchBend(-63);
+				rootview.pitchBend(-63);
 			}else{
-				rootview.setPitchBend(0);
+				rootview.pitchBend(0);
 			}
 		}else{
 			if(pt.x-startPoint.x > 32){
@@ -269,7 +269,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 
 	void playNote(int note,boolean playOrStop,boolean mute){
 		pressed[note]=playOrStop?1:0;
-		if(!mute) rootview.sendNoteOn(60+note+Chord.transpose(),playOrStop);
+		if(!mute) rootview.noteOn(60+note+Chord.transpose(),playOrStop);
 	}
 
 	public void keyPressed(KeyEvent arg0) {
@@ -410,9 +410,9 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 			}else if(key=='V'){
 				rootview.shiftVelocity(1);
 			}else if(key=='1'){
-				rootview.setPitchBend(-63);
+				rootview.pitchBend(-63);
 			}else if(key=='2'){
-				rootview.setPitchBend(63);
+				rootview.pitchBend(63);
 			}
 			switch(code){
 			case KeyEvent.VK_LEFT:
@@ -530,7 +530,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		int i;
 		char key=arg0.getKeyChar();
 
-		if(key=='1'||key=='2') rootview.setPitchBend(0);
+		if(key=='1'||key=='2') rootview.pitchBend(0);
 		if(arg0.getKeyCode()==KeyEvent.VK_SHIFT) shiftPushed=false;
 
 		for(i=0;i<smallKeys.length;i++){

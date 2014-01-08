@@ -16,15 +16,10 @@ public class BarCanvas extends Canvas {
 	public BarCanvas(Color c){
 		super();
 		col=c;
+		setBackground(c);
 	}
 	
 	public void paint(final Graphics g){
-		Image img=createImage(getSize().width,getSize().height);
-		Graphics grp=img.getGraphics();
 		
-		grp.setColor(col);
-		grp.fillRect(0,0,getSize().width,getSize().height);
-		
-		g.drawImage(img,0,0,this);
 	}
 }

@@ -27,7 +27,7 @@ public class KeyboardPanel extends JPanel implements ActionListener,MouseListene
 		add(cKeyboard);
 		cKeyboard.requestFocusInWindow();
 		
-		bFocus = new JButton("Å£");
+		bFocus = new JButton("Å£ Enter Å£");
 		bFocus.setBounds(80,125,225,20);
 		bFocus.addActionListener(this);
 		rootview.getRootPane().setDefaultButton(bFocus);

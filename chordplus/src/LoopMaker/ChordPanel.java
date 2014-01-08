@@ -2,6 +2,8 @@ package LoopMaker;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -22,11 +24,22 @@ public class ChordPanel extends JPanel implements MouseListener,MouseMotionListe
 	JLabel lLength;
 	BarCanvas cHorizon;
 	BarCanvas cVertic[];
+	BarCanvas cPlaying;
+	Sequencer sequencer;
 	
 	int chords;
-	int bar=8;
+	int beats=4;
+	int bar=4;
+	int roots[];
+	int basics[];
+	int tensions[];
+	int basses[];
 	int lengths[]=new int[12];
 	int pressed=-1,pressedX,pressedLength,pressedButton;
+	int playingPosition=-1;
+	int loopLength=-1;
+	
+	long startTime=-1;
 	
 	ChordPanel(LoopMaker rv){
 		super();
@@ -40,6 +53,11 @@ public class ChordPanel extends JPanel implements MouseListener,MouseMotionListe
 		cHorizon.setBounds(16,32,512,1);
 		add(cHorizon);
 		*/
+		
+		cPlaying=new BarCanvas(Color.red);
+		cPlaying.setBounds(16,12,1,40);
+		cPlaying.setVisible(false);
+		add(cPlaying);
 		
 		cVertic=new BarCanvas[9];
 		for(int i=0;i<9;i++){
@@ -63,6 +81,8 @@ public class ChordPanel extends JPanel implements MouseListener,MouseMotionListe
 		lLength.setVisible(false);
 		add(lLength);
 		
+		sequencer = new Sequencer();
+		sequencer.start();
 	}
 	
 	public void receiveChords(int n,int ds[],int bs[],int ts[],int bass[]){
@@ -76,8 +96,15 @@ public class ChordPanel extends JPanel implements MouseListener,MouseMotionListe
 			}
 		}
 		for(int i=0;i<n;i++){
-			lengths[i]=bar;
+			lengths[i]=beats;
 		}
+		roots=new int[n];
+		for(int i=0;i<n;i++){
+			roots[i]=(ds[i]+Chord.tonic+36)%12;
+		}
+		basics=bs;
+		tensions=ts;
+		basses=bass;
 		chords=n;
 		updateLengths();
 	}
@@ -85,8 +112,12 @@ public class ChordPanel extends JPanel implements MouseListener,MouseMotionListe
 	public void updateLengths(){
 		int lastX=16;
 		for(int i=0;i<chords;i++){
-			lChords[i].setBounds(lastX,24,lengths[i]*64/bar,16);
-			lastX+=lengths[i]*64/bar;
+			lChords[i].setBounds(lastX,24,lengths[i]*64/beats,16);
+			lastX+=lengths[i]*64/beats;
+		}
+		loopLength=0;
+		for(int i=0;i<chords;i++){
+			loopLength+=lengths[i];
 		}
 	}
 
@@ -96,11 +127,11 @@ public class ChordPanel extends JPanel implements MouseListener,MouseMotionListe
 			int x=arg0.getX();
 			if(pressedButton==3){
 				for(int i=pressed;i<chords;i++){
-					lengths[i]=pressedLength+(x-pressedX)/bar;
+					lengths[i]=pressedLength+(x-pressedX)/beats;
 					if(lengths[i]<=0) lengths[i]=1;
 				}
 			}else{
-				lengths[pressed]=pressedLength+(x-pressedX)/bar;
+				lengths[pressed]=pressedLength+(x-pressedX)/beats;
 				if(lengths[pressed]<=0) lengths[pressed]=1;
 			}
 			lLength.setText(""+lengths[pressed]);
@@ -155,6 +186,38 @@ public class ChordPanel extends JPanel implements MouseListener,MouseMotionListe
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		lLength.setVisible(false);
+	}
+	
+	class Sequencer extends Thread{
+		public void run(){
+			while(true){
+	    		try {
+	    			sleep(10);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+	    		if(playingPosition>=0){
+	    			long time=System.currentTimeMillis()-startTime;
+	    			long loopLengthTime=120/60*1000*loopLength/beats;
+	    			time=time%loopLengthTime;
+	    			playingPosition=(int)(time*64*60/120/1000);
+	    			cPlaying.setLocation(16+playingPosition,12);
+	    		}
+			}
+		}
+	}
+	
+	public void startPlaying(){
+		startTime=System.currentTimeMillis();
+		playingPosition=0;
+		cPlaying.setLocation(16,12);
+		cPlaying.setVisible(true);
+	}
+	
+	public void stopPlaying(){
+		cPlaying.setVisible(false);
+		startTime=-1;
+		playingPosition=-1;
 	}
 	
 }
