@@ -55,7 +55,7 @@ public class ChordPanel extends JPanel implements MouseListener,MouseMotionListe
 		*/
 		
 		cPlaying=new BarCanvas(Color.red);
-		cPlaying.setBounds(16,12,1,40);
+		cPlaying.setBounds(16,12,2,40);
 		cPlaying.setVisible(false);
 		add(cPlaying);
 		

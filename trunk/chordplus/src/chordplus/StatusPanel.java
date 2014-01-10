@@ -31,7 +31,7 @@ public class StatusPanel extends JPanel implements MouseListener,ActionListener 
 		add(lStatus);
 		
 		bOption=new JButton("ƒIƒvƒVƒ‡ƒ“");
-		bOption.setBounds(550,8,96,24);
+		bOption.setBounds(526,8,112,24);
 		bOption.addMouseListener(this);
 		add(bOption);
 	}
