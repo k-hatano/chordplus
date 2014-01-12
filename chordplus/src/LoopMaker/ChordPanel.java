@@ -7,6 +7,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.ArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -14,11 +17,16 @@ import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 
+import LoopMaker.Loop.MyNoteEvent;
+
 import chordplus.BarCanvas;
 import chordplus.Chord;
+import chordplus.MIDI;
+import chordplus.chordplus;
 
 public class ChordPanel extends JPanel implements MouseListener,MouseMotionListener {
-	LoopMaker rootview;
+	LoopMaker superview;
+	chordplus rootview;
 	
 	JLabel lChords[];
 	JLabel lLength;
@@ -26,6 +34,8 @@ public class ChordPanel extends JPanel implements MouseListener,MouseMotionListe
 	BarCanvas cVertic[];
 	BarCanvas cPlaying;
 	Sequencer sequencer;
+	
+	ArrayList<MyNoteEvent> events=null;
 	
 	int chords;
 	int beats=4;
@@ -38,11 +48,13 @@ public class ChordPanel extends JPanel implements MouseListener,MouseMotionListe
 	int pressed=-1,pressedX,pressedLength,pressedButton;
 	int playingPosition=-1;
 	int loopLength=-1;
+	int playedIndex=-1;
 	
 	long startTime=-1;
 	
-	ChordPanel(LoopMaker rv){
+	ChordPanel(LoopMaker sv,chordplus rv){
 		super();
+		superview=sv;
 		rootview=rv;
 
 		setLayout(null);
@@ -99,12 +111,13 @@ public class ChordPanel extends JPanel implements MouseListener,MouseMotionListe
 			lengths[i]=beats;
 		}
 		roots=new int[n];
+		basses=new int[n];
 		for(int i=0;i<n;i++){
 			roots[i]=(ds[i]+Chord.tonic+36)%12;
+			basses[i]=(ds[i]+Chord.tonic+36)%12;
 		}
 		basics=bs;
 		tensions=ts;
-		basses=bass;
 		chords=n;
 		updateLengths();
 	}
@@ -196,28 +209,45 @@ public class ChordPanel extends JPanel implements MouseListener,MouseMotionListe
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-	    		if(playingPosition>=0){
+	    		if(playingPosition>=0&&events!=null){
 	    			long time=System.currentTimeMillis()-startTime;
 	    			long loopLengthTime=120/60*1000*loopLength/beats;
-	    			time=time%loopLengthTime;
+	    			if(time>=loopLengthTime){
+	    				while(playedIndex<events.size()){
+		    				rootview.noteOn(events.get(playedIndex).note,events.get(playedIndex).onOrOff);
+		    				playedIndex++;
+		    			}
+	    				time=time%loopLengthTime;
+	    				startTime=System.currentTimeMillis();
+	    				playedIndex=0;
+	    			}
 	    			playingPosition=(int)(time*64*60/120/1000);
 	    			cPlaying.setLocation(16+playingPosition,12);
+	    			while(playedIndex<events.size()&&events.get(playedIndex).time*500<time){
+	    				rootview.noteOn(events.get(playedIndex).note,events.get(playedIndex).onOrOff);
+	    				playedIndex++;
+	    			}
 	    		}
 			}
 		}
 	}
 	
 	public void startPlaying(){
+		events=Loop.myNoteEventListOfLoop(superview.cTemplateKind.getSelectedIndex()+1,0,chords,basics,tensions,roots,basses,lengths);
 		startTime=System.currentTimeMillis();
 		playingPosition=0;
+		playedIndex=0;
 		cPlaying.setLocation(16,12);
 		cPlaying.setVisible(true);
 	}
 	
 	public void stopPlaying(){
+		rootview.sendAllNotesOff();
 		cPlaying.setVisible(false);
 		startTime=-1;
 		playingPosition=-1;
+		playedIndex=-1;
+		events=null;
 	}
 	
 }

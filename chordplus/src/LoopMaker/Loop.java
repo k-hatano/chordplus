@@ -113,8 +113,8 @@ public class Loop {
 
 		@Override
 		public int compare(MyNoteEvent arg0, MyNoteEvent arg1) {
-			if(arg0.time<arg1.time) return 1;
-			else if(arg0.time>arg1.time) return -1;
+			if(arg0.time>arg1.time) return 1;
+			else if(arg0.time<arg1.time) return -1;
 			else return 0;
 		}
 		
