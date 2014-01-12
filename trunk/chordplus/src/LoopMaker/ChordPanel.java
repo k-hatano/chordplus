@@ -114,7 +114,7 @@ public class ChordPanel extends JPanel implements MouseListener,MouseMotionListe
 		basses=new int[n];
 		for(int i=0;i<n;i++){
 			roots[i]=(ds[i]+Chord.tonic+36)%12;
-			basses[i]=(ds[i]+Chord.tonic+36)%12;
+			basses[i]=(bass[i]+Chord.tonic+36)%12;
 		}
 		basics=bs;
 		tensions=ts;
@@ -204,50 +204,56 @@ public class ChordPanel extends JPanel implements MouseListener,MouseMotionListe
 	class Sequencer extends Thread{
 		public void run(){
 			while(true){
-	    		try {
-	    			sleep(10);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+				synchronized(this){
+					try {
+						sleep(10);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					if(playingPosition>=0&&events!=null){
+						long time=System.currentTimeMillis()-startTime;
+						long loopLengthTime=120/60*1000*loopLength/beats;
+						if(time>=loopLengthTime){
+							while(playedIndex<events.size()){
+								rootview.noteOn(events.get(playedIndex).note,events.get(playedIndex).onOrOff);
+								playedIndex++;
+							}
+							time=time%loopLengthTime;
+							startTime=System.currentTimeMillis();
+							playedIndex=0;
+						}
+						playingPosition=(int)(time*64*60/120/1000);
+						cPlaying.setLocation(16+playingPosition,12);
+						while(playedIndex<events.size()&&events.get(playedIndex).time*500<time){
+							rootview.noteOn(events.get(playedIndex).note,events.get(playedIndex).onOrOff);
+							playedIndex++;
+						}
+					}
 				}
-	    		if(playingPosition>=0&&events!=null){
-	    			long time=System.currentTimeMillis()-startTime;
-	    			long loopLengthTime=120/60*1000*loopLength/beats;
-	    			if(time>=loopLengthTime){
-	    				while(playedIndex<events.size()){
-		    				rootview.noteOn(events.get(playedIndex).note,events.get(playedIndex).onOrOff);
-		    				playedIndex++;
-		    			}
-	    				time=time%loopLengthTime;
-	    				startTime=System.currentTimeMillis();
-	    				playedIndex=0;
-	    			}
-	    			playingPosition=(int)(time*64*60/120/1000);
-	    			cPlaying.setLocation(16+playingPosition,12);
-	    			while(playedIndex<events.size()&&events.get(playedIndex).time*500<time){
-	    				rootview.noteOn(events.get(playedIndex).note,events.get(playedIndex).onOrOff);
-	    				playedIndex++;
-	    			}
-	    		}
 			}
 		}
 	}
 	
 	public void startPlaying(){
-		events=Loop.myNoteEventListOfLoop(superview.cTemplateKind.getSelectedIndex()+1,0,chords,basics,tensions,roots,basses,lengths);
-		startTime=System.currentTimeMillis();
-		playingPosition=0;
-		playedIndex=0;
-		cPlaying.setLocation(16,12);
-		cPlaying.setVisible(true);
+		synchronized(this){
+			events=Loop.myNoteEventListOfLoop(superview.cTemplateKind.getSelectedIndex()+1,0,chords,basics,tensions,roots,basses,lengths);
+			startTime=System.currentTimeMillis();
+			playingPosition=0;
+			playedIndex=0;
+			cPlaying.setLocation(16,12);
+			cPlaying.setVisible(true);
+		}
 	}
-	
+
 	public void stopPlaying(){
-		rootview.sendAllNotesOff();
-		cPlaying.setVisible(false);
-		startTime=-1;
-		playingPosition=-1;
-		playedIndex=-1;
-		events=null;
+		synchronized(this){
+			rootview.sendAllNotesOff();
+			cPlaying.setVisible(false);
+			startTime=-1;
+			playingPosition=-1;
+			playedIndex=-1;
+			events=null;
+		}
 	}
 	
 }

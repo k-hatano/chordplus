@@ -202,7 +202,8 @@ public class Chord {
 		int chordNotes[]=notesOfChordWithRoot(basic,tension,root);
 		int res[]=new int[chordNotes.length+1];
 		
-		res[0]=root;
+		if(bass>=0) res[0]=bass;
+		else res[0]=root;
 		while(true){
 			if(res[0]<pianoBasement+48) res[0]+=12;
 			else if(res[0]>=pianoBasement+60) res[0]-=12;
@@ -212,8 +213,8 @@ public class Chord {
 		for(int i=0;i<chordNotes.length;i++){
 			res[i+1]=chordNotes[i];
 			while(true){
-				if(res[i+1]<Chord.pianoBasement+60) res[i+1]+=12;
-				else if(res[i+1]>=Chord.pianoBasement+72) res[i+1]-=12;
+				if(res[i+1]<pianoBasement+60) res[i+1]+=12;
+				else if(res[i+1]>=pianoBasement+72) res[i+1]-=12;
 				else break;
 			}
 		}
