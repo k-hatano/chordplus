@@ -79,18 +79,18 @@ public class FullKeyboardPanel extends JPanel implements ActionListener, ChangeL
 		if(target==rPiano){
 			if(Chord.mode==1){
 				rootview.changePianoBasement(0);
-				changeInstrument(0);
 			}else{
 				rootview.changeMode(1);
 			}
+			changeInstrument(0);
 		}
 		if(target==rGuitar){
 			if(Chord.mode==2){
 				rootview.changeGuitarBasement(0);
-				changeInstrument(24);
 			}else{
 				rootview.changeMode(2);
 			}
+			changeInstrument(24);
 		}
 		if(target==cInst){
 			rootview.changeInstrument(cInst.getSelectedIndex());

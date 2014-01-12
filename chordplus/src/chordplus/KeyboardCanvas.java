@@ -9,6 +9,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 	int pressed[]=new int[18];
 	int lastPressed[]=new int[18];
 	int togglePressed[]=new int[18];
+	int spotted[]={0,0,0,0,0,0,0,0,0,0,0,0};
 	int lastClicked;
 	int lastKey;
 	int whiteKeys[]={0,2,4,5,7,9,11,12,14,16,17};
@@ -46,7 +47,6 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 	int mode=0;
 	int transpose=1;
 	int chordNotes[]={0,0,0,0,0,0,0,0,0,0,0,0};
-	int keysSpotted[]={0,0,0,0,0,0,0,0,0,0,0,0};
 	Point startPoint;
 	int rotated=0;
 	int bassNote=-1,oldBassNote=-1;
@@ -114,7 +114,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		}
 
 		for(i=0;i<12;i++){
-			if(keysSpotted[i]>0){
+			if(spotted[i]>0){
 				if(Chord.scaleContainsNote(Chord.tonic,Chord.minor,i)){
 					grp.setColor(Color.gray);
 				}else{
@@ -207,7 +207,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		which=whichKey(pt.x,pt.y);
 		if(which>-1&&pressed[which]==0){
 			lastClicked=which;
-			pressed[which]=1;
+			switchPressed(which,1);
 		}
 		startPoint=pt;
 		repaintTrigger=true;
@@ -218,7 +218,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		if(arg0.getButton()==MouseEvent.BUTTON3){
 			return;
 		}
-		pressed[lastClicked]=0;
+		switchPressed(lastClicked,0);
 		lastClicked=-1;
 		if(mode==0){
 			rootview.pitchBend(0);
@@ -268,7 +268,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 	}
 
 	void playNote(int note,boolean playOrStop,boolean mute){
-		pressed[note]=playOrStop?1:0;
+		switchPressed(note,playOrStop?1:0);
 		if(!mute) rootview.noteOn(60+note+Chord.transpose(),playOrStop);
 	}
 
@@ -376,7 +376,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 				if(shiftPushed){
 					rootview.bassChanged(i%12);
 				}else{
-					pressed[i]=1;
+					switchPressed(i,1);
 				}
 				break;
 			}
@@ -536,7 +536,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		for(i=0;i<smallKeys.length;i++){
 			if((key==smallKeys[i]||key==largeKeys[i])&&
 					lastClicked!=i){
-				pressed[i]=0;
+				switchPressed(i,0);
 				break;
 			}
 		}
@@ -552,45 +552,47 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 	    public void run(){
 	    	int i,pressing;
 	    	while(true){
-	    		try {
-	    			for(int j=0;j<10;j++){
-	    				sleep(10);
-	    				if(repaintTrigger) break;
+	    		synchronized(this){
+	    			try {
+	    				for(int j=0;j<10;j++){
+	    					sleep(10);
+	    					if(repaintTrigger) break;
+	    				}
+	    			} catch (InterruptedException e) {
+	    				e.printStackTrace();
 	    			}
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-	    		pressing=0;
-	    		for(i=0;i<smallKeys.length;i++){
-	    			if(pressed[i]==1) pressing++;
-	    			if(pressed[i]==1&&lastPressed[i]==0){
-	    				playNote(i,true,mode!=0);
-	    				lastPressed[i]=1;
-	    				rootview.keyPressed(i);
-	    				repaintKey(i);
+	    			pressing=0;
+	    			for(i=0;i<smallKeys.length;i++){
+	    				if(pressed[i]==1) pressing++;
+	    				if(pressed[i]==1&&lastPressed[i]==0){
+	    					playNote(i,true,mode!=0);
+	    					lastPressed[i]=1;
+	    					rootview.keyPressed(i);
+	    					repaintKey(i);
+	    				}
+	    				if(pressed[i]==0&&lastPressed[i]==1){
+	    					playNote(i,false,mode!=0);
+	    					lastPressed[i]=0;
+	    					repaintKey(i);
+	    				}
 	    			}
-	    			if(pressed[i]==0&&lastPressed[i]==1){
-	    				playNote(i,false,mode!=0);
-	    				lastPressed[i]=0;
-	    				repaintKey(i);
+	    			for(i=0;i<12;i++){
+	    				if(chordNotes[i]!=spotted[i]){
+	    					spotted[i]=chordNotes[i];
+	    					repaintKey(i);
+	    				}
 	    			}
-	    		}
-	    		for(i=0;i<12;i++){
-	    			if(chordNotes[i]!=keysSpotted[i]){
-	    				keysSpotted[i]=chordNotes[i];
-	    				repaintKey(i);
+	    			if(bassNote!=oldBassNote){
+	    				if(bassNote>=0) repaintKey(bassNote);
+	    				if(oldBassNote>=0) repaintKey(oldBassNote);
+	    				oldBassNote=bassNote;
 	    			}
+	    			if(pressing==0&&keyPressedAfterReleased&&Chord.playAtReleased){
+	    				keyPressedAfterReleased=false;
+	    				rootview.play();
+	    			}
+	    			repaintTrigger=false;
 	    		}
-	    		if(bassNote!=oldBassNote){
-	    			if(bassNote>=0) repaintKey(bassNote);
-	    			if(oldBassNote>=0) repaintKey(oldBassNote);
-	    			oldBassNote=bassNote;
-	    		}
-	    		if(pressing==0&&keyPressedAfterReleased&&Chord.playAtReleased){
-	    			keyPressedAfterReleased=false;
-	    			rootview.play();
-	    		}
-	    		repaintTrigger=false;
 	    	}
 	    }
 	}
@@ -634,6 +636,18 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		}else if(rotated<=-1){
 			rootview.shiftRow(-1, 0);
 			rotated=0;
+		}
+	}
+
+	public void switchPressed(int index,int value){
+		synchronized(this){
+			pressed[index]=value;
+		}
+	}
+	
+	public void switchSpotted(int index,int value){
+		synchronized(this){
+			spotted[index]=value;
 		}
 	}
 }
