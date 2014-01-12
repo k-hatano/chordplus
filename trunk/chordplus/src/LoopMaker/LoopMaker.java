@@ -76,7 +76,7 @@ public class LoopMaker extends JFrame implements ActionListener,WindowListener {
 		fTemplate.add(lTime);
 		add(fTemplate);
 		
-		fChord = new ChordPanel(this);
+		fChord = new ChordPanel(this,rootview);
 		fChord.setBounds(8,56,544,64);
 		add(fChord);
 		
