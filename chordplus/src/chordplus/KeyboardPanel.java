@@ -74,7 +74,13 @@ public class KeyboardPanel extends JPanel implements ActionListener,MouseListene
 	}
 
 	public void mouseClicked(MouseEvent arg0) {
-		play();
+		if(arg0.getButton()==MouseEvent.BUTTON3){
+			rootview.keyPressed(-1);
+			rootview.sendAllNotesOff();
+			return;
+		}else{
+			play();
+		}
 	}
 
 	public void mouseEntered(MouseEvent arg0) {

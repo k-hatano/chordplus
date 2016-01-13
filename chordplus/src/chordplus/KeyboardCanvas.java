@@ -190,8 +190,10 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 		if(lastClicked>=0){
 			return;
 		}
-		rootview.keyPressed(-1);
-		rootview.sendAllNotesOff();
+		if(Chord.playAtReleased){
+			rootview.keyPressed(-1);
+			rootview.sendAllNotesOff();
+		}
 		return;
 	}
 
@@ -366,10 +368,6 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 			rootview.sendAllNotesOff();
 		}
 
-		if((key==' '||key=='\n')&&mode>0){
-			rootview.play();
-		}
-
 		for(i=0;i<smallKeys.length;i++){
 			if((key==smallKeys[i]||key==largeKeys[i])&&lastClicked!=i){
 				if(Chord.playAtReleased) keyPressedAfterReleased=true;
@@ -441,6 +439,10 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 				break;
 			}
 		}else if(mode>0){ // ピアノ・ギターモード
+			if((key==' '||key=='\n')&&mode>0){
+				rootview.play();
+			}
+			
 			for(i=0;i<7;i++){
 				int j=Chord.notesOfScale(Chord.tonic(),Chord.minor())[i];
 				if((key==smallNumberKeys[i]||key==largeNumberKeys[i])&&lastClicked!=j){
@@ -630,11 +632,14 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent arg0) {
 		rotated+=arg0.getWheelRotation();
-		if(rotated>=1){
-			rootview.shiftRow(1, 0);
+		if(rotated>=8){
+			if(rootview.fChord.root>=0){
+				rootview.play();
+			}
 			rotated=0;
-		}else if(rotated<=-1){
-			rootview.shiftRow(-1, 0);
+		}else if(rotated<=-8){
+			rootview.keyPressed(-1);
+			rootview.sendAllNotesOff();
 			rotated=0;
 		}
 	}
