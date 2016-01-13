@@ -12,8 +12,7 @@ public class FullKeyboardPanel extends JPanel implements ActionListener, ChangeL
 	JLabel lTranspose,lInstLabel;
 	JComboBox cInst;
 	FullKeyboardCanvas cKeyboard;
-	JRadioButton rSingle,rPiano,rGuitar;
-	ButtonGroup gHowToPlay;
+	
 	chordplus rootview;
 	JSpinner sTranspose;
 	
@@ -41,57 +40,18 @@ public class FullKeyboardPanel extends JPanel implements ActionListener, ChangeL
 		sTranspose.addChangeListener(this);
 		add(sTranspose);
 		
-		gHowToPlay = new ButtonGroup();
-		rSingle = new JRadioButton("フリー",true);
-		rSingle.setBounds(12,75,72,20);
-		add(rSingle);
-		rSingle.addActionListener(this);
-		gHowToPlay.add(rSingle);
-		rPiano = new JRadioButton("ピアノ",false);
-		rPiano.setBounds(84,75,72,20);
-		add(rPiano);
-		rPiano.addActionListener(this);
-		gHowToPlay.add(rPiano);
-		rGuitar = new JRadioButton("ギター",false);
-		rGuitar.setBounds(156,75,72,20);
-		add(rGuitar);
-		gHowToPlay.add(rGuitar);
-		rGuitar.addActionListener(this);
-		
 		lInstLabel = new JLabel("音色:",JLabel.RIGHT);
-		lInstLabel.setBounds(413,75,32,22);
+		lInstLabel.setBounds(413,10,32,22);
 		add(lInstLabel);
 		
 		cInst = new JComboBox(Chord.instrumentNameList());
-		cInst.setBounds(451,75,192,22);
+		cInst.setBounds(451,10,192,22);
 		cInst.addActionListener(this);
 		add(cInst);
 	}
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		Object target=arg0.getSource();
-		if(target==rSingle){
-			if(Chord.mode==0){
-				rootview.changeTranspose(0);
-			}
-			rootview.changeMode(0);
-		}
-		if(target==rPiano){
-			if(Chord.mode==1){
-				rootview.changePianoBasement(0);
-			}else{
-				rootview.changeMode(1);
-			}
-			changeInstrument(0);
-		}
-		if(target==rGuitar){
-			if(Chord.mode==2){
-				rootview.changeGuitarBasement(0);
-			}else{
-				rootview.changeMode(2);
-			}
-			changeInstrument(24);
-		}
 		if(target==cInst){
 			rootview.changeInstrument(cInst.getSelectedIndex());
 		}
@@ -112,9 +72,6 @@ public class FullKeyboardPanel extends JPanel implements ActionListener, ChangeL
 	
 	public void receiveChangeMode(int mode){
 		cKeyboard.changeMode(mode);
-		rSingle.setSelected(mode==0);
-		rPiano.setSelected(mode==1);
-		rGuitar.setSelected(mode==2);
 	}
 	
 	public void receiveChangeTranspose(int t){
