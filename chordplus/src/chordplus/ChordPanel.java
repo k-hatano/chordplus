@@ -1,11 +1,13 @@
 package chordplus;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.*;
 import javax.swing.border.*;
 
-public class ChordPanel extends JPanel {
+public class ChordPanel extends JPanel implements MouseListener {
 	JLabel lScale,lDegree,lOn;
 	JLabel[] aTriad=new JLabel[6];
 	JLabel[] aSeventh=new JLabel[6];
@@ -70,6 +72,7 @@ public class ChordPanel extends JPanel {
 			aTriad[i].setBounds(8+i*61,41,61,16);
 			aTriad[i].setForeground(Color.gray);
 			aTriad[i].setOpaque(true);
+			aTriad[i].addMouseListener(this);
 			add(aTriad[i]);
 		}
 		for(i=0;i<6;i++){
@@ -77,6 +80,7 @@ public class ChordPanel extends JPanel {
 			aSeventh[i].setBounds(8+i*61,60,61,16);
 			aSeventh[i].setForeground(Color.gray);
 			aSeventh[i].setOpaque(true);
+			aSeventh[i].addMouseListener(this);
 			add(aSeventh[i]);
 		}
 		for(i=0;i<6;i++){
@@ -84,6 +88,7 @@ public class ChordPanel extends JPanel {
 			aMajorSeventh[i].setBounds(8+i*61,80,61,16);
 			aMajorSeventh[i].setForeground(Color.gray);
 			aMajorSeventh[i].setOpaque(true);
+			aMajorSeventh[i].addMouseListener(this);
 			add(aMajorSeventh[i]);
 		}
 		for(i=0;i<6;i++){
@@ -91,6 +96,7 @@ public class ChordPanel extends JPanel {
 			aSixth[i].setBounds(8+i*61,100,61,16);
 			aSixth[i].setForeground(Color.gray);
 			aSixth[i].setOpaque(true);
+			aSixth[i].addMouseListener(this);
 			add(aSixth[i]);
 		}
 		for(i=0;i<6;i++){
@@ -98,6 +104,7 @@ public class ChordPanel extends JPanel {
 			aAdd9[i].setBounds(8+i*61,120,61,16);
 			aAdd9[i].setForeground(Color.gray);
 			aAdd9[i].setOpaque(true);
+			aAdd9[i].addMouseListener(this);
 			add(aAdd9[i]);
 		}
 		
@@ -320,7 +327,6 @@ public class ChordPanel extends JPanel {
 			tension=lastTension;
 		}
 		
-		
 		rootview.sendAllNotesOff();
 		
 		if(Chord.mode==1){
@@ -476,5 +482,40 @@ public class ChordPanel extends JPanel {
 		reflectReality();
 		rootview.receiveEstimatedChord(chordName(),Chord.notesOfChordWithRoot(basic,tension,root),bass<0?root:bass,true);
 	
+	}
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		Object target=e.getSource();
+		JLabel[][] labels={aTriad,aSeventh,aMajorSeventh,aSixth,aAdd9};
+		for(int j=0;j<labels.length;j++){
+			for(int i=0;i<6;i++){
+				if (target==labels[j][i]){
+					rootview.selectRow(i);
+					rootview.selectTension(j);
+					rootview.play();
+					return;
+				}
+			}
+		}
+	}
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
