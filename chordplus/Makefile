@@ -1,8 +1,8 @@
 # Makefile
 chordplus: src/chordplus/chordplus.java
-	javac -encoding Shift_JIS src/chordplus/*.java src/LoopMaker/*.java
-	jar cvfm chordplus.jar mani.mf src/LoopMaker/*.class src/chordplus/*.class
+	javac -encoding Shift_JIS -d classes src/chordplus/*.java src/LoopMaker/*.java
+	jar cvfm chordplus.jar mani.mf -C classes/ .
 clean:
 	rm chordplus.jar
-	rm src/chordplus/*.class
-	rm src/LoopMaker/*.class
+	rm classes/chordplus/*.class
+	rm classes/LoopMaker/*.class
