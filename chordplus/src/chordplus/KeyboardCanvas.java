@@ -442,7 +442,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 			if((key==' '||key=='\n')&&mode>0){
 				rootview.play();
 			}
-			
+
 			for(i=0;i<7;i++){
 				int j=Chord.notesOfScale(Chord.tonic(),Chord.minor())[i];
 				if((key==smallNumberKeys[i]||key==largeNumberKeys[i])&&lastClicked!=j){
@@ -454,7 +454,12 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 					break;
 				}
 			}
-			if(key=='8'){
+			if(key=='M'){
+				rootview.shiftRoot(6);
+				rootview.selectRow(3);
+				rootview.selectTension(0);
+				rootview.bassChanged(Chord.root);
+			}else if(key=='8'){
 				rootview.shiftRoot(-1);
 			}else if(key=='9'){
 				rootview.shiftRoot(1);
@@ -649,7 +654,7 @@ public class KeyboardCanvas extends Canvas implements MouseListener,MouseMotionL
 			pressed[index]=value;
 		}
 	}
-	
+
 	public void switchSpotted(int index,int value){
 		synchronized(this){
 			spotted[index]=value;
