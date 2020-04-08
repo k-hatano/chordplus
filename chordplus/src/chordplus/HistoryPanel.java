@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
@@ -13,112 +12,118 @@ import javax.swing.border.EtchedBorder;
 import LoopMaker.LoopMaker;
 
 public class HistoryPanel extends JPanel implements ActionListener {
-	LoopMaker loopMaker=null;
+	LoopMaker loopMaker = null;
 	chordplus rootview;
-	JButton bLoopMaker,bCancel;
+	JButton bLoopMaker, bCancel;
 	JCheckBox cChords[];
-	
-	int degrees[],basics[],tensions[],basses[];
-	
-	public HistoryPanel(chordplus cp){
+
+	int degrees[], basics[], tensions[], basses[];
+
+	public HistoryPanel(chordplus cp) {
 		super();
-		
-		rootview=cp;
-		
-		degrees=new int[12];
-		for(int i=0;i<12;i++) degrees[i]=-1;
-		basics=new int[12];
-		for(int i=0;i<12;i++) basics[i]=-1;
-		tensions=new int[12];
-		for(int i=0;i<12;i++) tensions[i]=-1;
-		basses=new int[12];
-		for(int i=0;i<12;i++) basses[i]=-1;
-		
+
+		rootview = cp;
+
+		degrees = new int[12];
+		for (int i = 0; i < 12; i++)
+			degrees[i] = -1;
+		basics = new int[12];
+		for (int i = 0; i < 12; i++)
+			basics[i] = -1;
+		tensions = new int[12];
+		for (int i = 0; i < 12; i++)
+			tensions[i] = -1;
+		basses = new int[12];
+		for (int i = 0; i < 12; i++)
+			basses[i] = -1;
+
 		setLayout(null);
 		setBorder(new EtchedBorder(EtchedBorder.LOWERED));
-		
-		cChords=new JCheckBox[12];
-		for(int i=0;i<12;i++){
-			cChords[i]=new JCheckBox();
-			cChords[i].setBounds(16,i*20+4,120,20);
+
+		cChords = new JCheckBox[12];
+		for (int i = 0; i < 12; i++) {
+			cChords[i] = new JCheckBox();
+			cChords[i].setBounds(16, i * 20 + 4, 120, 20);
 			add(cChords[i]);
 		}
-		
-		bLoopMaker = new JButton("ƒ‹[ƒvì¬");
-		bLoopMaker.setBounds(12,248,137,24);
+
+		bLoopMaker = new JButton("ãƒ«ãƒ¼ãƒ—ä½œæˆ");
+		bLoopMaker.setBounds(12, 248, 137, 24);
 		bLoopMaker.addActionListener(this);
 		add(bLoopMaker);
-		
-		bCancel = new JButton("ƒLƒƒƒ“ƒZƒ‹");
-		bCancel.setBounds(12,276,137,24);
+
+		bCancel = new JButton("ã‚­ãƒ£ãƒ³ã‚»ãƒ«");
+		bCancel.setBounds(12, 276, 137, 24);
 		bCancel.addActionListener(this);
 		add(bCancel);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		if(arg0.getSource()==bCancel){
+		if (arg0.getSource() == bCancel) {
 			rootview.showOptionPanel();
-		}else if(arg0.getSource()==bLoopMaker){
-			int ds[]=new int[12];
-			int bs[]=new int[12];
-			int ts[]=new int[12];
-			int bss[]=new int[12];
-			int k=0;
-			for(int i=0;i<12;i++){
-				if(cChords[i].isSelected()){
-					ds[k]=degrees[i];
-					bs[k]=basics[i];
-					ts[k]=tensions[i];
-					bss[k]=basses[i];
+		} else if (arg0.getSource() == bLoopMaker) {
+			int ds[] = new int[12];
+			int bs[] = new int[12];
+			int ts[] = new int[12];
+			int bss[] = new int[12];
+			int k = 0;
+			for (int i = 0; i < 12; i++) {
+				if (cChords[i].isSelected()) {
+					ds[k] = degrees[i];
+					bs[k] = basics[i];
+					ts[k] = tensions[i];
+					bss[k] = basses[i];
 					k++;
 				}
 			}
-			if(k<=0){
-				JOptionPane.showMessageDialog(null,"ƒ‹[ƒv‚ÉŽg—p‚·‚éƒR[ƒh‚ð 1 ‚ÂˆÈã‘I‘ð‚µ‚Ä‚­‚¾‚³‚¢B");
-			}else{
-				if(loopMaker==null){
-					loopMaker=new LoopMaker(this,rootview);
+			if (k <= 0) {
+				JOptionPane.showMessageDialog(null, "ãƒ«ãƒ¼ãƒ—ã«ä½¿ç”¨ã™ã‚‹ã‚³ãƒ¼ãƒ‰ã‚’ 1 ã¤ä»¥ä¸Šé¸æŠžã—ã¦ãã ã•ã„ã€‚");
+			} else {
+				if (loopMaker == null) {
+					loopMaker = new LoopMaker(this, rootview);
 				}
 				loopMaker.receiveChords(k, ds, bs, ts, bss, Chord.mode);
 				loopMaker.show();
 			}
 		}
 	}
-	
-	public void pushChord(int d,int b,int t,int bass){
+
+	public void pushChord(int d, int b, int t, int bass) {
 		int i;
-		if(degrees[11]==d&&basics[11]==b&&tensions[11]==t&&basses[11]==bass) return;
-		for(i=0;i<11;i++){
-			degrees[i]=degrees[i+1];
-			basics[i]=basics[i+1];
-			tensions[i]=tensions[i+1];
-			basses[i]=basses[i+1];
+		if (degrees[11] == d && basics[11] == b && tensions[11] == t && basses[11] == bass)
+			return;
+		for (i = 0; i < 11; i++) {
+			degrees[i] = degrees[i + 1];
+			basics[i] = basics[i + 1];
+			tensions[i] = tensions[i + 1];
+			basses[i] = basses[i + 1];
 		}
-		degrees[11]=d;
-		basics[11]=b;
-		tensions[11]=t;
-		basses[11]=bass;
+		degrees[11] = d;
+		basics[11] = b;
+		tensions[11] = t;
+		basses[11] = bass;
 		updateChordNames();
 	}
-	
-	public void updateChordNames(){
-		for(int i=0;i<12;i++){
-			if(degrees[i]<0){
+
+	public void updateChordNames() {
+		for (int i = 0; i < 12; i++) {
+			if (degrees[i] < 0) {
 				cChords[i].setEnabled(false);
 				cChords[i].setText("");
-			}else{
+			} else {
 				cChords[i].setEnabled(true);
-				cChords[i].setText(Chord.chordName((degrees[i]+Chord.tonic+36)%12,basics[i],tensions[i],(basses[i]+Chord.tonic+36)%12,0));
+				cChords[i].setText(Chord.chordName((degrees[i] + Chord.tonic + 36) % 12, basics[i], tensions[i],
+						(basses[i] + Chord.tonic + 36) % 12, 0));
 			}
 		}
 	}
-	
-	public void receiveShowHistoryPanel(){
+
+	public void receiveShowHistoryPanel() {
 		updateChordNames();
-		for(int i=0;i<12;i++){
-			cChords[i].setSelected(i>=4&&degrees[i]>=0);
+		for (int i = 0; i < 12; i++) {
+			cChords[i].setSelected(i >= 4 && degrees[i] >= 0);
 		}
 	}
-	
+
 }

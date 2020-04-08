@@ -1,6 +1,5 @@
 package LoopMaker;
 
-import java.awt.Color;
 import java.awt.FileDialog;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -17,135 +16,135 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 
-import chordplus.Chord;
 import chordplus.HistoryPanel;
 import chordplus.chordplus;
 
-public class LoopMaker extends JFrame implements ActionListener,WindowListener {
-	int il,it;
-	
+public class LoopMaker extends JFrame implements ActionListener, WindowListener {
+	int il, it;
+
 	HistoryPanel superview;
 	chordplus rootview;
-	
+
 	JPanel fTemplate;
-	JLabel lTemplate,lTime;
-	JComboBox cTemplateKind,cTemplate;
-	
+	JLabel lTemplate, lTime;
+	JComboBox cTemplateKind, cTemplate;
+
 	ChordPanel fChord;
-	
+
 	JPanel fExport;
-	JButton bPlay,bExport;
-	
-	boolean playing=false;
-	
-	public LoopMaker(HistoryPanel cp,chordplus gp){
+	JButton bPlay, bExport;
+
+	boolean playing = false;
+
+	public LoopMaker(HistoryPanel cp, chordplus gp) {
 		super();
-		
-		superview=cp;
-		rootview=gp;
-		
-		setTitle("ƒ‹[ƒvì¬");
+
+		superview = cp;
+		rootview = gp;
+
+		setTitle("ãƒ«ãƒ¼ãƒ—ä½œæˆ");
 		pack();
 		Insets insets = this.getInsets();
-		il=insets.left;
-		it=insets.top;
-		setSize(560+il,176+it);
-		setLocation(48,64);
+		il = insets.left;
+		it = insets.top;
+		setSize(560 + il, 176 + it);
+		setLocation(48, 64);
 		setResizable(false);
 		setLayout(null);
-		
+
 		fTemplate = new JPanel();
-		fTemplate.setBounds(8,8,544,40);
+		fTemplate.setBounds(8, 8, 544, 40);
 		fTemplate.setLayout(null);
 		fTemplate.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
-		lTemplate = new JLabel("ƒeƒ“ƒvƒŒ[ƒg:",JLabel.RIGHT);
-		lTemplate.setBounds(8,8,96,24);
+		lTemplate = new JLabel("ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆ:", JLabel.RIGHT);
+		lTemplate.setBounds(8, 8, 96, 24);
 		fTemplate.add(lTemplate);
 		cTemplateKind = new JComboBox(Loop.loopKinds);
-		cTemplateKind.setBounds(112,8,96,24);
+		cTemplateKind.setBounds(112, 8, 96, 24);
 		fTemplate.add(cTemplateKind);
 		cTemplate = new JComboBox(Loop.pianoTemplates);
-		cTemplate.setBounds(208,8,196,24);
+		cTemplate.setBounds(208, 8, 196, 24);
 		fTemplate.add(cTemplate);
 		lTime = new JLabel("");
-		lTime.setBounds(412,8,128,24);
+		lTime.setBounds(412, 8, 128, 24);
 		fTemplate.add(lTime);
 		add(fTemplate);
-		
-		fChord = new ChordPanel(this,rootview);
-		fChord.setBounds(8,56,544,64);
+
+		fChord = new ChordPanel(this, rootview);
+		fChord.setBounds(8, 56, 544, 64);
 		add(fChord);
-		
+
 		fExport = new JPanel();
-		fExport.setBounds(8,128,544,40);
+		fExport.setBounds(8, 128, 544, 40);
 		fExport.setLayout(null);
 		fExport.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
-		bPlay=new JButton("Ä¶");
-		bPlay.setBounds(8,8,96,24);
+		bPlay = new JButton("å†ç”Ÿ");
+		bPlay.setBounds(8, 8, 96, 24);
 		bPlay.addActionListener(this);
 		fExport.add(bPlay);
-		bExport=new JButton("‘‚«o‚µ");
-		bExport.setBounds(440,8,96,24);
+		bExport = new JButton("æ›¸ãå‡ºã—");
+		bExport.setBounds(440, 8, 96, 24);
 		fExport.add(bExport);
 		bExport.addActionListener(this);
 		add(fExport);
-		
+
 		addWindowListener(this);
-		
+
 		updateTime();
 	}
-	
-	public void receiveChords(int n,int ds[],int bs[],int ts[],int bass[],int md){
-		if(md>0) cTemplateKind.setSelectedIndex(md-1);
-		fChord.receiveChords(n,ds,bs,ts,bass);
+
+	public void receiveChords(int n, int ds[], int bs[], int ts[], int bass[], int md) {
+		if (md > 0)
+			cTemplateKind.setSelectedIndex(md - 1);
+		fChord.receiveChords(n, ds, bs, ts, bass);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource()==bPlay){
-			if(playing){
+		if (e.getSource() == bPlay) {
+			if (playing) {
 				stopPlaying();
-			}else{
+			} else {
 				startPlaying();
 			}
-		}else if(e.getSource()==bExport){
-			FileDialog dialog = new FileDialog(this,"MIDI ƒtƒ@ƒCƒ‹‚Ì•Û‘¶æ‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢B",FileDialog.SAVE);
-			dialog.setFile("L‚Î‚µ.mid");
+		} else if (e.getSource() == bExport) {
+			FileDialog dialog = new FileDialog(this, "MIDI ãƒ•ã‚¡ã‚¤ãƒ«ã®ä¿å­˜å…ˆã‚’æŒ‡å®šã—ã¦ãã ã•ã„ã€‚", FileDialog.SAVE);
+			dialog.setFile("ä¼¸ã°ã—.mid");
 			dialog.setVisible(true);
-			String fileName=dialog.getDirectory()+dialog.getFile();
+			String fileName = dialog.getDirectory() + dialog.getFile();
 			dialog.dispose();
-			if(dialog.getFile()!=null){
+			if (dialog.getFile() != null) {
 				FileOutputStream output;
-				try{
-					output=new FileOutputStream(fileName);
-					Sequence seq=Loop.sequenceOfLoop(cTemplateKind.getSelectedIndex()+1,0,fChord.chords,fChord.basics,fChord.tensions,fChord.roots,fChord.basses,fChord.lengths,fChord.beats,fChord.bar);
+				try {
+					output = new FileOutputStream(fileName);
+					Sequence seq = Loop.sequenceOfLoop(cTemplateKind.getSelectedIndex() + 1, 0, fChord.chords,
+							fChord.basics, fChord.tensions, fChord.roots, fChord.basses, fChord.lengths, fChord.beats,
+							fChord.bar);
 					MidiSystem.write(seq, 0, output);
 					output.close();
-				}catch (Exception exc){
-					JOptionPane.showMessageDialog(null,"MIDI ƒtƒ@ƒCƒ‹‚Ì•Û‘¶‚É¸”s‚µ‚Ü‚µ‚½B");
+				} catch (Exception exc) {
+					JOptionPane.showMessageDialog(null, "MIDI ãƒ•ã‚¡ã‚¤ãƒ«ã®ä¿å­˜ã«å¤±æ•—ã—ã¾ã—ãŸã€‚");
 					exc.printStackTrace();
 				}
 			}
 		}
 	}
-	
-	public void stopPlaying(){
-		bPlay.setLabel("Ä¶");
+
+	public void stopPlaying() {
+		bPlay.setLabel("å†ç”Ÿ");
 		fChord.stopPlaying();
-		playing=false;
+		playing = false;
 		cTemplateKind.setEnabled(true);
 		cTemplate.setEnabled(true);
 		bExport.setEnabled(true);
 	}
-	
-	public void startPlaying(){
-		bPlay.setLabel("’â~");
+
+	public void startPlaying() {
+		bPlay.setLabel("åœæ­¢");
 		fChord.startPlaying();
-		playing=true;
+		playing = true;
 		cTemplateKind.setEnabled(false);
 		cTemplate.setEnabled(false);
 		bExport.setEnabled(false);
@@ -154,13 +153,13 @@ public class LoopMaker extends JFrame implements ActionListener,WindowListener {
 	@Override
 	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowClosed(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -171,28 +170,28 @@ public class LoopMaker extends JFrame implements ActionListener,WindowListener {
 	@Override
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowDeiconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowIconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
-	public void updateTime(){
-		lTime.setText(""+fChord.beats+"/"+fChord.bar+" ”q");
+
+	public void updateTime() {
+		lTime.setText("" + fChord.beats + "/" + fChord.bar + " æ‹å­");
 	}
 }
