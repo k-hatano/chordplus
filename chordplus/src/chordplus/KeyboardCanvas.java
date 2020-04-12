@@ -20,7 +20,7 @@ public class KeyboardCanvas extends Canvas
 	char smallKeys[] = { 'a', 'w', 's', 'e', 'd', 'f', 't', 'g', 'y', 'h', 'u', 'j', 'k', 'o', 'l', 'p', ';', ':' };
 	char largeKeys[] = { 'A', 'W', 'S', 'E', 'D', 'F', 'T', 'G', 'Y', 'H', 'U', 'J', 'K', 'O', 'L', 'P', '+', '*' };
 	char smallRowKeys[] = { 'z', 'x', 'c', 'v', 'b', 'n' };
-	char largeRowKeys[] = { 'Z', 'X', 'C', 'V', 'B', 'N' };
+	char largeRowKeys[] = { 'Z', 'X', 'C', 'V', 'B', 'N', 'M'};
 	char smallNumberKeys[] = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 	char largeNumberKeys[] = { '!', '\"', '#', '$', '%', '&', '\'', '(', ')' };
 	KeyboardPanel superview;
@@ -45,12 +45,15 @@ public class KeyboardCanvas extends Canvas
 		rootview = gp;
 		haveFocus = false;
 		shiftPushed = false;
-		for (i = 0; i < 18; i++)
+		for (i = 0; i < 18; i++) {
 			pressed[i] = 0;
-		for (i = 0; i < 18; i++)
+		}
+		for (i = 0; i < 18; i++) {
 			lastPressed[i] = 0;
-		for (i = 0; i < 18; i++)
+		}
+		for (i = 0; i < 18; i++) {
 			togglePressed[i] = 0;
+		}
 		lastClicked = -1;
 		lastKey = -1;
 		addKeyListener(this);
@@ -369,7 +372,9 @@ public class KeyboardCanvas extends Canvas
 				rootview.selectRow(i);
 				break;
 			}
-			if (key == largeRowKeys[i] && i <= 4) {
+		}
+		for (i = 0; i < largeRowKeys.length; i++) {
+			if (key == largeRowKeys[i]) {
 				rootview.selectTension(i);
 			}
 		}
@@ -438,7 +443,7 @@ public class KeyboardCanvas extends Canvas
 					break;
 				}
 			}
-			if (key == 'M') {
+			if (key == 'q' || key == 'Q') {
 				rootview.shiftRoot(6);
 				rootview.selectRow(3);
 				rootview.selectTension(0);
@@ -465,16 +470,24 @@ public class KeyboardCanvas extends Canvas
 						rootview.shiftVelocity(-8);
 						break;
 					case KeyEvent.VK_LEFT:
-						rootview.shiftScale(-1);
+						if (mode == 1 && Chord.pianoBasement > -36) {
+							rootview.changePianoBasement(Chord.pianoBasement - 1);
+						} else if (mode == 2 && Chord.guitarBasement > -36) {
+							rootview.changeGuitarBasement(Chord.guitarBasement - 1);
+						}
 						break;
 					case KeyEvent.VK_RIGHT:
-						rootview.shiftScale(1);
+						if (mode == 1 && Chord.pianoBasement < 36) {
+							rootview.changePianoBasement(Chord.pianoBasement + 1);
+						} else if (mode == 2 && Chord.guitarBasement < 36) {
+							rootview.changeGuitarBasement(Chord.guitarBasement + 1);
+						}
 						break;
 					case KeyEvent.VK_PAGE_UP:
-						rootview.shiftScale(1);
+						rootview.shiftScale(-1);
 						break;
 					case KeyEvent.VK_PAGE_DOWN:
-						rootview.shiftScale(-1);
+						rootview.shiftScale(1);
 						break;
 					case KeyEvent.VK_HOME:
 						rootview.changeScale(Chord.tonic, 0);
@@ -498,10 +511,10 @@ public class KeyboardCanvas extends Canvas
 						rootview.shiftRow(1, 0);
 						break;
 					case KeyEvent.VK_PAGE_UP:
-						rootview.shiftScale(1);
+						rootview.shiftScale(-1);
 						break;
 					case KeyEvent.VK_PAGE_DOWN:
-						rootview.shiftScale(-1);
+						rootview.shiftScale(1);
 						break;
 					case KeyEvent.VK_HOME:
 						rootview.changeScale(Chord.tonic, 0);
@@ -608,19 +621,19 @@ public class KeyboardCanvas extends Canvas
 	}
 
 	void receiveChangeMode(int md) {
-		int i;
 		mode = md;
 		if (mode == 0) {
-			for (i = 0; i < 18; i++)
+			for (int i = 0; i < 18; i++) {
 				togglePressed[i] = 0;
+			}
 		}
 	}
 
 	void receiveEstimatedChordNotes(int notes[], int bass) {
-		int i;
-		for (i = 0; i < 12; i++)
+		for (int i = 0; i < 12; i++) {
 			chordNotes[i] = 0;
-		for (i = 0; i < notes.length; i++) {
+		}
+		for (int i = 0; i < notes.length; i++) {
 			chordNotes[notes[i]] = 1;
 		}
 		bassNote = bass;

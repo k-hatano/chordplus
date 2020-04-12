@@ -14,13 +14,15 @@ public class ChordPanel extends JPanel implements MouseListener {
 	JLabel[] aMajorSeventh = new JLabel[6];
 	JLabel[] aSixth = new JLabel[6];
 	JLabel[] aAdd9 = new JLabel[6];
+	JLabel[] aNinth = new JLabel[6];
+	JLabel[] aMajorNinth = new JLabel[6];
 
 	BarCanvas bcSeparator;
 
 	chordplus rootview;
 	int lastPressed;
 	int root;
-	int reality[][] = new int[6][5];
+	int reality[][] = new int[6][7];
 	int basic, tension;
 	int bass;
 	int row = -1;
@@ -32,8 +34,6 @@ public class ChordPanel extends JPanel implements MouseListener {
 
 	public ChordPanel(chordplus cp) {
 		super();
-		int i;
-
 		lastPressed = -1;
 
 		rootview = cp;
@@ -68,89 +68,99 @@ public class ChordPanel extends JPanel implements MouseListener {
 		bcSeparator.setBounds(8, 34, 366, 1);
 		add(bcSeparator);
 
-		for (i = 0; i < 6; i++) {
-			aTriad[i] = new JLabel(Chord.chordName(-1, i, 0, -1, 0), JLabel.CENTER);
-			aTriad[i].setBounds(8 + i * 61, 41, 61, 16);
-			aTriad[i].setForeground(Color.gray);
-			aTriad[i].setOpaque(true);
-			aTriad[i].addMouseListener(this);
-			add(aTriad[i]);
+		for (int t = 0; t < 6; t++) {
+			aTriad[t] = new JLabel(Chord.chordName(-1, t, 0, -1, 0), JLabel.CENTER);
+			aTriad[t].setBounds(8 + t * 61, 41, 61, 16);
+			add(aTriad[t]);
+
+			aSeventh[t] = new JLabel(Chord.chordName(-1, t, 1, -1, 0), JLabel.CENTER);
+			aSeventh[t].setBounds(8 + t * 61, 60, 61, 16);
+			add(aSeventh[t]);
+
+			aMajorSeventh[t] = new JLabel(Chord.chordName(-1, t, 2, -1, 0), JLabel.CENTER);
+			aMajorSeventh[t].setBounds(8 + t * 61, 80, 61, 16);
+			add(aMajorSeventh[t]);
+
+			aSixth[t] = new JLabel(Chord.chordName(-1, t, 3, -1, 0), JLabel.CENTER);
+			aSixth[t].setBounds(8 + t * 61, 100, 61, 16);
+			add(aSixth[t]);
+
+			aAdd9[t] = new JLabel(Chord.chordName(-1, t, 4, -1, 0), JLabel.CENTER);
+			aAdd9[t].setBounds(8 + t * 61, 120, 61, 16);
+			add(aAdd9[t]);
+
+			aNinth[t] = new JLabel(Chord.chordName(-1, t, 5, -1, 0), JLabel.CENTER);
+			aNinth[t].setBounds(8 + t * 61, 140, 61, 16);
+			add(aNinth[t]);
+
+			aMajorNinth[t] = new JLabel(Chord.chordName(-1, t, 6, -1, 0), JLabel.CENTER);
+			aMajorNinth[t].setBounds(8 + t * 61, 160, 61, 16);
+			add(aMajorNinth[t]);
 		}
-		for (i = 0; i < 6; i++) {
-			aSeventh[i] = new JLabel(Chord.chordName(-1, i, 1, -1, 0), JLabel.CENTER);
-			aSeventh[i].setBounds(8 + i * 61, 60, 61, 16);
-			aSeventh[i].setForeground(Color.gray);
-			aSeventh[i].setOpaque(true);
-			aSeventh[i].addMouseListener(this);
-			add(aSeventh[i]);
-		}
-		for (i = 0; i < 6; i++) {
-			aMajorSeventh[i] = new JLabel(Chord.chordName(-1, i, 2, -1, 0), JLabel.CENTER);
-			aMajorSeventh[i].setBounds(8 + i * 61, 80, 61, 16);
-			aMajorSeventh[i].setForeground(Color.gray);
-			aMajorSeventh[i].setOpaque(true);
-			aMajorSeventh[i].addMouseListener(this);
-			add(aMajorSeventh[i]);
-		}
-		for (i = 0; i < 6; i++) {
-			aSixth[i] = new JLabel(Chord.chordName(-1, i, 3, -1, 0), JLabel.CENTER);
-			aSixth[i].setBounds(8 + i * 61, 100, 61, 16);
-			aSixth[i].setForeground(Color.gray);
-			aSixth[i].setOpaque(true);
-			aSixth[i].addMouseListener(this);
-			add(aSixth[i]);
-		}
-		for (i = 0; i < 6; i++) {
-			aAdd9[i] = new JLabel(Chord.chordName(-1, i, 4, -1, 0), JLabel.CENTER);
-			aAdd9[i].setBounds(8 + i * 61, 120, 61, 16);
-			aAdd9[i].setForeground(Color.gray);
-			aAdd9[i].setOpaque(true);
-			aAdd9[i].addMouseListener(this);
-			add(aAdd9[i]);
+
+		for (int b = 0; b < 7; b++) {
+			for (int t = 0; t < 6; t++) {
+				JLabel label = this.chordLabel(b, t);
+				label.setForeground(Color.gray);
+				label.setOpaque(true);
+				label.addMouseListener(this);
+			}
 		}
 
 		lScale.setVisible(false);
 		lDegree.setVisible(false);
 		lOn.setVisible(false);
 		bcSeparator.setVisible(false);
-		for (i = 0; i < aTriad.length; i++) {
-			aTriad[i].setVisible(false);
-			aSeventh[i].setVisible(false);
-			aMajorSeventh[i].setVisible(false);
-			aSixth[i].setVisible(false);
-			aAdd9[i].setVisible(false);
+		for (int t = 0; t < aTriad.length; t++) {
+			aTriad[t].setVisible(false);
+			aSeventh[t].setVisible(false);
+			aMajorSeventh[t].setVisible(false);
+			aSixth[t].setVisible(false);
+			aAdd9[t].setVisible(false);
+			aNinth[t].setVisible(false);
+			aMajorNinth[t].setVisible(false);
 		}
 
 		resetReality();
 	}
 
+	JLabel chordLabel(int b, int t) {
+		switch (b) {
+			case 0:
+				return aTriad[t];
+			case 1:
+				return aSeventh[t];
+			case 2:
+				return aMajorSeventh[t];
+			case 3:
+				return aSixth[t];
+			case 4:
+				return aAdd9[t];
+			case 5:
+				return aNinth[t];
+			case 6:
+				return aMajorNinth[t];
+			default:
+				return null;
+		}
+	}
+
 	void receiveChangeMode(int md) {
-		int i;
 		Chord.mode = md;
-		if (Chord.mode == 0) {
-			lScale.setVisible(false);
-			lDegree.setVisible(false);
-			lOn.setVisible(false);
-			bcSeparator.setVisible(false);
-			for (i = 0; i < aTriad.length; i++) {
-				aTriad[i].setVisible(false);
-				aSeventh[i].setVisible(false);
-				aMajorSeventh[i].setVisible(false);
-				aSixth[i].setVisible(false);
-				aAdd9[i].setVisible(false);
-			}
-		} else {
-			lScale.setVisible(true);
-			lDegree.setVisible(true);
-			lOn.setVisible(true);
-			bcSeparator.setVisible(true);
-			for (i = 0; i < aTriad.length; i++) {
-				aTriad[i].setVisible(!Chord.omitTriad);
-				aSeventh[i].setVisible(true);
-				aMajorSeventh[i].setVisible(true);
-				aSixth[i].setVisible(true);
-				aAdd9[i].setVisible(true);
-			}
+		boolean labelsVisible = md != 0;
+
+		lScale.setVisible(labelsVisible);
+		lDegree.setVisible(labelsVisible);
+		lOn.setVisible(labelsVisible);
+		bcSeparator.setVisible(labelsVisible);
+		for (int i = 0; i < aTriad.length; i++) {
+			aTriad[i].setVisible(labelsVisible && !Chord.omitTriad);
+			aSeventh[i].setVisible(labelsVisible);
+			aMajorSeventh[i].setVisible(labelsVisible);
+			aSixth[i].setVisible(labelsVisible);
+			aAdd9[i].setVisible(labelsVisible);
+			aNinth[i].setVisible(labelsVisible);
+			aMajorNinth[i].setVisible(labelsVisible);
 		}
 	}
 
@@ -180,22 +190,22 @@ public class ChordPanel extends JPanel implements MouseListener {
 	}
 
 	void estimate(int note) {
-		int i, j, k, l, diatonic[], chord[];
+		int diatonic[], chord[];
 		boolean flg, flg2;
 		if (root == -1) {
 			root = note % 12;
 			diatonic = Chord.notesOfScale(Chord.tonic, Chord.minor);
-			for (i = 0; i < 5; i++) {
-				for (j = 0; j < 6; j++) {
+			for (int i = 0; i < 7; i++) {
+				for (int j = 0; j < 6; j++) {
 					if (i == 0 && Chord.omitTriad) {
 						reality[j][i] = 0;
 						continue;
 					}
 					chord = Chord.notesOfChordWithRoot(j, i, root);
 					flg = true;
-					for (k = 1; k < chord.length; k++) {
+					for (int k = 1; k < chord.length; k++) {
 						flg2 = false;
-						for (l = 0; l < diatonic.length; l++) {
+						for (int l = 0; l < diatonic.length; l++) {
 							if (diatonic[l] == chord[k]) {
 								flg2 = true;
 								break;
@@ -212,15 +222,15 @@ public class ChordPanel extends JPanel implements MouseListener {
 				}
 			}
 		} else {
-			for (i = 0; i < 5; i++) {
-				for (j = 0; j < 6; j++) {
+			for (int i = 0; i < 7; i++) {
+				for (int j = 0; j < 6; j++) {
 					if (i == 0 && Chord.omitTriad) {
 						reality[j][i] = 0;
 						continue;
 					}
 					chord = Chord.notesOfChordWithRoot(j, i, root);
 					flg = false;
-					for (k = 0; k < chord.length; k++) {
+					for (int k = 0; k < chord.length; k++) {
 						if (note == chord[k]) {
 							flg = true;
 							break;
@@ -237,9 +247,9 @@ public class ChordPanel extends JPanel implements MouseListener {
 	}
 
 	void selectMax() {
-		int i, j, b = -1, t = -1, m = 0;
-		for (i = 0; i < 5; i++) {
-			for (j = 0; j < 6; j++) {
+		int b = -1, t = -1, m = 0;
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 6; j++) {
 				if (reality[j][i] > m) {
 					b = j;
 					t = i;
@@ -247,63 +257,44 @@ public class ChordPanel extends JPanel implements MouseListener {
 				}
 			}
 		}
-		if (m > 0)
+		if (m > 0) {
 			stressMax(b, t);
+		}
 	}
 
 	void stressMax(int b, int t) {
-		int j;
 		tension = t;
 		basic = b;
-		for (j = 0; j < 6; j++) {
-			if (tension == 0 && basic == j)
-				aTriad[j].setBackground(Color.lightGray);
-			else
-				aTriad[j].setBackground(null);
-		}
-		for (j = 0; j < 6; j++) {
-			if (tension == 1 && basic == j)
-				aSeventh[j].setBackground(Color.lightGray);
-			else
-				aSeventh[j].setBackground(null);
-		}
-		for (j = 0; j < 6; j++) {
-			if (tension == 2 && basic == j)
-				aMajorSeventh[j].setBackground(Color.lightGray);
-			else
-				aMajorSeventh[j].setBackground(null);
-		}
-		for (j = 0; j < 6; j++) {
-			if (tension == 3 && basic == j)
-				aSixth[j].setBackground(Color.lightGray);
-			else
-				aSixth[j].setBackground(null);
-		}
-		for (j = 0; j < 6; j++) {
-			if (tension == 4 && basic == j)
-				aAdd9[j].setBackground(Color.lightGray);
-			else
-				aAdd9[j].setBackground(null);
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 6; j++) {
+				JLabel label = this.chordLabel(i, j);
+				if (tension == i && basic == j) {
+					label.setBackground(Color.lightGray);
+				}
+				else {
+					label.setBackground(null);
+				}
+			}
 		}
 	}
 
 	void resetReality() {
-		int i, j;
-		for (i = 0; i < 5; i++) {
-			for (j = 0; j < 6; j++)
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 6; j++)
 				reality[j][i] = 0;
 		}
-		for (j = 0; j < 6; j++) {
+		for (int j = 0; j < 6; j++) {
 			aTriad[j].setBackground(null);
 			aSeventh[j].setBackground(null);
 			aMajorSeventh[j].setBackground(null);
 			aSixth[j].setBackground(null);
 			aAdd9[j].setBackground(null);
+			aNinth[j].setBackground(null);
+			aMajorNinth[j].setBackground(null);
 		}
 	}
 
 	void reflectReality() {
-		int j;
 		lScale.setText(root < 0 ? "" : Chord.nameOfNote(root, 0));
 		if (root < 0) {
 			lDegree.setText("");
@@ -314,40 +305,32 @@ public class ChordPanel extends JPanel implements MouseListener {
 		} else {
 			lDegree.setText(Chord.sDegreeHarmonicMinor[(root - Chord.tonic + 36) % 12]);
 		}
-		if (bass >= 0 && bass != root)
+		if (bass >= 0 && bass != root) {
 			lOn.setText("on " + Chord.nameOfNote(bass, 0));
-		else
+		}
+		else {
 			lOn.setText("");
-		for (j = 0; j < 6; j++) {
-			aTriad[j].setForeground(reality[j][0] > 0 ? Color.black : Color.gray);
 		}
-		for (j = 0; j < 6; j++) {
-			aSeventh[j].setForeground(reality[j][1] > 0 ? Color.black : Color.gray);
-		}
-		for (j = 0; j < 6; j++) {
-			aMajorSeventh[j].setForeground(reality[j][2] > 0 ? Color.black : Color.gray);
-		}
-		for (j = 0; j < 6; j++) {
-			aSixth[j].setForeground(reality[j][3] > 0 ? Color.black : Color.gray);
-		}
-		for (j = 0; j < 6; j++) {
-			aAdd9[j].setForeground(reality[j][4] > 0 ? Color.black : Color.gray);
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 6; j++) {
+				JLabel label = this.chordLabel(i, j);
+				label.setForeground(reality[j][i] > 0 ? Color.black : Color.gray);
+			}
 		}
 	}
 
 	String chordName() {
-		String r = Chord.chordName(root, basic, tension, bass, 0);
-
-		return r;
+		return Chord.chordName(root, basic, tension, bass, 0);
 	}
 
 	void receivePlay() {
 		int chord[];
-		int n, i;
+		int n;
 
 		if (root < 0) {
-			if (lastRoot < 0)
+			if (lastRoot < 0) {
 				return;
+			}
 			root = lastRoot;
 			bass = lastBass;
 			basic = lastBasic;
@@ -359,14 +342,14 @@ public class ChordPanel extends JPanel implements MouseListener {
 		if (Chord.mode == 1) {
 			chord = Chord.notesOfChordWithPianoBasement(basic, tension, root + (Chord.transpose() + 36) % 12,
 					bass < 0 ? bass : bass + (Chord.transpose() + 36) % 12, Chord.pianoBasement);
-			for (i = 0; i < chord.length; i++) {
+			for (int i = 0; i < chord.length; i++) {
 				n = chord[i];
 				rootview.noteOn(n, true);
 			}
 		} else if (Chord.mode == 2) {
 			chord = Chord.notesOfChordWithGuitarBasement(basic, tension, root + (Chord.transpose() + 36) % 12,
 					bass < 0 ? bass : bass + (Chord.transpose() + 36) % 12, Chord.guitarBasement + 40);
-			for (i = 0; i < chord.length; i++) {
+			for (int i = 0; i < chord.length; i++) {
 				n = chord[i];
 				rootview.noteOn(n, true);
 			}
@@ -401,20 +384,19 @@ public class ChordPanel extends JPanel implements MouseListener {
 	}
 
 	void receiveSelectRow(int which) {
-		int i, j;
 		if (Chord.mode == 0)
 			return;
 		if (root < 0 && lastRoot >= 0) {
 			root = lastRoot;
 		}
-		for (i = 0; i < 5; i++) {
-			for (j = 0; j < 6; j++)
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 6; j++)
 				reality[j][i] = (j == which) ? 1 : 0;
 		}
 		if (row == which) {
 			do {
 				tension++;
-				if (tension >= 5)
+				if (tension >= 7)
 					tension = Chord.omitTriad ? 1 : 0;
 			} while (Chord.notesOfChord(basic, tension).length <= 1);
 		} else {
@@ -430,19 +412,19 @@ public class ChordPanel extends JPanel implements MouseListener {
 	}
 
 	void receiveSelectTension(int which) {
-		int i, j;
 		if (Chord.mode == 0)
 			return;
 		if (root < 0 && lastRoot >= 0) {
 			root = lastRoot;
 		}
-		for (i = 0; i < 5; i++) {
-			for (j = 0; j < 6; j++)
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 6; j++)
 				reality[j][i] = (i == which) ? 1 : 0;
 		}
 		tension = which;
-		if (Chord.notesOfChord(basic, tension).length <= 1)
+		if (Chord.notesOfChord(basic, tension).length <= 1) {
 			tension = Chord.omitTriad ? 1 : 0;
+		}
 		reality[basic][tension]++;
 		reflectReality();
 		selectMax();
@@ -457,21 +439,36 @@ public class ChordPanel extends JPanel implements MouseListener {
 			root = lastRoot;
 		}
 		basic += vx;
-		if (basic < 0)
+		if (basic < 0) {
 			basic = 5;
-		if (basic > 5)
+		}
+		if (basic > 5) {
 			basic = 0;
+		}
 		row = basic;
 		tension += vy;
-		if (tension >= 5)
-			tension = Chord.omitTriad ? 1 : 0;
-		if (Chord.notesOfChord(basic, tension).length <= 1)
-			tension = Chord.omitTriad ? 1 : 0;
 
-		if (tension < (Chord.omitTriad ? 1 : 0))
-			tension = 4;
-		while (Chord.notesOfChord(basic, tension).length <= 1)
-			tension--;
+		if (vy > 0) {
+			if (tension >= 7) {
+				tension = Chord.omitTriad ? 1 : 0;
+			}
+			while (Chord.notesOfChord(basic, tension).length <= 1) {
+				tension++;
+				if (tension >= 7) {
+					tension = Chord.omitTriad ? 1 : 0;
+				}
+			}
+		}
+
+		if (vy <= 0) {
+			if (tension < (Chord.omitTriad ? 1 : 0)) {
+				tension = 6;
+			}
+			while (Chord.notesOfChord(basic, tension).length <= 1) {
+				tension--;
+			}
+		}
+		
 		reflectReality();
 		stressMax(basic, tension);
 		rootview.receiveEstimatedChord(chordName(), Chord.notesOfChordWithRoot(basic, tension, root),
@@ -480,8 +477,9 @@ public class ChordPanel extends JPanel implements MouseListener {
 
 	void receiveChangeOmitTriad(boolean ot) {
 		int i;
-		if (Chord.mode == 0)
+		if (Chord.mode == 0) {
 			ot = true;
+		}
 		for (i = 0; i < 6; i++) {
 			aTriad[i].setVisible(!ot);
 		}

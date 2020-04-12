@@ -15,7 +15,6 @@ public class ScalePanel extends JPanel implements ActionListener {
 
 	public ScalePanel(chordplus cp) {
 		super();
-		int i;
 		rootview = cp;
 		Chord.changeScale(0, 0);
 
@@ -24,9 +23,9 @@ public class ScalePanel extends JPanel implements ActionListener {
 		gScale = new ButtonGroup();
 		gMajor = new ButtonGroup();
 
-		for (i = 0; i < 12; i++) {
+		for (int i = 0; i < 12; i++) {
 			aScale[i] = new JRadioButton(sScale[i]);
-			aScale[i].setBounds(4, 8 + 20 * i, 84, 20);
+			aScale[i].setBounds(4, 8 + 22 * i, 84, 20);
 			add(aScale[i]);
 			aScale[i].addActionListener(this);
 			gScale.add(aScale[i]);
@@ -34,13 +33,13 @@ public class ScalePanel extends JPanel implements ActionListener {
 		aScale[0].setSelected(true);
 
 		rMaj = new JRadioButton("Major", true);
-		rMaj.setBounds(4, 260, 84, 20);
+		rMaj.setBounds(4, 292, 84, 20);
 		rMaj.addActionListener(this);
 		add(rMaj);
 		gMajor.add(rMaj);
 
 		rMin = new JRadioButton("Minor");
-		rMin.setBounds(4, 280, 84, 20);
+		rMin.setBounds(4, 314, 84, 20);
 		rMin.addActionListener(this);
 		add(rMin);
 		gMajor.add(rMin);

@@ -8,12 +8,17 @@ public class Chord {
 			{ 0, 5, 7, 11 }, { 0, 4, 6, 11 } };
 	static int nSixth[][] = { { 0, 4, 7, 9 }, { 0, 3, 7, 9 }, { 0, 3, 6, 9 }, {}, {}, {} };
 	static int nAdd9[][] = { { 0, 4, 7, 14 }, { 0, 3, 7, 14 }, {}, {}, { 0, 4, 5, 7 }, {} };
+	static int nNinth[][] = { { 0, 2, 4, 7, 10 }, { 0, 2, 3, 7, 10 }, { 0, 2, 3, 6, 10 }, { 0, 2, 4, 8, 10 }, {},
+			{ 0, 2, 4, 6, 10 } };
+	static int nMajorNinth[][] = { { 0, 2, 4, 7, 11 }, { 0, 2, 3, 7, 11 }, {}, {}, {}, {} };
 
 	static String[] sTriad = { "maj", "m", "dim", "aug", "sus4", "-5" };
 	static String[] sSeventh = { "7", "m7", "m7-5", "aug7", "7sus4", "7-5" };
 	static String[] sMajorSeventh = { "M7", "mM7", "mM7-5", "augM7", "M7sus4", "M7-5" };
 	static String[] sSixth = { "6", "m6", "dim7", "", "", "" };
 	static String[] sAdd9 = { "add9", "madd9", "", "", "add4", "" };
+	static String[] sNinth = { "9", "m9", "m7-5(9)", "aug9", "", "9-5" };
+	static String[] sMajorNinth = { "M9", "mM9", "", "", "", "" };
 
 	static int nMajor[] = { 0, 2, 4, 5, 7, 9, 11 };
 	static int nMinor[] = { 0, 2, 3, 5, 7, 8, 10 };
@@ -75,6 +80,12 @@ public class Chord {
 				break;
 			case 4:
 				b = nAdd9[basic];
+				break;
+			case 5:
+				b = nNinth[basic];
+				break;
+			case 6:
+				b = nMajorNinth[basic];
 				break;
 			default:
 				b = nTriad[basic];
@@ -263,6 +274,12 @@ public class Chord {
 				break;
 			case 4:
 				name = name + sAdd9[basic];
+				break;
+			case 5:
+				name = name + sNinth[basic];
+				break;
+			case 6:
+				name = name + sMajorNinth[basic];
 				break;
 			default:
 				name = name + sTriad[basic];
