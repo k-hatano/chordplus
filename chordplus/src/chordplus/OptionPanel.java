@@ -59,8 +59,9 @@ public class OptionPanel extends JPanel implements ChangeListener, ActionListene
 		if (arg0.getSource() == sVelocitySlider) {
 			int v;
 			v = sVelocitySlider.getValue();
-			if (v >= 128)
+			if (v >= 128) {
 				v = 127;
+			}
 			rootview.changeVelocity(v);
 		}
 	}

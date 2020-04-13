@@ -5,7 +5,8 @@ import java.awt.event.*;
 
 public class FullKeyboardCanvas extends Canvas implements MouseListener, MouseMotionListener {
 	int mode = 0;
-	int whiteNote[] = { 0, 2, 4, 5, 7, 9, 11 }, blackNote[] = { 1, 3, -1, 6, 8, 10, -1 };
+	int whiteNote[] = { 0, 2, 4, 5, 7, 9, 11 };
+	int blackNote[] = { 1, 3, -1, 6, 8, 10, -1 };
 	int notesPlaying[] = new int[144];
 	int clickedX, clickedKey = -1, originTranspose;
 	FullKeyboardPanel superview;
@@ -15,8 +16,9 @@ public class FullKeyboardCanvas extends Canvas implements MouseListener, MouseMo
 		int i;
 		superview = cp;
 		rootview = gp;
-		for (i = 0; i < notesPlaying.length; i++)
+		for (i = 0; i < notesPlaying.length; i++) {
 			notesPlaying[i] = 0;
+		}
 		addMouseListener(this);
 		addMouseMotionListener(this);
 	}
@@ -44,15 +46,17 @@ public class FullKeyboardCanvas extends Canvas implements MouseListener, MouseMo
 
 	public Rectangle getRectOfKey(int i, Boolean blackOrWhite, Boolean playing) {
 		if (blackOrWhite) {
-			if (playing)
+			if (playing) {
 				return new Rectangle(i * 10 + 7, 9, 7, 9);
-			else
+			} else {
 				return new Rectangle(i * 10 + 6, 0, 8, 18);
+			}
 		} else {
-			if (playing)
+			if (playing) {
 				return new Rectangle(i * 10 + 2, 20, 7, 9);
-			else
+			} else {
 				return new Rectangle(i * 10, 0, 10, 30);
+			}
 		}
 	}
 
@@ -87,8 +91,9 @@ public class FullKeyboardCanvas extends Canvas implements MouseListener, MouseMo
 			for (i = 0; i < 72; i++) {
 				int note = (i / 7) * 12 + blackNote[i % 7];
 				Rectangle rect = getRectOfKey(i, true, false);
-				if (blackNote[i % 7] < 0)
+				if (blackNote[i % 7] < 0) {
 					continue;
+				}
 				if (note >= Chord.transpose + 60 && note <= Chord.transpose + 60 + 17) {
 					grp.setColor(new Color(0.15f, 0.15f, 0.15f));
 					grp.fillRect(rect.x, rect.y, rect.width, rect.height);
@@ -135,8 +140,9 @@ public class FullKeyboardCanvas extends Canvas implements MouseListener, MouseMo
 			grp.setColor(Color.black);
 			for (i = 0; i < 72; i++) {
 				int note = (i / 7) * 12 + blackNote[i % 7];
-				if (blackNote[i % 7] < 0)
+				if (blackNote[i % 7] < 0) {
 					continue;
+				}
 				Rectangle rect = getRectOfKey(i, true, false);
 				if (note >= Chord.pianoBasement + 48 && note < Chord.pianoBasement + 60) {
 					grp.setColor(new Color(0.0f, 0.15f, 0.3f));
@@ -209,8 +215,9 @@ public class FullKeyboardCanvas extends Canvas implements MouseListener, MouseMo
 			grp.setColor(Color.black);
 			for (i = 0; i < 72; i++) {
 				int note = (i / 7) * 12 + blackNote[i % 7];
-				if (blackNote[i % 7] < 0)
+				if (blackNote[i % 7] < 0) {
 					continue;
+				}
 				Rectangle rect = getRectOfKey(i, true, false);
 				if (note >= Chord.guitarBasement + 40 && note < Chord.guitarBasement + 45) {
 					grp.setColor(new Color(0.2f, 0.0f, 0.0f));
@@ -269,8 +276,9 @@ public class FullKeyboardCanvas extends Canvas implements MouseListener, MouseMo
 	public void mouseDragged(MouseEvent arg0) {
 		int newTranspose;
 		newTranspose = (arg0.getX() - clickedX) / 6 + originTranspose;
-		if (newTranspose < -36 || newTranspose > 36)
+		if (newTranspose < -36 || newTranspose > 36) {
 			return;
+		}
 		if (mode == 0) {
 			if (newTranspose != Chord.transpose) {
 				rootview.changeTranspose(newTranspose);
@@ -306,27 +314,29 @@ public class FullKeyboardCanvas extends Canvas implements MouseListener, MouseMo
 
 	public void mousePressed(MouseEvent arg0) {
 		clickedX = arg0.getX();
-		if (mode == 0)
+		if (mode == 0) {
 			originTranspose = Chord.transpose;
-		if (mode == 1)
+		}
+		if (mode == 1) {
 			originTranspose = Chord.pianoBasement;
-		if (mode == 2)
+		}
+		if (mode == 2) {
 			originTranspose = Chord.guitarBasement;
+		}
 
 		if (arg0.getButton() == 1) {
 			for (int i = 0; i < 72; i++) {
-				if (blackNote[i % 7] < 0)
+				if (blackNote[i % 7] < 0) {
 					continue;
+				}
 				if (getRectOfKey(i, true, false).contains(new Point(arg0.getX(), arg0.getY()))) {
 					clickedKey = (i / 7) * 12 + blackNote[i % 7];
-					;
 				}
 			}
 			if (clickedKey < 0) {
 				for (int i = 0; i < 72; i++) {
 					if (getRectOfKey(i, false, false).contains(new Point(arg0.getX(), arg0.getY()))) {
 						clickedKey = (i / 7) * 12 + whiteNote[i % 7];
-						;
 					}
 				}
 			}

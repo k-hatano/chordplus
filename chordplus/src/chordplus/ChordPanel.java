@@ -270,8 +270,7 @@ public class ChordPanel extends JPanel implements MouseListener {
 				JLabel label = this.chordLabel(i, j);
 				if (tension == i && basic == j) {
 					label.setBackground(Color.lightGray);
-				}
-				else {
+				} else {
 					label.setBackground(null);
 				}
 			}
@@ -307,8 +306,7 @@ public class ChordPanel extends JPanel implements MouseListener {
 		}
 		if (bass >= 0 && bass != root) {
 			lOn.setText("on " + Chord.nameOfNote(bass, 0));
-		}
-		else {
+		} else {
 			lOn.setText("");
 		}
 		for (int i = 0; i < 7; i++) {
@@ -390,14 +388,16 @@ public class ChordPanel extends JPanel implements MouseListener {
 			root = lastRoot;
 		}
 		for (int i = 0; i < 7; i++) {
-			for (int j = 0; j < 6; j++)
+			for (int j = 0; j < 6; j++) {
 				reality[j][i] = (j == which) ? 1 : 0;
+			}
 		}
 		if (row == which) {
 			do {
 				tension++;
-				if (tension >= 7)
+				if (tension >= 7) {
 					tension = Chord.omitTriad ? 1 : 0;
+				}
 			} while (Chord.notesOfChord(basic, tension).length <= 1);
 		} else {
 			basic = which;
@@ -468,7 +468,7 @@ public class ChordPanel extends JPanel implements MouseListener {
 				tension--;
 			}
 		}
-		
+
 		reflectReality();
 		stressMax(basic, tension);
 		rootview.receiveEstimatedChord(chordName(), Chord.notesOfChordWithRoot(basic, tension, root),
@@ -542,7 +542,7 @@ public class ChordPanel extends JPanel implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		Object target = e.getSource();
-		JLabel[][] labels = { aTriad, aSeventh, aMajorSeventh, aSixth, aAdd9 };
+		JLabel[][] labels = { aTriad, aSeventh, aMajorSeventh, aSixth, aAdd9, aNinth, aMajorNinth };
 		for (int j = 0; j < labels.length; j++) {
 			for (int i = 0; i < 6; i++) {
 				if (target == labels[j][i]) {

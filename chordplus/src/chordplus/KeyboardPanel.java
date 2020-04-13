@@ -47,10 +47,11 @@ public class KeyboardPanel extends JPanel implements ActionListener, MouseListen
 	}
 
 	void receiveEstimatedChord(String name, int notes[], int bass, boolean mute) {
-		if (mute)
+		if (mute) {
 			lChord.setForeground(Color.gray);
-		else
+		} else {
 			lChord.setForeground(Color.black);
+		}
 		lChord.setText(name);
 		cKeyboard.receiveEstimatedChordNotes(notes, bass);
 	}
@@ -58,6 +59,11 @@ public class KeyboardPanel extends JPanel implements ActionListener, MouseListen
 	void play() {
 		lChord.setForeground(Color.black);
 		rootview.play();
+	}
+
+	void stop() {
+		rootview.keyPressed(-1);
+		rootview.sendAllNotesOff();
 	}
 
 	public void receiveKeyboardBlured() {
@@ -71,19 +77,18 @@ public class KeyboardPanel extends JPanel implements ActionListener, MouseListen
 	}
 
 	public void receiveChangeTranspose(int t) {
-		if (t == 0)
+		if (t == 0) {
 			lTranspose.setText("");
-		else if (t > 0)
+		} else if (t > 0) {
 			lTranspose.setText("+" + t);
-		else
+		} else {
 			lTranspose.setText("" + t);
+		}
 	}
 
 	public void mouseClicked(MouseEvent arg0) {
 		if (arg0.getButton() == MouseEvent.BUTTON3) {
-			rootview.keyPressed(-1);
-			rootview.sendAllNotesOff();
-			return;
+			stop();
 		} else {
 			play();
 		}

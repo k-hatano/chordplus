@@ -64,9 +64,10 @@ public class ScalePanel extends JPanel implements ActionListener {
 			}
 		}
 
-		if (target == rMaj)
+		if (target == rMaj) {
 			rootview.changeScale(Chord.tonic, 0);
-		else if (target == rMin)
+		} else if (target == rMin) {
 			rootview.changeScale(Chord.tonic, 1);
+		}
 	}
 }

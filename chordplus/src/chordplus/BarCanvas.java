@@ -5,8 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class BarCanvas extends Canvas {
-
-	Color col = Color.black;
+	Color color = Color.black;
 
 	public BarCanvas() {
 		super();
@@ -14,7 +13,7 @@ public class BarCanvas extends Canvas {
 
 	public BarCanvas(Color c) {
 		super();
-		col = c;
+		color = c;
 		setBackground(c);
 	}
 

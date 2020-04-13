@@ -61,8 +61,7 @@ public class FullKeyboardPanel extends JPanel implements ActionListener, ChangeL
 	}
 
 	void receiveAllNotesOff() {
-		int i = 0;
-		for (i = 0; i < 120; i++) {
+		for (int i = 0; i < 120; i++) {
 			if (cKeyboard.isNotePlaying(i) > 0) {
 				rootview.noteOn(i, false);
 			}

@@ -17,7 +17,7 @@ public class Chord {
 	static String[] sMajorSeventh = { "M7", "mM7", "mM7-5", "augM7", "M7sus4", "M7-5" };
 	static String[] sSixth = { "6", "m6", "dim7", "", "", "" };
 	static String[] sAdd9 = { "add9", "madd9", "", "", "add4", "" };
-	static String[] sNinth = { "9", "m9", "m7-5(9)", "aug9", "", "9-5" };
+	static String[] sNinth = { "9", "m9", "m9-5", "aug9", "", "9-5" };
 	static String[] sMajorNinth = { "M9", "mM9", "", "", "", "" };
 
 	static int nMajor[] = { 0, 2, 4, 5, 7, 9, 11 };
@@ -63,7 +63,7 @@ public class Chord {
 			"Melodic Tom", "Synth Drum", "Reverse Cymbal", "Guitar Fret Noise", "Breath Noise", "Seashore",
 			"Bird Tweet", "Telephone Ring", "Helicopter", "Applause", "Gunshot" };
 
-	public static int[] notesOfChord(int basic, int tension) {
+	public static int[] notesOfChord(final int basic, final int tension) {
 		int r[], b[], i;
 		switch (tension) {
 			case 0:
@@ -96,75 +96,88 @@ public class Chord {
 		return r;
 	}
 
-	public static int[] notesOfChordWithRoot(int basic, int tension, int root) {
-		int r[] = notesOfChord(basic, tension);
+	public static int[] notesOfChordWithRoot(final int basic, final int tension, final int root) {
+		final int r[] = notesOfChord(basic, tension);
 		int i;
-		for (i = 0; i < r.length; i++)
+		for (i = 0; i < r.length; i++) {
 			r[i] = (r[i] + root + 36) % 12;
+		}
 		return r;
 	}
 
-	public static int[] notesOfChordWithPianoBasement(int basic, int tension, int root, int bass, int pianoBasement) {
-		int chordNotes[] = notesOfChordWithRoot(basic, tension, root);
-		int res[] = new int[chordNotes.length + 1];
+	public static int[] notesOfChordWithPianoBasement(final int basic, final int tension, final int root,
+			final int bass, final int pianoBasement) {
+		final int chordNotes[] = notesOfChordWithRoot(basic, tension, root);
+		final int res[] = new int[chordNotes.length + 1];
 
-		if (bass >= 0)
+		if (bass >= 0) {
 			res[0] = bass;
-		else
+		} else {
 			res[0] = root;
+		}
 		while (true) {
-			if (res[0] < pianoBasement + 48)
+			if (res[0] < pianoBasement + 48) {
 				res[0] += 12;
-			else if (res[0] >= pianoBasement + 60)
+			} else if (res[0] >= pianoBasement + 60) {
 				res[0] -= 12;
-			else
+			} else {
 				break;
+			}
 		}
 
 		for (int i = 0; i < chordNotes.length; i++) {
 			res[i + 1] = chordNotes[i];
 			while (true) {
-				if (res[i + 1] < pianoBasement + 60)
+				if (res[i + 1] < pianoBasement + 60) {
 					res[i + 1] += 12;
-				else if (res[i + 1] >= pianoBasement + 72)
+				} else if (res[i + 1] >= pianoBasement + 72) {
 					res[i + 1] -= 12;
-				else
+				} else {
 					break;
+				}
 			}
 		}
 
 		return res;
 	}
 
-	public static int[] notesOfChordWithGuitarBasement(int basic, int tension, int root, int bass, int guitarBasement) {
-		int a, b, c, d, e, f, i, j, n, lowest = -1, highScore = 0;
-		int tmpNotes[] = { -1, -1, -1, -1, -1, -1 };
-		int chordNotes[] = notesOfChordWithRoot(basic, tension, root);
+	public static int[] notesOfChordWithGuitarBasement(final int basic, final int tension, final int root, int bass,
+			final int guitarBasement) {
+		int n, lowest = -1, highScore = 0;
+		final int tmpNotes[] = { -1, -1, -1, -1, -1, -1 };
+		final int chordNotes[] = notesOfChordWithRoot(basic, tension, root);
 		if (bass < 0)
 			bass = root;
-		for (a = -1; a < 5; a++) {
-			for (b = -1; b < 5; b++) {
-				for (c = -1; c < 5; c++) {
-					for (d = -1; d < 4; d++) {
-						for (e = -1; e < 5; e++) {
-							for (f = -1; f < 5; f++) {
+		for (int a = -1; a < 5; a++) {
+			for (int b = -1; b < 5; b++) {
+				for (int c = -1; c < 5; c++) {
+					for (int d = -1; d < 4; d++) {
+						for (int e = -1; e < 5; e++) {
+							for (int f = -1; f < 5; f++) {
 								lowest = -1;
-								if (lowest < 0 && a >= 0)
+								if (lowest < 0 && a >= 0) {
 									lowest = a + guitarBasement;
-								if (lowest < 0 && b >= 0)
+								}
+								if (lowest < 0 && b >= 0) {
 									lowest = b + guitarBasement + 5;
-								if (lowest < 0 && c >= 0)
+								}
+								if (lowest < 0 && c >= 0) {
 									lowest = c + guitarBasement + 10;
-								if (lowest < 0 && d >= 0)
+								}
+								if (lowest < 0 && d >= 0) {
 									lowest = d + guitarBasement + 15;
-								if (lowest < 0 && e >= 0)
+								}
+								if (lowest < 0 && e >= 0) {
 									lowest = e + guitarBasement + 19;
-								if (lowest < 0 && f >= 0)
+								}
+								if (lowest < 0 && f >= 0) {
 									lowest = f + guitarBasement + 24;
-								if (lowest % 12 != bass % 12)
+								}
+								if (lowest % 12 != bass % 12) {
 									continue;
+								}
 
-								int currentNotes[] = new int[6];
+								final int currentNotes[] = new int[6];
 								int score = 0;
 								int flag;
 								currentNotes[0] = a < 0 ? -1 : a + guitarBasement;
@@ -173,19 +186,22 @@ public class Chord {
 								currentNotes[3] = d < 0 ? -1 : d + guitarBasement + 15;
 								currentNotes[4] = e < 0 ? -1 : e + guitarBasement + 19;
 								currentNotes[5] = f < 0 ? -1 : f + guitarBasement + 24;
-								for (i = 0; i < chordNotes.length; i++) {
+								for (int i = 0; i < chordNotes.length; i++) {
 									flag = 0;
-									for (j = 0; j < 6; j++) {
-										if (currentNotes[j] >= 0 && currentNotes[j] % 12 == chordNotes[i] % 12)
+									for (int j = 0; j < 6; j++) {
+										if (currentNotes[j] >= 0 && currentNotes[j] % 12 == chordNotes[i] % 12) {
 											flag++;
-										if (flag == 1)
+										}
+										if (flag == 1) {
 											flag = 2;
+										}
 									}
 									score += flag;
 								}
 								if (score > highScore) {
-									for (i = 0; i < 6; i++)
+									for (int i = 0; i < 6; i++) {
 										tmpNotes[i] = currentNotes[i];
+									}
 									highScore = score;
 								}
 							}
@@ -195,13 +211,14 @@ public class Chord {
 			}
 		}
 		n = 0;
-		for (i = 0; i < 6; i++) {
-			if (tmpNotes[i] >= 0)
+		for (int i = 0; i < 6; i++) {
+			if (tmpNotes[i] >= 0) {
 				n++;
+			}
 		}
-		int notes[] = new int[n];
-		j = 0;
-		for (i = 0; i < 6; i++) {
+		final int notes[] = new int[n];
+		int j = 0;
+		for (int i = 0; i < 6; i++) {
 			if (tmpNotes[i] >= 0) {
 				notes[j] = tmpNotes[i];
 				j++;
@@ -210,58 +227,63 @@ public class Chord {
 		return notes;
 	}
 
-	public static int[] notesOfScale(int tonic, int minor) {
-		int[] r = new int[7];
+	public static int[] notesOfScale(final int tonic, final int minor) {
+		final int[] r = new int[7];
 		int[] b;
 		switch (minor) {
 			case 0:
 				b = nMajor;
 				break;
 			case 1:
-				if (harmonicMinor)
+				if (harmonicMinor) {
 					b = nHarmonicMinor;
-				else
+				} else {
 					b = nMinor;
+				}
 				break;
 			default:
 				b = nMajor;
 		}
-		int i;
-		for (i = 0; i < 7; i++)
+		for (int i = 0; i < 7; i++) {
 			r[i] = (b[i] + tonic) % 12;
+		}
 		return r;
 	}
 
-	public static boolean scaleContainsNote(int tonic, int minor, int note) {
-		int[] r = notesOfScale(tonic, minor);
+	public static boolean scaleContainsNote(final int tonic, final int minor, final int note) {
+		final int[] r = notesOfScale(tonic, minor);
 		for (int i = 0; i < r.length; i++) {
-			if (r[i] == note)
+			if (r[i] == note) {
 				return true;
+			}
 		}
 		return false;
 	}
 
-	public static String nameOfNote(int note, int flat) {
-		if (flat > 0)
+	public static String nameOfNote(final int note, final int flat) {
+		if (flat > 0) {
 			return sNoteFlat[note];
-		else
+		} else {
 			return sNoteSharp[note];
+		}
 	}
 
-	public static String chordName(int root, int basic, int tension, int bass, int flat) {
+	public static String chordName(final int root, final int basic, final int tension, final int bass, final int flat) {
 		String name;
 
-		if (root < 0)
+		if (root < 0) {
 			name = "";
-		else if (flat > 0)
+		} else if (flat > 0) {
 			name = sNoteFlat[root];
-		else
+		} else {
 			name = sNoteSharp[root];
+		}
 
 		switch (tension) {
 			case 0:
-				if (root < 0 || basic > 0)
+				if (root < 0 || basic > 0) {
 					name = name + sTriad[basic];
+				}
 				break;
 			case 1:
 				name = name + sSeventh[basic];
@@ -286,16 +308,17 @@ public class Chord {
 		}
 
 		if (bass >= 0 && bass != root) {
-			if (flat > 0)
+			if (flat > 0) {
 				name = name + "/" + sNoteFlat[bass];
-			else
+			} else {
 				name = name + "/" + sNoteSharp[bass];
+			}
 		}
 
 		return name;
 	}
 
-	public static void changeScale(int t, int m) {
+	public static void changeScale(final int t, final int m) {
 		tonic = t;
 		minor = m;
 	}
@@ -312,12 +335,12 @@ public class Chord {
 		return transpose;
 	}
 
-	public static void changeTranspose(int t) {
+	public static void changeTranspose(final int t) {
 		transpose = t;
 	}
 
 	public static String[] instrumentNameList() {
-		String[] list = new String[128];
+		final String[] list = new String[128];
 		int i;
 		for (i = 0; i < 128; i++) {
 			list[i] = "" + (i + 1) + " - " + instruments[i];
@@ -325,12 +348,14 @@ public class Chord {
 		return list;
 	}
 
-	public static int numberOfSharps(int tonic, int minor) {
-		if (minor > 0)
+	public static int numberOfSharps(int tonic, final int minor) {
+		if (minor > 0) {
 			tonic = (tonic + 9) % 12;
+		}
 		int res = (tonic * 5) % 12;
-		if (res > 6)
+		if (res > 6) {
 			res -= 12;
+		}
 		return res;
 	}
 }

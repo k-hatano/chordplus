@@ -25,17 +25,21 @@ public class HistoryPanel extends JPanel implements ActionListener {
 		rootview = cp;
 
 		degrees = new int[12];
-		for (int i = 0; i < 12; i++)
+		for (int i = 0; i < 12; i++) {
 			degrees[i] = -1;
+		}
 		basics = new int[12];
-		for (int i = 0; i < 12; i++)
+		for (int i = 0; i < 12; i++) {
 			basics[i] = -1;
+		}
 		tensions = new int[12];
-		for (int i = 0; i < 12; i++)
+		for (int i = 0; i < 12; i++) {
 			tensions[i] = -1;
+		}
 		basses = new int[12];
-		for (int i = 0; i < 12; i++)
+		for (int i = 0; i < 12; i++) {
 			basses[i] = -1;
+		}
 
 		setLayout(null);
 		setBorder(new EtchedBorder(EtchedBorder.LOWERED));
@@ -90,10 +94,9 @@ public class HistoryPanel extends JPanel implements ActionListener {
 	}
 
 	public void pushChord(int d, int b, int t, int bass) {
-		int i;
 		if (degrees[11] == d && basics[11] == b && tensions[11] == t && basses[11] == bass)
 			return;
-		for (i = 0; i < 11; i++) {
+		for (int i = 0; i < 11; i++) {
 			degrees[i] = degrees[i + 1];
 			basics[i] = basics[i + 1];
 			tensions[i] = tensions[i + 1];

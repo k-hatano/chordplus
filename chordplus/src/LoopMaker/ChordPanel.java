@@ -133,13 +133,15 @@ public class ChordPanel extends JPanel implements MouseListener, MouseMotionList
 			if (pressedButton == 3) {
 				for (int i = pressed; i < chords; i++) {
 					lengths[i] = pressedLength + (x - pressedX) / beats;
-					if (lengths[i] <= 0)
+					if (lengths[i] <= 0) {
 						lengths[i] = 1;
+					}
 				}
 			} else {
 				lengths[pressed] = pressedLength + (x - pressedX) / beats;
-				if (lengths[pressed] <= 0)
+				if (lengths[pressed] <= 0) {
 					lengths[pressed] = 1;
+				}
 			}
 			lLength.setText("" + lengths[pressed]);
 			updateLengths();

@@ -88,8 +88,9 @@ public class Loop {
 	public static String generateTrackName(int chords, int roots[], int basics[], int tensions[], int basses[]) {
 		String name = "";
 		for (int i = 0; i < chords; i++) {
-			if (i > 0)
+			if (i > 0) {
 				name += " ";
+			}
 			name += Chord.chordName(roots[i], basics[i], tensions[i], basses[i], 0);
 		}
 		return name;
@@ -117,12 +118,13 @@ public class Loop {
 
 		@Override
 		public int compare(MyNoteEvent arg0, MyNoteEvent arg1) {
-			if (arg0.time > arg1.time)
+			if (arg0.time > arg1.time) {
 				return 1;
-			else if (arg0.time < arg1.time)
+			} else if (arg0.time < arg1.time) {
 				return -1;
-			else
+			} else {
 				return 0;
+			}
 		}
 
 	}

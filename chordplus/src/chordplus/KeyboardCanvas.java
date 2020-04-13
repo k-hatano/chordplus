@@ -20,7 +20,7 @@ public class KeyboardCanvas extends Canvas
 	char smallKeys[] = { 'a', 'w', 's', 'e', 'd', 'f', 't', 'g', 'y', 'h', 'u', 'j', 'k', 'o', 'l', 'p', ';', ':' };
 	char largeKeys[] = { 'A', 'W', 'S', 'E', 'D', 'F', 'T', 'G', 'Y', 'H', 'U', 'J', 'K', 'O', 'L', 'P', '+', '*' };
 	char smallRowKeys[] = { 'z', 'x', 'c', 'v', 'b', 'n' };
-	char largeRowKeys[] = { 'Z', 'X', 'C', 'V', 'B', 'N', 'M'};
+	char largeRowKeys[] = { 'Z', 'X', 'C', 'V', 'B', 'N', 'M' };
 	char smallNumberKeys[] = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 	char largeNumberKeys[] = { '!', '\"', '#', '$', '%', '&', '\'', '(', ')' };
 	KeyboardPanel superview;
@@ -121,15 +121,14 @@ public class KeyboardCanvas extends Canvas
 	}
 
 	int whichKey(int x, int y) {
-		int i;
 		if (y >= 0 && y <= 64) {
-			for (i = 0; i < blackKeys.length; i++) {
+			for (int i = 0; i < blackKeys.length; i++) {
 				if (x >= keyRects[blackKeys[i]][0] && x <= keyRects[blackKeys[i]][0] + keyRects[blackKeys[i]][2])
 					return blackKeys[i];
 			}
 		}
 		if (y >= 2 && y <= 98) {
-			for (i = 0; i < whiteKeys.length; i++) {
+			for (int i = 0; i < whiteKeys.length; i++) {
 				if (x >= keyRects[whiteKeys[i]][0] && x <= keyRects[whiteKeys[i]][0] + keyRects[whiteKeys[i]][2])
 					return whiteKeys[i];
 			}
@@ -151,8 +150,9 @@ public class KeyboardCanvas extends Canvas
 	}
 
 	void repaintKey(int which) {
-		if (which < 0)
+		if (which < 0) {
 			return;
+		}
 		repaint(keyRects[which][0], keyRects[which][1], keyRects[which][2], keyRects[which][3]);
 	}
 
@@ -182,8 +182,13 @@ public class KeyboardCanvas extends Canvas
 	public void mousePressed(MouseEvent arg0) {
 		int which;
 
-		if (lastClicked > -1)
+		if (lastClicked > -1) {
 			return;
+		}
+		if (arg0.getButton() == MouseEvent.BUTTON2) {
+			superview.stop();
+			return;
+		}
 		if (arg0.getButton() == MouseEvent.BUTTON3) {
 			superview.play();
 			return;
@@ -199,8 +204,9 @@ public class KeyboardCanvas extends Canvas
 	}
 
 	public void mouseReleased(MouseEvent arg0) {
-		if (lastClicked < 0)
+		if (lastClicked < 0) {
 			return;
+		}
 		if (arg0.getButton() == MouseEvent.BUTTON3) {
 			return;
 		}
@@ -255,12 +261,12 @@ public class KeyboardCanvas extends Canvas
 
 	void playNote(int note, boolean playOrStop, boolean mute) {
 		switchPressed(note, playOrStop ? 1 : 0);
-		if (!mute)
+		if (!mute) {
 			rootview.noteOn(60 + note + Chord.transpose(), playOrStop);
+		}
 	}
 
 	public void keyPressed(KeyEvent arg0) {
-		int i;
 		char key = arg0.getKeyChar();
 		int code = arg0.getKeyCode();
 
@@ -310,7 +316,7 @@ public class KeyboardCanvas extends Canvas
 			} else if (key == ')') {
 				rootview.changeInstrument(0);
 			}
-			for (i = 0; i < smallKeys.length; i++) {
+			for (int i = 0; i < smallKeys.length; i++) {
 				if ((key == smallKeys[i] || key == largeKeys[i]) && lastClicked != i) {
 					rootview.changeScale(i, Chord.minor);
 					break;
@@ -354,7 +360,7 @@ public class KeyboardCanvas extends Canvas
 			rootview.sendAllNotesOff();
 		}
 
-		for (i = 0; i < smallKeys.length; i++) {
+		for (int i = 0; i < smallKeys.length; i++) {
 			if ((key == smallKeys[i] || key == largeKeys[i]) && lastClicked != i) {
 				if (Chord.playAtReleased)
 					keyPressedAfterReleased = true;
@@ -367,13 +373,13 @@ public class KeyboardCanvas extends Canvas
 			}
 		}
 
-		for (i = 0; i < smallRowKeys.length; i++) {
+		for (int i = 0; i < smallRowKeys.length; i++) {
 			if (key == smallRowKeys[i]) {
 				rootview.selectRow(i);
 				break;
 			}
 		}
-		for (i = 0; i < largeRowKeys.length; i++) {
+		for (int i = 0; i < largeRowKeys.length; i++) {
 			if (key == largeRowKeys[i]) {
 				rootview.selectTension(i);
 			}
@@ -432,7 +438,7 @@ public class KeyboardCanvas extends Canvas
 				rootview.play();
 			}
 
-			for (i = 0; i < 7; i++) {
+			for (int i = 0; i < 7; i++) {
 				int j = Chord.notesOfScale(Chord.tonic(), Chord.minor())[i];
 				if ((key == smallNumberKeys[i] || key == largeNumberKeys[i]) && lastClicked != j) {
 					if (shiftPushed) {
@@ -531,7 +537,6 @@ public class KeyboardCanvas extends Canvas
 	}
 
 	public void keyReleased(KeyEvent arg0) {
-		int i;
 		char key = arg0.getKeyChar();
 
 		if (key == '1' || key == '2')
@@ -539,7 +544,7 @@ public class KeyboardCanvas extends Canvas
 		if (arg0.getKeyCode() == KeyEvent.VK_SHIFT)
 			shiftPushed = false;
 
-		for (i = 0; i < smallKeys.length; i++) {
+		for (int i = 0; i < smallKeys.length; i++) {
 			if ((key == smallKeys[i] || key == largeKeys[i]) && lastClicked != i) {
 				switchPressed(i, 0);
 				break;
@@ -555,7 +560,7 @@ public class KeyboardCanvas extends Canvas
 
 	class KeyWatcher extends Thread {
 		public void run() {
-			int i, pressing;
+			int pressing;
 			while (true) {
 				synchronized (this) {
 					try {
@@ -568,7 +573,7 @@ public class KeyboardCanvas extends Canvas
 						e.printStackTrace();
 					}
 					pressing = 0;
-					for (i = 0; i < smallKeys.length; i++) {
+					for (int i = 0; i < smallKeys.length; i++) {
 						if (pressed[i] == 1)
 							pressing++;
 						if (pressed[i] == 1 && lastPressed[i] == 0) {
@@ -583,7 +588,7 @@ public class KeyboardCanvas extends Canvas
 							repaintKey(i);
 						}
 					}
-					for (i = 0; i < 12; i++) {
+					for (int i = 0; i < 12; i++) {
 						if (chordNotes[i] != spotted[i]) {
 							spotted[i] = chordNotes[i];
 							repaintKey(i);
@@ -642,12 +647,12 @@ public class KeyboardCanvas extends Canvas
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent arg0) {
 		rotated += arg0.getWheelRotation();
-		if (rotated >= 8) {
+		if (rotated >= 4) {
 			if (rootview.fChord.root >= 0) {
 				rootview.play();
 			}
 			rotated = 0;
-		} else if (rotated <= -8) {
+		} else if (rotated <= -4) {
 			rootview.keyPressed(-1);
 			rootview.sendAllNotesOff();
 			rotated = 0;

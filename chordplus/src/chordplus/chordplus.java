@@ -145,8 +145,9 @@ public class chordplus extends JFrame {
 
 	public void shiftTranspose(int dt) {
 		int t = Chord.transpose + dt;
-		if (t < -36 || t > 36)
+		if (t < -36 || t > 36) {
 			return;
+		}
 		changeTranspose(t);
 	}
 
@@ -169,10 +170,12 @@ public class chordplus extends JFrame {
 
 	public void shiftVelocity(int v) {
 		Chord.velocity = (Chord.velocity + v) / v * v;
-		if (Chord.velocity < 0)
+		if (Chord.velocity < 0) {
 			Chord.velocity = 0;
-		if (Chord.velocity >= 128)
+		}
+		if (Chord.velocity >= 128) {
 			Chord.velocity = 127;
+		}
 		fOption.receiveChangeVelocity(Chord.velocity);
 	}
 
@@ -244,8 +247,9 @@ public class chordplus extends JFrame {
 		MIDI.close();
 		this.setVisible(false);
 		MIDI.selectMidiDevice();
-		if (MIDI.receiver == null)
+		if (MIDI.receiver == null) {
 			System.exit(0);
+		}
 		this.setVisible(true);
 	}
 

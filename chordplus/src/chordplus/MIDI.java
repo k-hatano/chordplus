@@ -14,7 +14,6 @@ import javax.sound.midi.MidiDevice.Info;
 import javax.swing.JOptionPane;
 
 public class MIDI {
-
 	static Receiver receiver = null;
 	static MidiDevice device = null;
 
@@ -50,15 +49,18 @@ public class MIDI {
 				 * String params[] = new String[infos.length]; for(int i=0;i<infos.length;i++){
 				 * params[i]=infos[i].getName(); }
 				 */
-				if (params.length <= 0)
+				if (params.length <= 0) {
 					throw new MidiUnavailableException();
+				}
 				String res = (String) JOptionPane.showInputDialog(null, "使用する MIDI デバイスを選択してください。", "chordplus",
-						JOptionPane.INFORMATION_MESSAGE, null, params, params[0]);
-				if (res == null)
+						 JOptionPane.INFORMATION_MESSAGE, null, params, params[0]);
+				if (res == null) {
 					System.exit(1);
+				}
 				for (int i = 0; i < infos.length; i++) {
-					if (omits[i])
+					if (omits[i]) {
 						continue;
+					}
 					if (res.equals(infos[i].getName())) {
 						device = MidiSystem.getMidiDevice(infos[i]);
 						device.open();
@@ -76,10 +78,12 @@ public class MIDI {
 	}
 
 	public static void close() {
-		if (device != null)
+		if (device != null) {
 			device.close();
-		if (receiver != null)
+		}
+		if (receiver != null) {
 			receiver.close();
+		}
 	}
 
 	public static MidiMessage messageNoteOn(int note, boolean onOrOff) {
