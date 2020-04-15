@@ -5,7 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class chordplus extends JFrame {
+public class chordplus extends JFrame implements MouseListener {
 	int il, it;
 
 	StatusPanel fStatus;
@@ -70,9 +70,11 @@ public class chordplus extends JFrame {
 		 */
 
 		MIDI.selectMidiDevice();
-		if (MIDI.receiver == null)
+		if (MIDI.receiver == null) {
 			System.exit(0);
+		}
 
+		addMouseListener(this);
 		Runtime.getRuntime().addShutdownHook(new Shutdown());
 	}
 
@@ -251,6 +253,38 @@ public class chordplus extends JFrame {
 			System.exit(0);
 		}
 		this.setVisible(true);
+	}
+
+	/* mouse events */
+
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		this.keyPressed(-1);
+		this.sendAllNotesOff();
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

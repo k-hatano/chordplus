@@ -37,9 +37,14 @@ public class Chord {
 	static String[] sDegreeMinor = { "I", "", "II", "III", "", "IV", "", "V", "VI", "", "VII", "" };
 	static String[] sDegreeHarmonicMinor = { "I", "", "II", "III", "", "IV", "", "V", "VI", "", "", "VII" };
 
+	public static final int RIGHT_CLICK_BASE_NOTE = 1;
+	public static final int RIGHT_CLICK_PLAY = 2;
+	public static final int RIGHT_CLICK_STOP = 3;
+
 	public static boolean omitTriad = false;
 	public static boolean harmonicMinor = false;
 	public static boolean playAtReleased = false;
+	public static int rightClickAction = RIGHT_CLICK_BASE_NOTE;
 
 	static String[] instruments = { "Acoustic Piano", "Bright Piano", "Electric Grand Piano", "Honky-tonk Piano",
 			"Electric Piano", "Electric Piano 2", "Harpsichord", "Clavi", "Celesta", "Glockenspiel", "Musical box",

@@ -539,16 +539,24 @@ public class ChordPanel extends JPanel implements MouseListener {
 
 	}
 
+	/* mouse events */
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		Object target = e.getSource();
-		JLabel[][] labels = { aTriad, aSeventh, aMajorSeventh, aSixth, aAdd9, aNinth, aMajorNinth };
-		for (int j = 0; j < labels.length; j++) {
-			for (int i = 0; i < 6; i++) {
-				if (target == labels[j][i]) {
-					rootview.selectRow(i);
-					rootview.selectTension(j);
-					rootview.play();
+		for (int j = 0; j < 6; j++) {
+			for (int i = 0; i < 7; i++) {
+				if (target == chordLabel(i, j)) {
+					if (chordLabel(i, j).getText().length() > 0) {
+						rootview.selectRow(j);
+						rootview.selectTension(i);
+						if (e.getButton() == MouseEvent.BUTTON1) {
+							rootview.play();
+						}
+					} else {
+						rootview.keyPressed(-1);
+						rootview.sendAllNotesOff();
+					}
 					return;
 				}
 			}

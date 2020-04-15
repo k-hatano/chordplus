@@ -9,9 +9,11 @@ import javax.swing.border.*;
 public class OptionPanel extends JPanel implements ChangeListener, ActionListener {
 	chordplus rootview;
 	JButton bHistory;
-	JLabel lVelocityLabel, lVelocity;
+	JLabel lVelocityLabel, lVelocity, lRightClick;
 	JSlider sVelocitySlider;
 	JCheckBox cOmitTriad, cHarmonicMinor, cPlayAtReleased, cTransposed;
+	JRadioButton rBaseNote, rPlay, rStop;
+	ButtonGroup rRightClick;
 
 	public OptionPanel(chordplus cp) {
 		super();
@@ -49,8 +51,29 @@ public class OptionPanel extends JPanel implements ChangeListener, ActionListene
 		cPlayAtReleased.addActionListener(this);
 		add(cPlayAtReleased);
 
+		lRightClick = new JLabel("右クリック", JLabel.LEFT);
+		lRightClick.setBounds(12, 128, 137, 16);
+		add(lRightClick);
+
+		rRightClick = new ButtonGroup();
+		rBaseNote = new JRadioButton("ベース音", true);
+		rBaseNote.setBounds(12, 148, 137, 20);
+		add(rBaseNote);
+		rBaseNote.addActionListener(this);
+		rRightClick.add(rBaseNote);
+		rPlay = new JRadioButton("再生", false);
+		rPlay.setBounds(12, 168, 137, 20);
+		add(rPlay);
+		rPlay.addActionListener(this);
+		rRightClick.add(rPlay);
+		rStop = new JRadioButton("停止", false);
+		rStop.setBounds(12, 188, 137, 20);
+		add(rStop);
+		rRightClick.add(rStop);
+		rStop.addActionListener(this);
+
 		bHistory = new JButton("コード再生履歴");
-		bHistory.setBounds(12, 128, 137, 24);
+		bHistory.setBounds(12, 220, 137, 24);
 		bHistory.addActionListener(this);
 		add(bHistory);
 	}
@@ -80,15 +103,22 @@ public class OptionPanel extends JPanel implements ChangeListener, ActionListene
 	}
 
 	public void actionPerformed(ActionEvent arg0) {
-		if (arg0.getSource() == cOmitTriad) {
+		Object target = arg0.getSource();
+		if (target == cOmitTriad) {
 			Chord.omitTriad = cOmitTriad.isSelected();
 			rootview.changeOmitTriad(cOmitTriad.isSelected());
-		} else if (arg0.getSource() == bHistory) {
+		} else if (target == bHistory) {
 			rootview.showHistoryPanel();
-		} else if (arg0.getSource() == cPlayAtReleased) {
+		} else if (target == cPlayAtReleased) {
 			Chord.playAtReleased = cPlayAtReleased.isSelected();
-		} else if (arg0.getSource() == cHarmonicMinor) {
+		} else if (target == cHarmonicMinor) {
 			Chord.harmonicMinor = cHarmonicMinor.isSelected();
+		} else if (target == rBaseNote) {
+			Chord.rightClickAction = Chord.RIGHT_CLICK_BASE_NOTE;
+		} else if (target == rPlay) {
+			Chord.rightClickAction = Chord.RIGHT_CLICK_PLAY;
+		} else if (target == rStop) {
+			Chord.rightClickAction = Chord.RIGHT_CLICK_STOP;
 		}
 	}
 }

@@ -33,6 +33,7 @@ public class KeyboardCanvas extends Canvas
 	Point startPoint;
 	int rotated = 0;
 	int bassNote = -1, oldBassNote = -1;
+	int draggingButton = -1;
 
 	boolean debugMode = false;
 	boolean keyPressedAfterReleased = false;
@@ -40,18 +41,13 @@ public class KeyboardCanvas extends Canvas
 
 	public KeyboardCanvas(KeyboardPanel cp, chordplus gp) {
 		super();
-		int i;
 		superview = cp;
 		rootview = gp;
 		haveFocus = false;
 		shiftPushed = false;
-		for (i = 0; i < 18; i++) {
+		for (int i = 0; i < 18; i++) {
 			pressed[i] = 0;
-		}
-		for (i = 0; i < 18; i++) {
 			lastPressed[i] = 0;
-		}
-		for (i = 0; i < 18; i++) {
 			togglePressed[i] = 0;
 		}
 		lastClicked = -1;
@@ -66,36 +62,34 @@ public class KeyboardCanvas extends Canvas
 	}
 
 	public void paint(final Graphics g) {
-		int i;
-
 		Image img = createImage(getSize().width, getSize().height);
 		Graphics grp = img.getGraphics();
 
-		for (i = 0; i < whiteKeys.length; i++) {
+		for (int i = 0; i < whiteKeys.length; i++) {
 			grp.setColor(colorOfKey(lastPressed[whiteKeys[i]], false));
 			grp.fillRect(keyRects[whiteKeys[i]][0], keyRects[whiteKeys[i]][1], keyRects[whiteKeys[i]][2],
 					keyRects[whiteKeys[i]][3]);
 		}
 
 		grp.setColor(Color.black);
-		for (i = 0; i < whiteKeys.length; i++) {
+		for (int i = 0; i < whiteKeys.length; i++) {
 			grp.drawRect(keyRects[whiteKeys[i]][0], keyRects[whiteKeys[i]][1], keyRects[whiteKeys[i]][2],
 					keyRects[whiteKeys[i]][3]);
 		}
 
-		for (i = 0; i < blackKeys.length; i++) {
+		for (int i = 0; i < blackKeys.length; i++) {
 			grp.setColor(colorOfKey(lastPressed[blackKeys[i]], true));
 			grp.fillRect(keyRects[blackKeys[i]][0], keyRects[blackKeys[i]][1], keyRects[blackKeys[i]][2],
 					keyRects[blackKeys[i]][3]);
 		}
 
 		grp.setColor(Color.black);
-		for (i = 0; i < blackKeys.length; i++) {
+		for (int i = 0; i < blackKeys.length; i++) {
 			grp.drawRect(keyRects[blackKeys[i]][0], keyRects[blackKeys[i]][1], keyRects[blackKeys[i]][2],
 					keyRects[blackKeys[i]][3]);
 		}
 
-		for (i = 0; i < 12; i++) {
+		for (int i = 0; i < 12; i++) {
 			if (spotted[i] > 0) {
 				if (Chord.scaleContainsNote(Chord.tonic, Chord.minor, i)) {
 					grp.setColor(Color.gray);
@@ -156,15 +150,113 @@ public class KeyboardCanvas extends Canvas
 		repaint(keyRects[which][0], keyRects[which][1], keyRects[which][2], keyRects[which][3]);
 	}
 
+	void playNote(int note, boolean playOrStop, boolean mute) {
+		switchPressed(note, playOrStop ? 1 : 0);
+		if (!mute) {
+			rootview.noteOn(60 + note + Chord.transpose(), playOrStop);
+		}
+	}
+
+	class KeyWatcher extends Thread {
+		public void run() {
+			int pressing;
+			while (true) {
+				synchronized (this) {
+					try {
+						for (int j = 0; j < 10; j++) {
+							sleep(10);
+							if (repaintTrigger)
+								break;
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					pressing = 0;
+					for (int i = 0; i < smallKeys.length; i++) {
+						if (pressed[i] == 1)
+							pressing++;
+						if (pressed[i] == 1 && lastPressed[i] == 0) {
+							playNote(i, true, mode != 0);
+							lastPressed[i] = 1;
+							rootview.keyPressed(i);
+							repaintKey(i);
+						}
+						if (pressed[i] == 0 && lastPressed[i] == 1) {
+							playNote(i, false, mode != 0);
+							lastPressed[i] = 0;
+							repaintKey(i);
+						}
+					}
+					for (int i = 0; i < 12; i++) {
+						if (chordNotes[i] != spotted[i]) {
+							spotted[i] = chordNotes[i];
+							repaintKey(i);
+						}
+					}
+					if (bassNote != oldBassNote) {
+						if (bassNote >= 0) {
+							repaintKey(bassNote);
+						}
+						if (oldBassNote >= 0) {
+							repaintKey(oldBassNote);
+						}
+						oldBassNote = bassNote;
+					}
+					if (pressing == 0 && keyPressedAfterReleased && Chord.playAtReleased) {
+						keyPressedAfterReleased = false;
+						rootview.play();
+					}
+					repaintTrigger = false;
+				}
+			}
+		}
+	}
+
+	void receiveChangeMode(int md) {
+		mode = md;
+		if (mode == 0) {
+			for (int i = 0; i < 18; i++) {
+				togglePressed[i] = 0;
+			}
+		}
+	}
+
+	void receiveEstimatedChordNotes(int notes[], int bass) {
+		for (int i = 0; i < 12; i++) {
+			chordNotes[i] = 0;
+		}
+		for (int i = 0; i < notes.length; i++) {
+			chordNotes[notes[i]] = 1;
+		}
+		bassNote = bass;
+	}
+
+	public void switchPressed(int index, int value) {
+		synchronized (this) {
+			pressed[index] = value;
+		}
+	}
+
+	public void switchSpotted(int index, int value) {
+		synchronized (this) {
+			spotted[index] = value;
+		}
+	}
+
+	/* mouse events */
+
+	@Override
 	public void mouseClicked(MouseEvent arg0) {
 
 	}
 
+	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void mouseExited(MouseEvent arg0) {
 		if (mode == 0) {
 			return;
@@ -179,22 +271,32 @@ public class KeyboardCanvas extends Canvas
 		return;
 	}
 
+	@Override
 	public void mousePressed(MouseEvent arg0) {
-		int which;
+		Point pt = arg0.getPoint();
+		int which = whichKey(pt.x, pt.y);;
 
+		draggingButton = arg0.getButton();
 		if (lastClicked > -1) {
 			return;
 		}
-		if (arg0.getButton() == MouseEvent.BUTTON2) {
-			superview.stop();
+		if (arg0.getButton() == MouseEvent.BUTTON3) {
+			if (Chord.rightClickAction == Chord.RIGHT_CLICK_BASE_NOTE && Chord.mode != 0) {
+				if (which > -1) {
+					bassNote = which;
+					rootview.bassChanged(bassNote);
+				}
+			} else if (Chord.rightClickAction == Chord.RIGHT_CLICK_PLAY) {
+				superview.play();
+			} else if (Chord.rightClickAction == Chord.RIGHT_CLICK_STOP) {
+				superview.stop();
+			}
 			return;
 		}
-		if (arg0.getButton() == MouseEvent.BUTTON3) {
+		if (arg0.getButton() == MouseEvent.BUTTON2) {
 			superview.play();
 			return;
 		}
-		Point pt = arg0.getPoint();
-		which = whichKey(pt.x, pt.y);
 		if (which > -1 && pressed[which] == 0) {
 			lastClicked = which;
 			switchPressed(which, 1);
@@ -203,11 +305,12 @@ public class KeyboardCanvas extends Canvas
 		repaintTrigger = true;
 	}
 
+	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		if (lastClicked < 0) {
 			return;
 		}
-		if (arg0.getButton() == MouseEvent.BUTTON3) {
+		if (arg0.getButton() == MouseEvent.BUTTON2 || arg0.getButton() == MouseEvent.BUTTON3) {
 			return;
 		}
 		switchPressed(lastClicked, 0);
@@ -221,9 +324,10 @@ public class KeyboardCanvas extends Canvas
 		repaintTrigger = true;
 	}
 
+	@Override
 	public void mouseDragged(MouseEvent e) {
 		Point pt = e.getPoint();
-		if (e.getButton() == MouseEvent.BUTTON3) {
+		if (draggingButton != MouseEvent.BUTTON1) {
 			return;
 		}
 		if (mode == 0) {
@@ -255,17 +359,29 @@ public class KeyboardCanvas extends Canvas
 		repaintTrigger = true;
 	}
 
+	@Override
 	public void mouseMoved(MouseEvent e) {
 
 	}
 
-	void playNote(int note, boolean playOrStop, boolean mute) {
-		switchPressed(note, playOrStop ? 1 : 0);
-		if (!mute) {
-			rootview.noteOn(60 + note + Chord.transpose(), playOrStop);
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent arg0) {
+		rotated += arg0.getWheelRotation();
+		if (rotated >= 4) {
+			if (rootview.fChord.root >= 0) {
+				rootview.play();
+			}
+			rotated = 0;
+		} else if (rotated <= -4) {
+			rootview.keyPressed(-1);
+			rootview.sendAllNotesOff();
+			rotated = 0;
 		}
 	}
 
+	/* key events */
+
+	@Override
 	public void keyPressed(KeyEvent arg0) {
 		char key = arg0.getKeyChar();
 		int code = arg0.getKeyCode();
@@ -536,13 +652,16 @@ public class KeyboardCanvas extends Canvas
 		repaintTrigger = true;
 	}
 
+	@Override
 	public void keyReleased(KeyEvent arg0) {
 		char key = arg0.getKeyChar();
 
-		if (key == '1' || key == '2')
+		if (key == '1' || key == '2') {
 			rootview.pitchBend(0);
-		if (arg0.getKeyCode() == KeyEvent.VK_SHIFT)
+		}
+		if (arg0.getKeyCode() == KeyEvent.VK_SHIFT) {
 			shiftPushed = false;
+		}
 
 		for (int i = 0; i < smallKeys.length; i++) {
 			if ((key == smallKeys[i] || key == largeKeys[i]) && lastClicked != i) {
@@ -553,121 +672,27 @@ public class KeyboardCanvas extends Canvas
 		repaintTrigger = true;
 	}
 
+	/* focus evnets*/
+
+	@Override
 	public void keyTyped(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
-	class KeyWatcher extends Thread {
-		public void run() {
-			int pressing;
-			while (true) {
-				synchronized (this) {
-					try {
-						for (int j = 0; j < 10; j++) {
-							sleep(10);
-							if (repaintTrigger)
-								break;
-						}
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					pressing = 0;
-					for (int i = 0; i < smallKeys.length; i++) {
-						if (pressed[i] == 1)
-							pressing++;
-						if (pressed[i] == 1 && lastPressed[i] == 0) {
-							playNote(i, true, mode != 0);
-							lastPressed[i] = 1;
-							rootview.keyPressed(i);
-							repaintKey(i);
-						}
-						if (pressed[i] == 0 && lastPressed[i] == 1) {
-							playNote(i, false, mode != 0);
-							lastPressed[i] = 0;
-							repaintKey(i);
-						}
-					}
-					for (int i = 0; i < 12; i++) {
-						if (chordNotes[i] != spotted[i]) {
-							spotted[i] = chordNotes[i];
-							repaintKey(i);
-						}
-					}
-					if (bassNote != oldBassNote) {
-						if (bassNote >= 0)
-							repaintKey(bassNote);
-						if (oldBassNote >= 0)
-							repaintKey(oldBassNote);
-						oldBassNote = bassNote;
-					}
-					if (pressing == 0 && keyPressedAfterReleased && Chord.playAtReleased) {
-						keyPressedAfterReleased = false;
-						rootview.play();
-					}
-					repaintTrigger = false;
-				}
-			}
-		}
-	}
-
+	@Override
 	public void focusGained(FocusEvent arg0) {
 		haveFocus = true;
 		superview.receiveKeyboardFocused();
 		keyWatcher.resume();
 	}
 
+	@Override
 	public void focusLost(FocusEvent arg0) {
 		haveFocus = false;
 		rootview.keyPressed(-1);
 		rootview.sendAllNotesOff();
 		superview.receiveKeyboardBlured();
 		keyWatcher.suspend();
-	}
-
-	void receiveChangeMode(int md) {
-		mode = md;
-		if (mode == 0) {
-			for (int i = 0; i < 18; i++) {
-				togglePressed[i] = 0;
-			}
-		}
-	}
-
-	void receiveEstimatedChordNotes(int notes[], int bass) {
-		for (int i = 0; i < 12; i++) {
-			chordNotes[i] = 0;
-		}
-		for (int i = 0; i < notes.length; i++) {
-			chordNotes[notes[i]] = 1;
-		}
-		bassNote = bass;
-	}
-
-	@Override
-	public void mouseWheelMoved(MouseWheelEvent arg0) {
-		rotated += arg0.getWheelRotation();
-		if (rotated >= 4) {
-			if (rootview.fChord.root >= 0) {
-				rootview.play();
-			}
-			rotated = 0;
-		} else if (rotated <= -4) {
-			rootview.keyPressed(-1);
-			rootview.sendAllNotesOff();
-			rotated = 0;
-		}
-	}
-
-	public void switchPressed(int index, int value) {
-		synchronized (this) {
-			pressed[index] = value;
-		}
-	}
-
-	public void switchSpotted(int index, int value) {
-		synchronized (this) {
-			spotted[index] = value;
-		}
 	}
 }
