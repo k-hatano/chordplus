@@ -110,6 +110,10 @@ public class chordplus extends JFrame implements MouseListener {
 		fChord.receiveKeyPressed(which);
 	}
 
+	public void changeRoot(int r) {
+		fChord.receiveChangeRoot(r);
+	}
+
 	public void shiftRoot(int db) {
 		fChord.receiveShiftRoot(db);
 	}

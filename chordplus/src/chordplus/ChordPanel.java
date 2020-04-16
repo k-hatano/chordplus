@@ -1,13 +1,12 @@
 package chordplus;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 
 import javax.swing.*;
 import javax.swing.border.*;
 
-public class ChordPanel extends JPanel implements MouseListener {
+public class ChordPanel extends JPanel implements MouseListener, MouseWheelListener {
 	JLabel lScale, lDegree, lOn;
 	JLabel[] aTriad = new JLabel[6];
 	JLabel[] aSeventh = new JLabel[6];
@@ -26,6 +25,7 @@ public class ChordPanel extends JPanel implements MouseListener {
 	int basic, tension;
 	int bass;
 	int row = -1;
+	int rotated = 0;
 
 	int lastRoot, lastBass, lastBasic, lastTension;
 	int emptyArray[] = {};
@@ -110,6 +110,11 @@ public class ChordPanel extends JPanel implements MouseListener {
 		lScale.setVisible(false);
 		lDegree.setVisible(false);
 		lOn.setVisible(false);
+
+		lScale.addMouseListener(this);
+		lDegree.addMouseListener(this);
+		lOn.addMouseListener(this);
+
 		bcSeparator.setVisible(false);
 		for (int t = 0; t < aTriad.length; t++) {
 			aTriad[t].setVisible(false);
@@ -120,6 +125,8 @@ public class ChordPanel extends JPanel implements MouseListener {
 			aNinth[t].setVisible(false);
 			aMajorNinth[t].setVisible(false);
 		}
+
+		addMouseWheelListener(this);
 
 		resetReality();
 	}
@@ -484,29 +491,27 @@ public class ChordPanel extends JPanel implements MouseListener {
 			aTriad[i].setVisible(!ot);
 		}
 
-		if (root < 0)
+		if (root < 0) {
 			return;
+		}
 		int r = root;
 		root = -1;
-		resetReality();
-		estimate(r);
-		reflectReality();
-		selectMax();
-		rootview.receiveEstimatedChord(chordName(), Chord.notesOfChordWithRoot(basic, tension, root),
-				bass < 0 ? root : bass, true);
+		reEstimate(r);
 	}
 
 	void receiveChangeHarmonicMinor(boolean hm) {
-		if (root < 0)
+		if (root < 0) {
 			return;
+		}
 		int r = root;
 		root = -1;
-		resetReality();
-		estimate(r);
-		reflectReality();
-		selectMax();
-		rootview.receiveEstimatedChord(chordName(), Chord.notesOfChordWithRoot(basic, tension, root),
-				bass < 0 ? root : bass, true);
+		reEstimate(r);
+	}
+
+	void receiveChangeRoot(int r) {
+		root = -1;
+		bass = -1;
+		reEstimate(r);
 	}
 
 	void receiveShiftRoot(int db) {
@@ -515,12 +520,7 @@ public class ChordPanel extends JPanel implements MouseListener {
 		}
 		int r = (root + db + 12) % 12;
 		root = -1;
-		resetReality();
-		estimate(r);
-		reflectReality();
-		selectMax();
-		rootview.receiveEstimatedChord(chordName(), Chord.notesOfChordWithRoot(basic, tension, root),
-				bass < 0 ? root : bass, true);
+		reEstimate(r);
 	}
 
 	void receiveShiftBass(int delta) {
@@ -530,13 +530,22 @@ public class ChordPanel extends JPanel implements MouseListener {
 			tension = lastTension;
 			bass = lastBass;
 		}
-		if (bass < 0)
+		if (bass < 0) {
 			bass = root;
+		}
 		bass = (bass + delta + 36) % 12;
 		reflectReality();
 		rootview.receiveEstimatedChord(chordName(), Chord.notesOfChordWithRoot(basic, tension, root),
 				bass < 0 ? root : bass, true);
+	}
 
+	void reEstimate(int r) {
+		resetReality();
+		estimate(r);
+		reflectReality();
+		selectMax();
+		rootview.receiveEstimatedChord(chordName(), Chord.notesOfChordWithRoot(basic, tension, root),
+				bass < 0 ? root : bass, true);
 	}
 
 	/* mouse events */
@@ -544,6 +553,16 @@ public class ChordPanel extends JPanel implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		Object target = e.getSource();
+		if (target == lDegree || target == lScale || target == lOn) {
+			if (e.getButton() == MouseEvent.BUTTON1) {
+				rootview.play();
+			} else if (e.getButton() == MouseEvent.BUTTON3) {
+				rootview.keyPressed(-1);
+				rootview.sendAllNotesOff();
+			}
+			return;
+		}
+
 		for (int j = 0; j < 6; j++) {
 			for (int i = 0; i < 7; i++) {
 				if (target == chordLabel(i, j)) {
@@ -577,13 +596,39 @@ public class ChordPanel extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-
+		Object target = e.getSource();
+		if ((e.getModifiers() & ActionEvent.ALT_MASK) == ActionEvent.ALT_MASK) {
+			for (int j = 0; j < 6; j++) {
+				for (int i = 0; i < 7; i++) {
+					if (target == chordLabel(i, j)) {
+						if (chordLabel(i, j).getText().length() > 0) {
+							rootview.selectRow(j);
+							rootview.selectTension(i);
+						}
+						return;
+					}
+				}
+			}
+		}
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent arg0) {
+		rotated += arg0.getWheelRotation();
+		if (Chord.root >= 0) {
+			if (rotated >= 4) {
+				rootview.shiftRoot(1);
+				rotated -= 4;
+			} else if (rotated <= -4) {
+				rootview.shiftRoot(-1);
+				rotated += 4;
+			}
+		}
 	}
 }

@@ -283,8 +283,12 @@ public class KeyboardCanvas extends Canvas
 		if (arg0.getButton() == MouseEvent.BUTTON3) {
 			if (Chord.rightClickAction == Chord.RIGHT_CLICK_BASE_NOTE && Chord.mode != 0) {
 				if (which > -1) {
-					bassNote = which;
-					rootview.bassChanged(bassNote);
+					bassNote = which % 12;
+					if (rootview.fChord.bass == bassNote) {
+						rootview.changeRoot(bassNote);
+					} else {
+						rootview.bassChanged(bassNote);
+					}
 				}
 			} else if (Chord.rightClickAction == Chord.RIGHT_CLICK_PLAY) {
 				superview.play();
@@ -293,14 +297,33 @@ public class KeyboardCanvas extends Canvas
 			}
 			return;
 		}
+
 		if (arg0.getButton() == MouseEvent.BUTTON2) {
 			superview.play();
 			return;
 		}
+
+		if ((arg0.getModifiers() & ActionEvent.SHIFT_MASK) == ActionEvent.SHIFT_MASK) {
+			if (which > -1) {
+				bassNote = which % 12;
+				if (rootview.fChord.bass == bassNote) {
+					rootview.changeRoot(bassNote);
+				} else {
+					rootview.bassChanged(bassNote);
+				}
+			}
+			return;
+		}
+		if ((arg0.getModifiers() & ActionEvent.ALT_MASK) == ActionEvent.ALT_MASK) {
+			superview.play();
+			return;
+		}
+
 		if (which > -1 && pressed[which] == 0) {
 			lastClicked = which;
 			switchPressed(which, 1);
 		}
+
 		startPoint = pt;
 		repaintTrigger = true;
 	}
@@ -367,15 +390,15 @@ public class KeyboardCanvas extends Canvas
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent arg0) {
 		rotated += arg0.getWheelRotation();
-		if (rotated >= 4) {
+		if (rotated >= 8) {
 			if (rootview.fChord.root >= 0) {
 				rootview.play();
 			}
-			rotated = 0;
-		} else if (rotated <= -4) {
+			rotated -= 8;
+		} else if (rotated <= -8) {
 			rootview.keyPressed(-1);
 			rootview.sendAllNotesOff();
-			rotated = 0;
+			rotated += 8;
 		}
 	}
 
@@ -478,10 +501,15 @@ public class KeyboardCanvas extends Canvas
 
 		for (int i = 0; i < smallKeys.length; i++) {
 			if ((key == smallKeys[i] || key == largeKeys[i]) && lastClicked != i) {
-				if (Chord.playAtReleased)
+				if (Chord.playAtReleased) {
 					keyPressedAfterReleased = true;
+				}
 				if (shiftPushed) {
-					rootview.bassChanged(i % 12);
+					if (rootview.fChord.bass == i % 12) {
+						rootview.changeRoot(i % 12);
+					} else {
+						rootview.bassChanged(i % 12);
+					}
 				} else {
 					switchPressed(i, 1);
 				}
@@ -558,7 +586,11 @@ public class KeyboardCanvas extends Canvas
 				int j = Chord.notesOfScale(Chord.tonic(), Chord.minor())[i];
 				if ((key == smallNumberKeys[i] || key == largeNumberKeys[i]) && lastClicked != j) {
 					if (shiftPushed) {
-						rootview.bassChanged(j % 12);
+						if (rootview.fChord.bass == j % 12) {
+							rootview.changeRoot(j % 12);
+						} else {
+							rootview.bassChanged(j % 12);
+						}
 					} else {
 						rootview.keyPressed(j);
 					}
@@ -689,10 +721,13 @@ public class KeyboardCanvas extends Canvas
 
 	@Override
 	public void focusLost(FocusEvent arg0) {
-		haveFocus = false;
+		for (int i = 0; i < spotted.length; i++) {
+			spotted[i] = 0;
+		}
 		rootview.keyPressed(-1);
 		rootview.sendAllNotesOff();
 		superview.receiveKeyboardBlured();
 		keyWatcher.suspend();
+		haveFocus = false;
 	}
 }
