@@ -35,7 +35,8 @@ public class KeyboardCanvas extends Canvas
 	int bassNote = -1, oldBassNote = -1;
 	int draggingButton = -1;
 	int pressingButton = -1;
-	long pressingStartTime = -1;
+	long pressingStartMillisecs = -1;
+	int pressingTime = -1;
 
 	boolean debugMode = false;
 	boolean keyPressedAfterReleased = false;
@@ -208,15 +209,21 @@ public class KeyboardCanvas extends Canvas
 						keyPressedAfterReleased = false;
 						rootview.play();
 					}
-					if (pressingButton > 0 && System.currentTimeMillis() - pressingStartTime >= 500) {
-						if (pressingButton == MouseEvent.BUTTON2) {
+					if (pressingButton > 0 && System.currentTimeMillis() - pressingStartMillisecs >= 500) {
+						if (Chord.playAtReleased && pressingTime == 0) {
+							if (pressingButton == MouseEvent.BUTTON2) {
+								rootview.keyPressed(-1);
+								rootview.sendAllNotesOff();
+							} else if (pressingButton == MouseEvent.BUTTON1 || pressingButton == MouseEvent.BUTTON3) {
+								rootview.play();
+							}
+						} if (Chord.playAtReleased && pressingTime == 1) {
 							rootview.keyPressed(-1);
 							rootview.sendAllNotesOff();
-						} else if (pressingButton == MouseEvent.BUTTON3) {
-							rootview.play();
 						}
-						pressingButton = -1;
-						pressingStartTime = -1;
+						
+						pressingStartMillisecs = System.currentTimeMillis();
+						pressingTime++;
 					}
 					repaintTrigger = false;
 				}
@@ -291,7 +298,9 @@ public class KeyboardCanvas extends Canvas
 
 		if (pressingButton < 0) {
 			pressingButton = arg0.getButton();
-			pressingStartTime = System.currentTimeMillis();
+			pressingStartMillisecs = System.currentTimeMillis();
+			pressingTime = 0;
+			pressingTime = 0;
 		}
 		draggingButton = arg0.getButton();
 
