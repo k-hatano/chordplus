@@ -34,6 +34,8 @@ public class KeyboardCanvas extends Canvas
 	int rotated = 0;
 	int bassNote = -1, oldBassNote = -1;
 	int draggingButton = -1;
+	int pressingButton = -1;
+	long pressingStartTime = -1;
 
 	boolean debugMode = false;
 	boolean keyPressedAfterReleased = false;
@@ -206,6 +208,16 @@ public class KeyboardCanvas extends Canvas
 						keyPressedAfterReleased = false;
 						rootview.play();
 					}
+					if (pressingButton > 0 && System.currentTimeMillis() - pressingStartTime >= 500) {
+						if (pressingButton == MouseEvent.BUTTON2) {
+							rootview.keyPressed(-1);
+							rootview.sendAllNotesOff();
+						} else if (pressingButton == MouseEvent.BUTTON3) {
+							rootview.play();
+						}
+						pressingButton = -1;
+						pressingStartTime = -1;
+					}
 					repaintTrigger = false;
 				}
 			}
@@ -247,7 +259,8 @@ public class KeyboardCanvas extends Canvas
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -276,7 +289,12 @@ public class KeyboardCanvas extends Canvas
 		Point pt = arg0.getPoint();
 		int which = whichKey(pt.x, pt.y);;
 
+		if (pressingButton < 0) {
+			pressingButton = arg0.getButton();
+			pressingStartTime = System.currentTimeMillis();
+		}
 		draggingButton = arg0.getButton();
+
 		if (lastClicked > -1) {
 			return;
 		}
@@ -330,6 +348,9 @@ public class KeyboardCanvas extends Canvas
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
+		pressingButton = -1;
+		draggingButton = -1;
+
 		if (lastClicked < 0) {
 			return;
 		}
@@ -350,35 +371,35 @@ public class KeyboardCanvas extends Canvas
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		Point pt = e.getPoint();
-		if (draggingButton != MouseEvent.BUTTON1) {
-			return;
-		}
-		if (mode == 0) {
-			if (pt.x - startPoint.x > 32) {
-				rootview.pitchBend(63);
-			} else if (pt.x - startPoint.x < -32) {
-				rootview.pitchBend(-63);
+		if (draggingButton == MouseEvent.BUTTON1) {
+			if (mode == 0) {
+				if (pt.x - startPoint.x > 32) {
+					rootview.pitchBend(63);
+				} else if (pt.x - startPoint.x < -32) {
+					rootview.pitchBend(-63);
+				} else {
+					rootview.pitchBend(0);
+				}
 			} else {
-				rootview.pitchBend(0);
-			}
-		} else {
-			if (pt.x - startPoint.x > 32) {
-				rootview.shiftRow(1, 0);
-				startPoint = pt;
-			}
-			if (pt.x - startPoint.x < -32) {
-				rootview.shiftRow(-1, 0);
-				startPoint = pt;
-			}
-			if (pt.y - startPoint.y > 32) {
-				rootview.shiftRow(0, 1);
-				startPoint = pt;
-			}
-			if (pt.y - startPoint.y < -32) {
-				rootview.shiftRow(0, -1);
-				startPoint = pt;
+				if (pt.x - startPoint.x > 32) {
+					rootview.shiftRow(1, 0);
+					startPoint = pt;
+				}
+				if (pt.x - startPoint.x < -32) {
+					rootview.shiftRow(-1, 0);
+					startPoint = pt;
+				}
+				if (pt.y - startPoint.y > 32) {
+					rootview.shiftRow(0, 1);
+					startPoint = pt;
+				}
+				if (pt.y - startPoint.y < -32) {
+					rootview.shiftRow(0, -1);
+					startPoint = pt;
+				}
 			}
 		}
+		
 		repaintTrigger = true;
 	}
 

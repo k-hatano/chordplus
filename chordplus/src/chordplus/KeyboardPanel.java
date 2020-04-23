@@ -27,17 +27,19 @@ public class KeyboardPanel extends JPanel implements ActionListener, MouseListen
 
 		bFocus = new JButton("▲ Enter ▲");
 		bFocus.setBounds(80, 125, 225, 20);
+		bFocus.setOpaque(true);
 		bFocus.addActionListener(this);
 		rootview.getRootPane().setDefaultButton(bFocus);
 		add(bFocus);
 
 		lChord = new JLabel("", JLabel.CENTER);
-		lChord.setBounds(8, 127, 369, 16);
+		lChord.setBounds(113, 126, 160, 18);
+		lChord.setOpaque(true);
 		lChord.addMouseListener(this);
 		add(lChord);
 
 		lTranspose = new JLabel("", JLabel.RIGHT);
-		lTranspose.setBounds(337, 127, 32, 16);
+		lTranspose.setBounds(337, 126, 32, 18);
 		lTranspose.setForeground(Color.gray);
 		add(lTranspose);
 	}
@@ -86,6 +88,12 @@ public class KeyboardPanel extends JPanel implements ActionListener, MouseListen
 		}
 	}
 
+	public void receiveKeyboardFocused() {
+		bFocus.setVisible(false);
+	}
+
+	/* mouse events */
+
 	public void mouseClicked(MouseEvent arg0) {
 		if (arg0.getButton() == MouseEvent.BUTTON3) {
 			stop();
@@ -95,11 +103,17 @@ public class KeyboardPanel extends JPanel implements ActionListener, MouseListen
 	}
 
 	public void mouseEntered(MouseEvent arg0) {
-
+		if (arg0.getSource() == lChord) {
+			if (lChord.getText().length() > 0) {
+				lChord.setBackground(new Color(0.8f, 0.8f, 0.8f));
+			}
+		}
 	}
 
 	public void mouseExited(MouseEvent arg0) {
-
+		if (arg0.getSource() == lChord) {
+			lChord.setBackground(null);
+		}
 	}
 
 	public void mousePressed(MouseEvent arg0) {
@@ -108,9 +122,5 @@ public class KeyboardPanel extends JPanel implements ActionListener, MouseListen
 
 	public void mouseReleased(MouseEvent arg0) {
 
-	}
-
-	public void receiveKeyboardFocused() {
-		bFocus.setVisible(false);
 	}
 }
