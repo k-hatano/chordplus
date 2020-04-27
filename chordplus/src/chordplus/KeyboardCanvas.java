@@ -210,14 +210,14 @@ public class KeyboardCanvas extends Canvas
 						rootview.play();
 					}
 					if (pressingButton > 0 && System.currentTimeMillis() - pressingStartMillisecs >= 500) {
-						if (Chord.playAtReleased && pressingTime == 0) {
+						if (!Chord.playAtReleased && pressingTime == 0) {
 							if (pressingButton == MouseEvent.BUTTON2) {
 								rootview.keyPressed(-1);
 								rootview.sendAllNotesOff();
 							} else if (pressingButton == MouseEvent.BUTTON1 || pressingButton == MouseEvent.BUTTON3) {
 								rootview.play();
 							}
-						} if (Chord.playAtReleased && pressingTime == 1) {
+						} if (!Chord.playAtReleased && pressingTime == 1) {
 							rootview.keyPressed(-1);
 							rootview.sendAllNotesOff();
 						}
