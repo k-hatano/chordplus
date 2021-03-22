@@ -28,6 +28,7 @@ public class Chord {
 	public static int instrument = 0;
 	public static int velocity = 64;
 	public static int mode = 0;
+	public static int smartRange = 0;
 
 	public static int basic = -1, tension = -1, root = -1, bass = -1;
 

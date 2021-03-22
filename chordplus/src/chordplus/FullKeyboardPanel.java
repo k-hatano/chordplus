@@ -11,6 +11,7 @@ public class FullKeyboardPanel extends JPanel implements ActionListener, ChangeL
 	JLabel lTranspose, lInstLabel;
 	JComboBox cInst;
 	FullKeyboardCanvas cKeyboard;
+	JCheckBox cSmartRange;
 
 	chordplus rootview;
 	JSpinner sTranspose;
@@ -31,6 +32,11 @@ public class FullKeyboardPanel extends JPanel implements ActionListener, ChangeL
 		lTranspose = new JLabel("トランスポーズ: ");
 		lTranspose.setBounds(16, 10, 112, 24);
 		add(lTranspose);
+
+		cSmartRange = new JCheckBox("スマートレンジ");
+		cSmartRange.setBounds(214, 10, 112, 24);
+		cSmartRange.addActionListener(this);
+		add(cSmartRange);
 
 		SpinnerNumberModel snm = new SpinnerNumberModel(0, -36, 36, 1);
 		sTranspose = new JSpinner(snm);
@@ -53,6 +59,8 @@ public class FullKeyboardPanel extends JPanel implements ActionListener, ChangeL
 		Object target = arg0.getSource();
 		if (target == cInst) {
 			rootview.changeInstrument(cInst.getSelectedIndex());
+		} else if (target == cSmartRange) {
+			rootview.changeSmartRange(cSmartRange.isSelected() ? 1 : 0);
 		}
 	}
 

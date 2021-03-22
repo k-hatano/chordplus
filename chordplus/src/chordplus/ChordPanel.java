@@ -6,6 +6,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
+import java.util.*;
+
 public class ChordPanel extends JPanel implements MouseListener, MouseWheelListener {
 	JLabel lScale, lDegree, lOn;
 	JLabel[] aTriad = new JLabel[6];
@@ -26,6 +28,7 @@ public class ChordPanel extends JPanel implements MouseListener, MouseWheelListe
 	int bass;
 	int row = -1;
 	int rotated = 0;
+	int autoselect = 0;
 
 	int lastRoot, lastBass, lastBasic, lastTension;
 	int emptyArray[] = {};
@@ -65,36 +68,36 @@ public class ChordPanel extends JPanel implements MouseListener, MouseWheelListe
 		add(lOn);
 
 		bcSeparator = new BarCanvas(Color.lightGray);
-		bcSeparator.setBounds(8, 34, 366, 1);
+		bcSeparator.setBounds(8, 33, 366, 1);
 		add(bcSeparator);
 
 		for (int t = 0; t < 6; t++) {
 			aTriad[t] = new JLabel(Chord.chordName(-1, t, 0, -1, 0), JLabel.CENTER);
-			aTriad[t].setBounds(8 + t * 61, 41, 61, 16);
+			aTriad[t].setBounds(8 + t * 61, 37, 61, 20);
 			add(aTriad[t]);
 
 			aSeventh[t] = new JLabel(Chord.chordName(-1, t, 1, -1, 0), JLabel.CENTER);
-			aSeventh[t].setBounds(8 + t * 61, 60, 61, 16);
+			aSeventh[t].setBounds(8 + t * 61, 57, 61, 20);
 			add(aSeventh[t]);
 
 			aMajorSeventh[t] = new JLabel(Chord.chordName(-1, t, 2, -1, 0), JLabel.CENTER);
-			aMajorSeventh[t].setBounds(8 + t * 61, 80, 61, 16);
+			aMajorSeventh[t].setBounds(8 + t * 61, 77, 61, 20);
 			add(aMajorSeventh[t]);
 
 			aSixth[t] = new JLabel(Chord.chordName(-1, t, 3, -1, 0), JLabel.CENTER);
-			aSixth[t].setBounds(8 + t * 61, 100, 61, 16);
+			aSixth[t].setBounds(8 + t * 61, 97, 61, 20);
 			add(aSixth[t]);
 
 			aAdd9[t] = new JLabel(Chord.chordName(-1, t, 4, -1, 0), JLabel.CENTER);
-			aAdd9[t].setBounds(8 + t * 61, 120, 61, 16);
+			aAdd9[t].setBounds(8 + t * 61, 117, 61, 20);
 			add(aAdd9[t]);
 
 			aNinth[t] = new JLabel(Chord.chordName(-1, t, 5, -1, 0), JLabel.CENTER);
-			aNinth[t].setBounds(8 + t * 61, 140, 61, 16);
+			aNinth[t].setBounds(8 + t * 61, 137, 61, 20);
 			add(aNinth[t]);
 
 			aMajorNinth[t] = new JLabel(Chord.chordName(-1, t, 6, -1, 0), JLabel.CENTER);
-			aMajorNinth[t].setBounds(8 + t * 61, 160, 61, 16);
+			aMajorNinth[t].setBounds(8 + t * 61, 157, 61, 20);
 			add(aMajorNinth[t]);
 		}
 
@@ -126,6 +129,7 @@ public class ChordPanel extends JPanel implements MouseListener, MouseWheelListe
 			aMajorNinth[t].setVisible(false);
 		}
 
+		addMouseListener(this);
 		addMouseWheelListener(this);
 
 		resetReality();
@@ -265,6 +269,10 @@ public class ChordPanel extends JPanel implements MouseListener, MouseWheelListe
 			}
 		}
 		if (m > 0) {
+			Chord.basic = b;
+			Chord.tension = t;
+			Chord.root = root;
+			Chord.bass = bass;
 			stressMax(b, t);
 		}
 	}
@@ -346,7 +354,19 @@ public class ChordPanel extends JPanel implements MouseListener, MouseWheelListe
 
 		if (Chord.mode == 1) {
 			chord = Chord.notesOfChordWithPianoBasement(basic, tension, root + (Chord.transpose() + 36) % 12,
-					bass < 0 ? bass : bass + (Chord.transpose() + 36) % 12, Chord.pianoBasement);
+				bass < 0 ? bass : bass + (Chord.transpose() + 36) % 12, Chord.pianoBasement);
+			if (Chord.smartRange > 0) {
+				int chordUnder[] = Chord.notesOfChordWithPianoBasement(basic, tension, root + (Chord.transpose() + 36) % 12,
+						bass < 0 ? bass : bass + (Chord.transpose() + 36) % 12, Chord.pianoBasement - 1);
+				Arrays.sort(chord);
+				Arrays.sort(chordUnder);
+				int chordNormalVariance = chord[chord.length - 1] - chord[0];
+				int chordUnderVariance = chordUnder[chordUnder.length - 1] - chordUnder[0];
+
+				if (chordUnderVariance < chordNormalVariance) {
+					chord = chordUnder;
+				}
+			}
 			for (int i = 0; i < chord.length; i++) {
 				n = chord[i];
 				rootview.noteOn(n, true);
@@ -571,6 +591,8 @@ public class ChordPanel extends JPanel implements MouseListener, MouseWheelListe
 						rootview.selectTension(i);
 						if (e.getButton() == MouseEvent.BUTTON1) {
 							rootview.play();
+						} else {
+							autoselect = 1;
 						}
 					} else {
 						rootview.keyPressed(-1);
@@ -597,13 +619,14 @@ public class ChordPanel extends JPanel implements MouseListener, MouseWheelListe
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		Object target = e.getSource();
-		if ((e.getModifiers() & ActionEvent.ALT_MASK) == ActionEvent.ALT_MASK) {
+		if (autoselect > 0 || (e.getModifiers() & ActionEvent.ALT_MASK) == ActionEvent.ALT_MASK) {
 			for (int j = 0; j < 6; j++) {
 				for (int i = 0; i < 7; i++) {
 					if (target == chordLabel(i, j)) {
 						if (chordLabel(i, j).getText().length() > 0) {
 							rootview.selectRow(j);
 							rootview.selectTension(i);
+							autoselect = 1;
 						}
 						return;
 					}
@@ -614,8 +637,10 @@ public class ChordPanel extends JPanel implements MouseListener, MouseWheelListe
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-
+		Object target = e.getSource();
+		if (target == this) {
+			autoselect = 0;
+		}
 	}
 
 	@Override

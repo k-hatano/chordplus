@@ -190,6 +190,10 @@ public class chordplus extends JFrame implements MouseListener {
 		fFullKeyboard.receiveChangeInstrument(inst);
 	}
 
+	public void changeSmartRange(int sr) {
+		Chord.smartRange = sr;
+	}
+
 	public void showHistoryPanel() {
 		fHistory.setVisible(true);
 		fHistory.receiveShowHistoryPanel();

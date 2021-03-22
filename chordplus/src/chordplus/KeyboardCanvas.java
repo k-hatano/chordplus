@@ -209,7 +209,7 @@ public class KeyboardCanvas extends Canvas
 						keyPressedAfterReleased = false;
 						rootview.play();
 					}
-					if (pressingButton > 0 && System.currentTimeMillis() - pressingStartMillisecs >= 500) {
+					if (pressingButton > 0 && System.currentTimeMillis() - pressingStartMillisecs >= 500 && Chord.mode != 0) {
 						if (!Chord.playAtReleased && pressingTime == 0) {
 							if (pressingButton == MouseEvent.BUTTON2) {
 								rootview.keyPressed(-1);
@@ -307,6 +307,17 @@ public class KeyboardCanvas extends Canvas
 		if (lastClicked > -1) {
 			return;
 		}
+
+		if (arg0.getButton() == 5) {
+			superview.play();
+			return;
+		}
+
+		if (arg0.getButton() == 4) {
+			superview.stop();
+			return;
+		}
+
 		if (arg0.getButton() == MouseEvent.BUTTON3) {
 			if (Chord.rightClickAction == Chord.RIGHT_CLICK_BASE_NOTE && Chord.mode != 0) {
 				if (which > -1) {
@@ -628,10 +639,11 @@ public class KeyboardCanvas extends Canvas
 				}
 			}
 			if (key == 'q' || key == 'Q') {
+				int originalRoot = Chord.root;
 				rootview.shiftRoot(6);
 				rootview.selectRow(3);
 				rootview.selectTension(0);
-				rootview.bassChanged(Chord.root);
+				rootview.bassChanged(originalRoot);
 			} else if (key == '8') {
 				rootview.shiftRoot(-1);
 			} else if (key == '9') {
@@ -759,5 +771,6 @@ public class KeyboardCanvas extends Canvas
 		superview.receiveKeyboardBlured();
 		keyWatcher.suspend();
 		haveFocus = false;
+		repaint();
 	}
 }
